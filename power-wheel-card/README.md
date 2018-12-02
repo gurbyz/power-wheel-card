@@ -1,6 +1,9 @@
 power-wheel-card
 ====
 
+An intuïtive way to represent the power that your home is consuming or producing.
+> Direct link to [GitHub](https://github.com/gurbyz/custom-cards-lovelace/tree/master/power-wheel-card).
+
 ## Features
 Features of the custom power-wheel-card:
 * Calculates the current power that your home is consuming: home power.
@@ -20,7 +23,7 @@ Features of the custom power-wheel-card:
     - The sensor value should be of type *int* or *float*.
     - The sensor value should be positive.
     - The sensor could have an icon (optional) that will override the icon in the power-wheel-card.
-1. You need to have a working sensor for your grid power. This is *YOUR_GRID_POWER_SENSOR* in the instructions below.
+1. You need to have a working sensor for your grid power. Write down the entity id of this sensor. This is *YOUR_GRID_POWER_SENSOR* in the instructions below.
     - This sensor has the `unit_of_measurement` set up as the sensor for solar power.
     - The sensor value should be of type *int* or *float*.
     - The sensor value should be **negative** for **producing** power to the grid and **positive** for **consuming** power of the grid.
@@ -49,8 +52,8 @@ In this example the sensors names for *YOUR_SOLAR_POWER_SENSOR* and *YOUR_GRID_P
 Not visible in the example above, but of course you have to have installed the hardware and configured it to feed your sensors.
 In the example above I used a [rest sensor](https://www.home-assistant.io/components/sensor.rest/) for my [Youless](http://youless.nl/winkel/product/ls120.html) for the solar power.
 For the grid power I used a [dsmr sensor](https://www.home-assistant.io/components/sensor.dsmr/) for my Iskra Smart Meter.
-Because the dsmr sensor supplies 2 separate sensors for grid power consumption and grid power production, you have to combine them to one grid power sensor.
-Because my solar power sensor and dsmr sensor don't report in the same unit of measurement, I had to convert that as well.
+Because the dsmr sensor supplies 2 separate sensors for grid power consumption and grid power production, I had to combine them into one grid power sensor.
+And because my solar power sensor and dsmr sensor don't report in the same unit of measurement, I had to convert that as well.
 
 ## Instructions
 1. Check the requirements above. If you don't comply to the requirements, the card won't be much of use for you or just won't work.
@@ -64,7 +67,7 @@ resources:
     type: module
 ```
 
-> Note: You can increase the number in `v=1` whenever updating code to avoid having to manually clear the cache of yours browsers/apps.
+> Note: You can increase the number in `v=1` whenever updating code to avoid having to manually clear the cache of your browsers and mobile apps.
 
 5. Include a configuration for the power-wheel-card in your `ui-lovelace.yaml` file:
 
@@ -89,7 +92,7 @@ views:
 
 ### More icons
 The icons for solar power and grid power are taken from your own sensors for solar power and grid power.
-If you haven't set up icons default icons will be used. For solar power: `mdi:weather-sunny`; and for grid power: `mdi:flash-circle`.
+If you haven't set up icons for them default icons will be used. For solar power: `mdi:weather-sunny`; and for grid power: `mdi:flash-circle`.
 
 An example for overriding the other two icons, to be put in `configuration.yaml`:
 
@@ -100,7 +103,7 @@ homeassistant:
     sensor.solar_power:
       icon: mdi:white-balance-sunny
     sensor.grid_power:
-      icon: mdi:flash-circle
+      icon: mdi:flash
 ```
 
 ## Advanced configuration example
