@@ -1,6 +1,10 @@
 Changelog
 ====
 
+## 0.0.2
+### New features
+* Added `solar_power_icon` and `grid_power_icon` as card options.
+
 ## 0.0.1
 ### New features
 * Calculates the current power that your home is consuming: home power.

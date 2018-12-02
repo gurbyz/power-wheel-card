@@ -22,12 +22,12 @@ Features of the custom power-wheel-card:
     - This sensor has a `unit_of_measurement` set up, e.g. `'W'` or `'kW'`.
     - The sensor value should be of type *int* or *float*.
     - The sensor value should be positive.
-    - The sensor could have an icon (optional) that will override the icon in the power-wheel-card.
+    - The sensor could have an icon (optional) that will override the icon in the power-wheel-card if the card option `solar_power_icon` is not used.
 1. You need to have a working sensor for your grid power. Write down the entity id of this sensor. This is *YOUR_GRID_POWER_SENSOR* in the instructions below.
     - This sensor has the `unit_of_measurement` set up as the sensor for solar power.
     - The sensor value should be of type *int* or *float*.
     - The sensor value should be **negative** for **producing** power to the grid and **positive** for **consuming** power of the grid.
-    - The sensor could have an icon (optional) that will override the icon in the power-wheel-card.
+    - The sensor could have an icon (optional) that will override the icon in the power-wheel-card if the card option `grid_power_icon` is not used.
 
 ### Example requirements configuration
 This is not the configuration of the power-wheel-card itself, but an example configuration that's needed to have input sensors for the power-wheel-card.
@@ -85,20 +85,23 @@ views:
 | Option | Type | Mandatory? | Default | Description |
 |--------|------|------------|---------|-------------|
 |type|string|**required**||Type of the card. Use `"custom:power-wheel-card"`.|
-|solar_power_entity|string|**required**||Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
-|grid_power_entity|string|**required**||Entity id of your grid power sensor. E.g. `sensor.YOUR_GRID_POWER_SENSOR`. See requirements above.|
 |title|string|optional|`"Power wheel"`|Title of the card.|
+|solar_power_entity|string|**required**||Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
+|solar_power_icon|string|optional|The icon of your solar power sensor. If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power.|
+|grid_power_entity|string|**required**||Entity id of your grid power sensor. E.g. `sensor.YOUR_GRID_POWER_SENSOR`. See requirements above.|
+|grid_power_icon|string|optional|The icon of your grid power sensor. If not available, then `"mdi:flash-circle"` will be used.|Icon for grid power.|
 |home_power_icon|string|optional|`"mdi:home"`|Icon for home power.|
 
-### More icons
-The icons for solar power and grid power are taken from your own sensors for solar power and grid power.
-If you haven't set up icons for them default icons will be used. For solar power: `mdi:weather-sunny`; and for grid power: `mdi:flash-circle`.
+### More about icons
+The icons for solar power and grid power can be set by card options as shown in the table above.
+If you don't specify them as card options, the icons are taken from your own sensors for solar power and grid power.
+You could have specified those with the `customize` option for `homeassistant` in your `configuration.yaml`.
+If you haven't set up icons for them, default icons will be used. For solar power: `mdi:weather-sunny`; and for grid power: `mdi:flash-circle`.
 
-An example for overriding the other two icons, to be put in `configuration.yaml`:
+An example for reusing the icons of your sensors, to be put in `configuration.yaml`:
 
 ```yaml
 homeassistant:
-  [...]
   customize:
     sensor.solar_power:
       icon: mdi:white-balance-sunny
@@ -112,7 +115,9 @@ A more advanced example for in the `ui-lovelace.yaml` file:
 - type: "custom:power-wheel-card"
   title: "Power distribution"
   solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
+  solar_power_icon: "mdi:white-balance-sunny"
   grid_power_entity: sensor.YOUR_GRID_POWER_SENSOR
+  grid_power_icon: "mdi:flash"
   home_power_icon: "mdi:home-assistant"
 ```
 

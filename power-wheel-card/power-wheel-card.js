@@ -15,13 +15,13 @@ class PowerWheelCard extends LitElement {
 
     const solarPowerState = hass.states[config.solar_power_entity];
     const solarPowerStateStr = solarPowerState ? solarPowerState.state : 'unavailable';
-    const solarPowerIcon = solarPowerState && solarPowerState.attributes.icon
-      ? solarPowerState.attributes.icon : 'mdi:weather-sunny';
+    const solarPowerIcon = config.solar_power_icon ? config.solar_power_icon
+      : (solarPowerState && solarPowerState.attributes.icon ? solarPowerState.attributes.icon : 'mdi:weather-sunny');
 
     const gridPowerState = hass.states[config.grid_power_entity];
     const gridPowerStateStr = gridPowerState ? gridPowerState.state : 'unavailable';
-    const gridPowerIcon = gridPowerState && gridPowerState.attributes.icon
-      ? gridPowerState.attributes.icon : 'mdi:flash-circle';
+    const gridPowerIcon = config.grid_power_icon ? config.grid_power_icon
+      : (gridPowerState && gridPowerState.attributes.icon ? gridPowerState.attributes.icon : 'mdi:flash-circle');
 
     const homePowerStateStr = solarPowerState && gridPowerState
       ? parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state) : 'unavailable';
