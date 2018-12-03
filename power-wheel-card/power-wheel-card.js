@@ -12,19 +12,20 @@ class PowerWheelCard extends LitElement {
 
   _render({ hass, config }) {
     const title = config.title ? config.title : 'Power wheel';
+    const decimals = config.decimals ? config.decimals : 0;
 
     const solarPowerState = hass.states[config.solar_power_entity];
-    const solarPowerStateStr = solarPowerState ? solarPowerState.state : 'unavailable';
+    const solarPowerStateStr = solarPowerState ? parseFloat(solarPowerState.state).toFixed(decimals) : 'unavailable';
     const solarPowerIcon = config.solar_power_icon ? config.solar_power_icon
       : (solarPowerState && solarPowerState.attributes.icon ? solarPowerState.attributes.icon : 'mdi:weather-sunny');
 
     const gridPowerState = hass.states[config.grid_power_entity];
-    const gridPowerStateStr = gridPowerState ? gridPowerState.state : 'unavailable';
+    const gridPowerStateStr = gridPowerState ? parseFloat(gridPowerState.state).toFixed(decimals) : 'unavailable';
     const gridPowerIcon = config.grid_power_icon ? config.grid_power_icon
       : (gridPowerState && gridPowerState.attributes.icon ? gridPowerState.attributes.icon : 'mdi:flash-circle');
 
     const homePowerStateStr = solarPowerState && gridPowerState
-      ? parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state) : 'unavailable';
+      ? (parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state)).toFixed(decimals) : 'unavailable';
     const homePowerIcon = config.home_power_icon ? config.home_power_icon : 'mdi:home';
 
     const unitStr = solarPowerState && gridPowerState
@@ -120,6 +121,9 @@ class PowerWheelCard extends LitElement {
     }
     if (!config.grid_power_entity) {
       throw new Error('You need to define a grid_power_entity');
+    }
+    if (config.decimals && !Number.isInteger(config.decimals)) {
+      throw new Error('Decimals should be an integer');
     }
     this.config = config;
   }

@@ -4,6 +4,7 @@ Changelog
 ## 0.0.2
 ### New features
 * Added `solar_power_icon` and `grid_power_icon` as card options.
+* Added `decimals` as card option to display the power values in this number of decimals.
 
 ## 0.0.1
 ### New features

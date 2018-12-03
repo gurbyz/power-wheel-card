@@ -91,6 +91,7 @@ views:
 |grid_power_entity|string|**required**||Entity id of your grid power sensor. E.g. `sensor.YOUR_GRID_POWER_SENSOR`. See requirements above.|
 |grid_power_icon|string|optional|The icon of your grid power sensor. If not available, then `"mdi:flash-circle"` will be used.|Icon for grid power.|
 |home_power_icon|string|optional|`"mdi:home"`|Icon for home power.|
+|decimals|int|optional|`0`|Number of decimals for the power values.|
 
 ### More about icons
 The icons for solar power and grid power can be set by card options as shown in the table above.
@@ -119,6 +120,7 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   grid_power_entity: sensor.YOUR_GRID_POWER_SENSOR
   grid_power_icon: "mdi:flash"
   home_power_icon: "mdi:home-assistant"
+  decimals: 2
 ```
 
 ## License
