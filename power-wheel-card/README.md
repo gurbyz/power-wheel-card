@@ -2,7 +2,7 @@ power-wheel-card
 ====
 
 An intuïtive way to represent the power that your home is consuming or producing.
-> Direct link to [GitHub](https://github.com/gurbyz/custom-cards-lovelace/tree/master/power-wheel-card).
+> This component is discussed [here](https://community.home-assistant.io/t/lovelace-power-wheel-card/82374) on the Home Assistant forum.
 
 ## Features
 Features of the custom power-wheel-card:
