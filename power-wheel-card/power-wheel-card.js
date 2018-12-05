@@ -24,8 +24,14 @@ class PowerWheelCard extends LitElement {
     const gridPowerIcon = config.grid_power_icon ? config.grid_power_icon
       : (gridPowerState && gridPowerState.attributes.icon ? gridPowerState.attributes.icon : 'mdi:flash-circle');
 
-    const homePowerStateStr = solarPowerState && gridPowerState
-      ? (parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state)).toFixed(decimals) : 'unavailable';
+    let homePowerStateStr;
+    if (config.home_power_entity) { // home power value by sensor
+      const homePowerState = hass.states[config.home_power_entity];
+      homePowerStateStr = homePowerState ? parseFloat(homePowerState.state).toFixed(decimals) : 'unavailable';
+    } else { // home power value by calculation
+      homePowerStateStr = solarPowerState && gridPowerState
+        ? (parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state)).toFixed(decimals) : 'unavailable';
+    }
     const homePowerIcon = config.home_power_icon ? config.home_power_icon : 'mdi:home';
 
     const unitStr = solarPowerState && gridPowerState
