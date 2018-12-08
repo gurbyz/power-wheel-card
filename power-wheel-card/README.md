@@ -6,9 +6,9 @@ An intuïtive way to represent the power that your home is consuming or producin
 
 ## Features
 Features of the custom power-wheel-card:
-* Calculates the current power that your home is consuming: home power.
-  Input for the calculation is the (produced) solar power and the (consumed or produced) grid power.
 * Displays the three power values (solar, grid and home) in 'a wheel'.
+* Optionally calculates the current power that your home is consuming: home power.
+  Input for the calculation is the (produced) solar power and the (consumed or produced) grid power.
 * Displays the transition between these powers as arrows.
   E.g. if your solar power panels produce power, the arrow from solar to home turns active.
   And if your solar power panels produce enough power to deliver some back to the grid, the arrow from solar to grid turns active.
@@ -24,12 +24,13 @@ Features of the custom power-wheel-card:
     - The sensor value should be positive.
     - The sensor could have an icon (optional) that will override the icon in the power-wheel-card if the card parameter `solar_power_icon` is not used.
 1. You need to have a working sensor for your grid power. Write down the entity id of this sensor. This is *YOUR_GRID_POWER_SENSOR* in the instructions below.
-    - This sensor has the same `unit_of_measurement` set up as the sensor for solar power.
+    - This sensor has **the same** `unit_of_measurement` set up as the sensor for solar power.
+    - Preferably this sensor has the same update interval as the sensor for solar power. (If not, the calculated value for home power can give unreal results sometimes.)
     - The sensor value should be of type *int* or *float*.
     - The sensor value should be **negative** for **producing** power to the grid and **positive** for **consuming** power of the grid.
     - The sensor could have an icon (optional) that will override the icon in the power-wheel-card if the card parameter `grid_power_icon` is not used.
 
-Nb. You don't need a sensor for your home power. The value will be calculated if your don't supply this sensor as card parameter.
+Nb. You don't need a sensor for your home power, but you can use if you have it available. The value will be calculated if your don't supply this sensor as card parameter.
 
 ### Example requirements configuration
 This is not the configuration of the power-wheel-card itself, but an example configuration that's needed to have input sensors for the power-wheel-card.
@@ -69,7 +70,7 @@ resources:
     type: module
 ```
 
-> Note: You can increase the number in `v=1` whenever updating code to avoid having to manually clear the cache of your browsers and mobile apps.
+> Note: The actual number in `v=A_NUMBER` isn't relevant. You can increase the number whenever updating the source code to avoid having to manually clear the cache of your browsers and mobile apps.
 
 5. Include a configuration for the power-wheel-card in your `ui-lovelace.yaml` file:
 
