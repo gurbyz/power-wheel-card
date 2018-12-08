@@ -12,19 +12,26 @@ class PowerWheelCard extends LitElement {
 
   _render({ hass, config }) {
     const title = config.title ? config.title : 'Power wheel';
+    const decimals = config.decimals ? config.decimals : 0;
 
     const solarPowerState = hass.states[config.solar_power_entity];
-    const solarPowerStateStr = solarPowerState ? solarPowerState.state : 'unavailable';
-    const solarPowerIcon = solarPowerState && solarPowerState.attributes.icon
-      ? solarPowerState.attributes.icon : 'mdi:weather-sunny';
+    const solarPowerStateStr = solarPowerState ? parseFloat(solarPowerState.state).toFixed(decimals) : 'unavailable';
+    const solarPowerIcon = config.solar_power_icon ? config.solar_power_icon
+      : (solarPowerState && solarPowerState.attributes.icon ? solarPowerState.attributes.icon : 'mdi:weather-sunny');
 
     const gridPowerState = hass.states[config.grid_power_entity];
-    const gridPowerStateStr = gridPowerState ? gridPowerState.state : 'unavailable';
-    const gridPowerIcon = gridPowerState && gridPowerState.attributes.icon
-      ? gridPowerState.attributes.icon : 'mdi:flash-circle';
+    const gridPowerStateStr = gridPowerState ? parseFloat(gridPowerState.state).toFixed(decimals) : 'unavailable';
+    const gridPowerIcon = config.grid_power_icon ? config.grid_power_icon
+      : (gridPowerState && gridPowerState.attributes.icon ? gridPowerState.attributes.icon : 'mdi:flash-circle');
 
-    const homePowerStateStr = solarPowerState && gridPowerState
-      ? parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state) : 'unavailable';
+    let homePowerStateStr;
+    if (config.home_power_entity) { // home power value by sensor
+      const homePowerState = hass.states[config.home_power_entity];
+      homePowerStateStr = homePowerState ? parseFloat(homePowerState.state).toFixed(decimals) : 'unavailable';
+    } else { // home power value by calculation
+      homePowerStateStr = solarPowerState && gridPowerState
+        ? (parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state)).toFixed(decimals) : 'unavailable';
+    }
     const homePowerIcon = config.home_power_icon ? config.home_power_icon : 'mdi:home';
 
     const unitStr = solarPowerState && gridPowerState
@@ -120,6 +127,9 @@ class PowerWheelCard extends LitElement {
     }
     if (!config.grid_power_entity) {
       throw new Error('You need to define a grid_power_entity');
+    }
+    if (config.decimals && !Number.isInteger(config.decimals)) {
+      throw new Error('Decimals should be an integer');
     }
     this.config = config;
   }
