@@ -1,6 +1,10 @@
 Changelog
 ====
 
+## 0.0.3
+### Improvements
+* Performance. Moved some code to run it only after config changes.
+
 ## 0.0.2
 ### New features
 * Added `solar_power_icon` and `grid_power_icon` as optional card parameters.
