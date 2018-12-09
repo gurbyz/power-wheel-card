@@ -21,9 +21,10 @@ class PowerWheelCard extends LitElement {
     const gridPowerIcon = config.grid_power_icon ? config.grid_power_icon
       : (gridPowerState && gridPowerState.attributes.icon ? gridPowerState.attributes.icon : 'mdi:flash-circle');
 
+    let homePowerState;
     let homePowerStateStr;
     if (config.home_power_entity) { // home power value by sensor
-      const homePowerState = hass.states[config.home_power_entity];
+      homePowerState = hass.states[config.home_power_entity];
       homePowerStateStr = homePowerState ? parseFloat(homePowerState.state).toFixed(this.decimals) : 'unavailable';
     } else { // home power value by calculation
       homePowerStateStr = solarPowerState && gridPowerState
@@ -70,6 +71,9 @@ class PowerWheelCard extends LitElement {
           text-align: center;
           width: 150px;
         }
+        ha-card .cell.power {
+          cursor: pointer;
+        }
         ha-icon {
           transition: color 0.3s ease-in-out, filter 0.3s ease-in-out;
           color: var(--paper-item-icon-color, #44739e);
@@ -88,7 +92,7 @@ class PowerWheelCard extends LitElement {
           ${this.title}
         </div>
         <div class="row">
-          <div class="cell">
+          <div class="cell power" on-click="${e => this._handleClick(e, solarPowerState)}">
             <ha-icon icon="${solarPowerIcon}"></ha-icon>
             <br/>${solarPowerStateStr} ${unitStr}
           </div>
@@ -102,20 +106,33 @@ class PowerWheelCard extends LitElement {
           </div>
         </div>
         <div class="row">
-          <div class="cell">
+          <div class="cell power" on-click="${e => this._handleClick(e, gridPowerState)}">
             <ha-icon icon="${gridPowerIcon}"></ha-icon>
             <br/>${gridPowerStateStr} ${unitStr}
           </div>
           <div class="cell">
             <ha-icon class$="${grid2homeClass}" icon="mdi:arrow-right"></ha-icon>
           </div>
-          <div class="cell">
+          <div class="cell power" on-click="${e => this._handleClick(e, homePowerState)}">
             <ha-icon icon="${homePowerIcon}"></ha-icon>
             <br/>${homePowerStateStr} ${unitStr}
           </div>
         </div>
       </ha-card>
     `;
+  }
+
+  _handleClick(ev, stateObj) {
+    if (!stateObj) {
+      return;
+    }
+    const event = new Event('hass-more-info', {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    });
+    event.detail = { entityId: stateObj.entity_id };
+    this.shadowRoot.dispatchEvent(event);
   }
 
   setConfig(config) {

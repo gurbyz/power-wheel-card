@@ -2,6 +2,8 @@ Changelog
 ====
 
 ## 0.0.3
+### New features
+* Click to open more-info modals.
 ### Improvements
 * Performance. Moved some code to run it only after config changes.
 
