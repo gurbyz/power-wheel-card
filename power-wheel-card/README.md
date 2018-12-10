@@ -13,6 +13,7 @@ Features of the custom power-wheel-card:
   E.g. if your solar power panels produce power, the arrow from solar to home turns active.
   And if your solar power panels produce enough power to deliver some back to the grid, the arrow from solar to grid turns active.
 * Works for default theme and custom themes that use [standard CSS vars](https://github.com/home-assistant/home-assistant-polymer/blob/master/src/resources/ha-style.js).
+* Support for [custom_updater](https://github.com/custom-components/custom_updater) custom component.
 
 ![example1](./example-card.gif "The power-wheel-card in Default theme")
 ![example2](./example-card-dark.gif "The power-wheel-card in a random dark theme")

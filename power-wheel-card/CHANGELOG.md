@@ -4,6 +4,7 @@ Changelog
 ## 0.0.3
 ### New features
 * Click to open more-info modals.
+* Support for [custom_updater](https://github.com/custom-components/custom_updater) custom component.
 ### Improvements
 * Performance. Moved some code to run it only after config changes.
 
