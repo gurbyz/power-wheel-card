@@ -7,6 +7,7 @@ Changelog
 * Support for [custom_updater](https://github.com/custom-components/custom_updater) custom component.
 ### Improvements
 * Performance. Moved some code to run it only after config changes.
+* Better syntax for 'Example requirements configuration' in readme.
 
 ## 0.0.2
 ### New features

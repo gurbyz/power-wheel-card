@@ -44,11 +44,14 @@ sensor:
       solar_power:
         friendly_name: 'Solar power production'
         unit_of_measurement: 'W'
-        value_template: '{{ states.sensor.youless.attributes.pwr }}'
+        value_template: >-
+          {{ state_attr("sensor.youless", "pwr") }}
       grid_power:
         friendly_name: 'Grid power consumption'
         unit_of_measurement: 'W'
-        value_template: '{{ (1000 * (states.sensor.power_consumption.state | float - states.sensor.power_production.state | float)) | int }}'
+        value_template: >-
+          {{ (1000 * (states("sensor.power_consumption") | float -
+                      states("sensor.power_production") | float)) | int }}
 ```
 
 In this example the sensors names for *YOUR_SOLAR_POWER_SENSOR* and *YOUR_GRID_POWER_SENSOR* are `solar_power` resp. `grid_power`.
