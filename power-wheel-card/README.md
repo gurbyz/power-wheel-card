@@ -12,6 +12,7 @@ Features of the custom power-wheel-card:
 * Displays the transition between these powers as arrows.
   E.g. if your solar power panels produce power, the arrow from solar to home turns active.
   And if your solar power panels produce enough power to deliver some back to the grid, the arrow from solar to grid turns active.
+* Optionally colors the consuming power icons yellow and the producing power icons green. You can choose your own colors for consuming and producing.
 * Works for default theme and custom themes that use [standard CSS vars](https://github.com/home-assistant/home-assistant-polymer/blob/master/src/resources/ha-style.js).
 * Support for [custom_updater](https://github.com/custom-components/custom_updater) custom component.
 
@@ -85,6 +86,7 @@ views:
       - type: "custom:power-wheel-card"
         solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
         grid_power_entity: sensor.YOUR_GRID_POWER_SENSOR
+        color_power_icons: true
 ```
 
 ## Parameters
@@ -100,6 +102,9 @@ views:
 |home_power_entity|string|optional|Default the home power value will be calculated.|Entity id of your home power sensor.|
 |home_power_icon|string|optional|`"mdi:home"`|Icon for home power.|
 |decimals|int|optional|`0`|Number of decimals for the power values.|
+|color_power_icons|boolean|optional|`false`|To color the consuming power icons green and the producing color icons yellow.|
+|consuming_color|string|optional|The yellow color for `--label-badge-yellow` from your theme. If not available, then `"#f4b400"` will be used.|CSS color code for consuming power icons if `color_power_icons` is set to `true`. Examples: `"orange"`, `"#ffcc66"` or `"rgb(200,100,50)"`. Don't forget the quotation marks when using the `#` color notation.|
+|producing_color|string|optional|The green color for `--label-badge-green` from your theme. If not available, then `"#0da035"` will be used.|CSS color code for producing power icons if `color_power_icons` is set to `true`.|
 
 ### More about icons
 The icons for solar power and grid power can be set by card parameters as shown in the table above.
@@ -129,6 +134,9 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   grid_power_icon: "mdi:flash"
   home_power_icon: "mdi:home-assistant"
   decimals: 2
+  color_power_icons: true
+  consuming_color: "#33ff33"
+  producing_color: "#dd5500"
 ```
 
 ## License

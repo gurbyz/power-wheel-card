@@ -3,6 +3,8 @@ Changelog
 
 ## 0.0.3
 ### New features
+* Added `color_power_icons` as optional boolean card parameter to color the power icons or not (=default).
+With the new optional card parameters `consuming_color` and `producing_color` you can choose your own colors.
 * Click to open more-info modals.
 * Support for [custom_updater](https://github.com/custom-components/custom_updater) custom component.
 ### Improvements

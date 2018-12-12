@@ -15,20 +15,30 @@ class PowerWheelCard extends LitElement {
     const solarPowerStateStr = solarPowerState ? parseFloat(solarPowerState.state).toFixed(this.decimals) : 'unavailable';
     const solarPowerIcon = config.solar_power_icon ? config.solar_power_icon
       : (solarPowerState && solarPowerState.attributes.icon ? solarPowerState.attributes.icon : 'mdi:weather-sunny');
+    const solarPowerClass = (solarPowerState && parseFloat(solarPowerState.state) > 0) ? 'producing' : 'inactive';
 
     const gridPowerState = hass.states[config.grid_power_entity];
     const gridPowerStateStr = gridPowerState ? parseFloat(gridPowerState.state).toFixed(this.decimals) : 'unavailable';
     const gridPowerIcon = config.grid_power_icon ? config.grid_power_icon
       : (gridPowerState && gridPowerState.attributes.icon ? gridPowerState.attributes.icon : 'mdi:flash-circle');
+    const gridPowerClass = (gridPowerState && parseFloat(gridPowerState.state) > 0)
+      ? 'consuming' : ((gridPowerState && parseFloat(gridPowerState.state) < 0) ? 'producing' : 'inactive');
 
-    let homePowerState;
-    let homePowerStateStr;
+    let homePowerState,
+        homePowerStateStr,
+        homePowerClass;
     if (config.home_power_entity) { // home power value by sensor
       homePowerState = hass.states[config.home_power_entity];
       homePowerStateStr = homePowerState ? parseFloat(homePowerState.state).toFixed(this.decimals) : 'unavailable';
+      homePowerClass = (homePowerState && parseFloat(homePowerState.state) > 0) ? 'consuming' : 'inactive';
     } else { // home power value by calculation
-      homePowerStateStr = solarPowerState && gridPowerState
-        ? (parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state)).toFixed(this.decimals) : 'unavailable';
+      if (solarPowerState && gridPowerState) {
+        homePowerStateStr = (parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state)).toFixed(this.decimals);
+        homePowerClass = parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state) > 0 ? 'consuming' : 'inactive';
+      } else {
+        homePowerStateStr = 'unavailable';
+        homePowerClass = 'inactive';
+      }
     }
     const homePowerIcon = config.home_power_icon ? config.home_power_icon : 'mdi:home';
 
@@ -86,6 +96,12 @@ class PowerWheelCard extends LitElement {
         ha-icon.inactive {
           color: var(--state-icon-unavailable-color, #bdbdbd);
         }
+        ha-icon.consuming {
+          color: ${this.consumingColor};
+        }
+        ha-icon.producing {
+          color: ${this.producingColor};
+        }
       </style>
       <ha-card>
         <div class="header">
@@ -93,7 +109,7 @@ class PowerWheelCard extends LitElement {
         </div>
         <div class="row">
           <div class="cell power" on-click="${e => this._handleClick(e, solarPowerState)}">
-            <ha-icon icon="${solarPowerIcon}"></ha-icon>
+            <ha-icon class$="${solarPowerClass}" icon="${solarPowerIcon}"></ha-icon>
             <br/>${solarPowerStateStr} ${unitStr}
           </div>
         </div>
@@ -107,14 +123,14 @@ class PowerWheelCard extends LitElement {
         </div>
         <div class="row">
           <div class="cell power" on-click="${e => this._handleClick(e, gridPowerState)}">
-            <ha-icon icon="${gridPowerIcon}"></ha-icon>
+            <ha-icon class$="${gridPowerClass}" icon="${gridPowerIcon}"></ha-icon>
             <br/>${gridPowerStateStr} ${unitStr}
           </div>
           <div class="cell">
             <ha-icon class$="${grid2homeClass}" icon="mdi:arrow-right"></ha-icon>
           </div>
           <div class="cell power" on-click="${e => this._handleClick(e, homePowerState)}">
-            <ha-icon icon="${homePowerIcon}"></ha-icon>
+            <ha-icon class$="${homePowerClass}" icon="${homePowerIcon}"></ha-icon>
             <br/>${homePowerStateStr} ${unitStr}
           </div>
         </div>
@@ -147,6 +163,13 @@ class PowerWheelCard extends LitElement {
       throw new Error('Decimals should be an integer');
     }
     this.decimals = config.decimals ? config.decimals : 0;
+    this.colorPowerIcons = config.color_power_icons ? (config.color_power_icons == true) : false;
+    this.consumingColor = this.colorPowerIcons
+      ? (config.consuming_color ? config.consuming_color : 'var(--label-badge-yellow, #f4b400)')
+      : 'var(--state-icon-unavailable-color, #bdbdbd)';
+    this.producingColor = this.colorPowerIcons
+      ? (config.producing_color ? config.producing_color : 'var(--label-badge-green, #0da035)')
+      : 'var(--state-icon-unavailable-color, #bdbdbd)';
     this.config = config;
   }
 
