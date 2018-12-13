@@ -26,11 +26,14 @@ class PowerWheelCard extends LitElement {
 
     let homePowerState,
         homePowerStateStr,
-        homePowerClass;
+        homePowerClass,
+        homePowerIcon;
     if (config.home_power_entity) { // home power value by sensor
       homePowerState = hass.states[config.home_power_entity];
       homePowerStateStr = homePowerState ? parseFloat(homePowerState.state).toFixed(this.decimals) : 'unavailable';
       homePowerClass = (homePowerState && parseFloat(homePowerState.state) > 0) ? 'consuming' : 'inactive';
+      homePowerIcon = config.home_power_icon ? config.home_power_icon
+        : (homePowerState && homePowerState.attributes.icon ? homePowerState.attributes.icon : 'mdi:home');
     } else { // home power value by calculation
       if (solarPowerState && gridPowerState) {
         homePowerStateStr = (parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state)).toFixed(this.decimals);
@@ -39,8 +42,8 @@ class PowerWheelCard extends LitElement {
         homePowerStateStr = 'unavailable';
         homePowerClass = 'inactive';
       }
+      homePowerIcon = config.home_power_icon ? config.home_power_icon : 'mdi:home';
     }
-    const homePowerIcon = config.home_power_icon ? config.home_power_icon : 'mdi:home';
 
     const unitStr = solarPowerState && gridPowerState
       && solarPowerState.attributes.unit_of_measurement && gridPowerState.attributes.unit_of_measurement

@@ -3,13 +3,14 @@ Changelog
 
 ## 0.0.3
 ### New features
-* Added `color_power_icons` as optional boolean card parameter to color the power icons or not (=default).
+* Added `color_power_icons` as optional boolean card parameter to color the power icons or not (=default). Yellow for consuming, green for producing.
 With the new optional card parameters `consuming_color` and `producing_color` you can choose your own colors.
-* Click to open more-info modals.
+* Click on the power icons to open the more-info modals of your sensors.
 * Support for [custom_updater](https://github.com/custom-components/custom_updater) custom component.
 ### Improvements
 * Performance. Moved some code to run it only after config changes.
 * Better syntax for 'Example requirements configuration' in readme.
+* Icon for home power can also be set via `customize:` sensor settings now.
 
 ## 0.0.2
 ### New features
