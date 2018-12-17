@@ -66,11 +66,22 @@ class PowerWheelCard extends LitElement {
       }
     }
 
-    const solar2gridClass = data.grid.stateObj && parseFloat(data.grid.stateObj.state) < 0 ? 'active' : 'inactive';
-    const solar2homeClass = data.solar.stateObj && parseFloat(data.solar.stateObj.state) > 0
-      && data.grid.stateObj && parseFloat(data.home.stateStr) != 0 ? 'active' : 'inactive';
-    const grid2homeClass = data.grid.stateObj && parseFloat(data.grid.stateObj.state) > 0
-      && data.solar.stateObj && parseFloat(data.home.stateStr) != 0 ? 'active' : 'inactive';
+    const arrowData = {
+      solar2grid: {
+        icon: 'mdi:arrow-bottom-left',
+        classValue: data.grid.stateObj && parseFloat(data.grid.stateObj.state) < 0 ? 'active' : 'inactive',
+      },
+      solar2home: {
+        icon: 'mdi:arrow-bottom-right',
+        classValue: data.solar.stateObj && parseFloat(data.solar.stateObj.state) > 0
+          && data.grid.stateObj && parseFloat(data.home.stateStr) != 0 ? 'active' : 'inactive',
+      },
+      grid2home: {
+        icon: 'mdi:arrow-right',
+        classValue: data.grid.stateObj && parseFloat(data.grid.stateObj.state) > 0
+          && data.solar.stateObj && parseFloat(data.home.stateStr) != 0 ? 'active' : 'inactive',
+      },
+    };
 
     return html`
       <style>
@@ -130,18 +141,12 @@ class PowerWheelCard extends LitElement {
           ${this._positionCell(data.solar)}
         </div>
         <div class="row">
-          <div class="cell">
-            <ha-icon class$="${solar2gridClass}" icon="mdi:arrow-bottom-left"></ha-icon>
-          </div>
-          <div class="cell">
-            <ha-icon class$="${solar2homeClass}" icon="mdi:arrow-bottom-right"></ha-icon>
-          </div>
+          ${this._arrowCell(arrowData.solar2grid)}
+          ${this._arrowCell(arrowData.solar2home)}
         </div>
         <div class="row">
           ${this._positionCell(data.grid)}
-          <div class="cell">
-            <ha-icon class$="${grid2homeClass}" icon="mdi:arrow-right"></ha-icon>
-          </div>
+          ${this._arrowCell(arrowData.grid2home)}
           ${this._positionCell(data.home)}
         </div>
       </ha-card>
@@ -156,7 +161,13 @@ class PowerWheelCard extends LitElement {
       </div>
     `;
   };
-
+  _arrowCell(arrowObj) {
+    return html`
+      <div class="cell">
+        <ha-icon class$="${arrowObj.classValue}" icon="${arrowObj.icon}"></ha-icon>
+      </div>
+    `;
+  };
   _handleClick(ev, stateObj) {
     if (!stateObj) {
       return;
