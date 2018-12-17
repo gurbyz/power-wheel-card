@@ -8,53 +8,70 @@ class PowerWheelCard extends LitElement {
       hass: Object,
       config: Object,
     }
-  }
+  };
+
+  _generateClass(producingIsPositive, value) {
+    if (producingIsPositive) {
+      return value > 0 ? 'producing' : ((value < 0) ? 'consuming' : 'inactive');
+    } else {
+      return value > 0 ? 'consuming' : ((value < 0) ? 'producing' : 'inactive');
+    }
+  };
+
+  _makePositionObject(hass, entity, configIcon, defaultIcon, producingIsPositive) {
+    const stateObj = hass.states[entity];
+    const stateStr = stateObj ? parseFloat(stateObj.state).toFixed(this.decimals) : 'unavailable';
+    const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
+    const classValue = this._generateClass(producingIsPositive, stateObj && parseFloat(stateObj.state));
+
+    return {
+      stateObj,
+      stateStr,
+      icon,
+      classValue
+    };
+  };
 
   _render({ hass, config }) {
-    const solarPowerState = hass.states[config.solar_power_entity];
-    const solarPowerStateStr = solarPowerState ? parseFloat(solarPowerState.state).toFixed(this.decimals) : 'unavailable';
-    const solarPowerIcon = config.solar_power_icon ? config.solar_power_icon
-      : (solarPowerState && solarPowerState.attributes.icon ? solarPowerState.attributes.icon : 'mdi:weather-sunny');
-    const solarPowerClass = (solarPowerState && parseFloat(solarPowerState.state) > 0) ? 'producing' : 'inactive';
+    const data = {
+      solar: {},
+      grid: {},
+      home: {}
+    };
 
-    const gridPowerState = hass.states[config.grid_power_entity];
-    const gridPowerStateStr = gridPowerState ? parseFloat(gridPowerState.state).toFixed(this.decimals) : 'unavailable';
-    const gridPowerIcon = config.grid_power_icon ? config.grid_power_icon
-      : (gridPowerState && gridPowerState.attributes.icon ? gridPowerState.attributes.icon : 'mdi:flash-circle');
-    const gridPowerClass = (gridPowerState && parseFloat(gridPowerState.state) > 0)
-      ? 'consuming' : ((gridPowerState && parseFloat(gridPowerState.state) < 0) ? 'producing' : 'inactive');
+    data.solar = this._makePositionObject(hass, config.solar_power_entity, config.solar_power_icon, 'mdi:weather-sunny', true);
+    data.grid = this._makePositionObject(hass, config.grid_power_entity, config.grid_power_icon, 'mdi:flash-circle', false);
 
-    let homePowerState,
-        homePowerStateStr,
-        homePowerClass,
-        homePowerIcon;
     if (config.home_power_entity) { // home power value by sensor
-      homePowerState = hass.states[config.home_power_entity];
-      homePowerStateStr = homePowerState ? parseFloat(homePowerState.state).toFixed(this.decimals) : 'unavailable';
-      homePowerClass = (homePowerState && parseFloat(homePowerState.state) > 0) ? 'consuming' : 'inactive';
-      homePowerIcon = config.home_power_icon ? config.home_power_icon
-        : (homePowerState && homePowerState.attributes.icon ? homePowerState.attributes.icon : 'mdi:home');
+      data.home = this._makePositionObject(hass, config.home_power_entity, config.home_power_icon, 'mdi:home', false);
     } else { // home power value by calculation
-      if (solarPowerState && gridPowerState) {
-        homePowerStateStr = (parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state)).toFixed(this.decimals);
-        homePowerClass = parseFloat(solarPowerState.state) + parseFloat(gridPowerState.state) > 0 ? 'consuming' : 'inactive';
+      if (data.solar.stateObj && data.grid.stateObj) {
+        data.home = {
+          stateObj: {},
+          stateStr: (parseFloat(data.solar.stateObj.state) + parseFloat(data.grid.stateObj.state)).toFixed(this.decimals),
+          icon: config.home_power_icon ? config.home_power_icon : 'mdi:home',
+          classValue: this._generateClass(false, parseFloat(data.solar.stateObj.state) + parseFloat(data.grid.stateObj.state)),
+        };
       } else {
-        homePowerStateStr = 'unavailable';
-        homePowerClass = 'inactive';
+        data.home = {
+          stateObj: {},
+          stateStr: 'unavailable',
+          icon: config.home_power_icon ? config.home_power_icon : 'mdi:home',
+          classValue: 'inactive'
+        };
       }
-      homePowerIcon = config.home_power_icon ? config.home_power_icon : 'mdi:home';
     }
 
-    const unitStr = solarPowerState && gridPowerState
-      && solarPowerState.attributes.unit_of_measurement && gridPowerState.attributes.unit_of_measurement
-      && solarPowerState.attributes.unit_of_measurement == gridPowerState.attributes.unit_of_measurement
-      ? solarPowerState.attributes.unit_of_measurement : 'unknown unit';
+    const unitStr = data.solar.stateObj && data.grid.stateObj
+      && data.solar.stateObj.attributes.unit_of_measurement && data.grid.stateObj.attributes.unit_of_measurement
+      && data.solar.stateObj.attributes.unit_of_measurement == data.grid.stateObj.attributes.unit_of_measurement
+      ? data.solar.stateObj.attributes.unit_of_measurement : 'unknown unit';
 
-    const solar2gridClass = gridPowerState && parseFloat(gridPowerState.state) < 0 ? 'active' : 'inactive';
-    const solar2homeClass = solarPowerState && parseFloat(solarPowerState.state) > 0
-      && gridPowerState && parseFloat(homePowerStateStr) != 0 ? 'active' : 'inactive';
-    const grid2homeClass = gridPowerState && parseFloat(gridPowerState.state) > 0
-      && solarPowerState && parseFloat(homePowerStateStr) != 0 ? 'active' : 'inactive';
+    const solar2gridClass = data.grid.stateObj && parseFloat(data.grid.stateObj.state) < 0 ? 'active' : 'inactive';
+    const solar2homeClass = data.solar.stateObj && parseFloat(data.solar.stateObj.state) > 0
+      && data.grid.stateObj && parseFloat(data.home.stateStr) != 0 ? 'active' : 'inactive';
+    const grid2homeClass = data.grid.stateObj && parseFloat(data.grid.stateObj.state) > 0
+      && data.solar.stateObj && parseFloat(data.home.stateStr) != 0 ? 'active' : 'inactive';
 
     return html`
       <style>
@@ -111,9 +128,9 @@ class PowerWheelCard extends LitElement {
           ${this.title}
         </div>
         <div class="row">
-          <div class="cell power" on-click="${e => this._handleClick(e, solarPowerState)}">
-            <ha-icon class$="${solarPowerClass}" icon="${solarPowerIcon}"></ha-icon>
-            <br/>${solarPowerStateStr} ${unitStr}
+          <div class="cell power" on-click="${e => this._handleClick(e, data.solar.stateObj)}">
+            <ha-icon class$="${data.solar.classValue}" icon="${data.solar.icon}"></ha-icon>
+            <br/>${data.solar.stateStr} ${unitStr}
           </div>
         </div>
         <div class="row">
@@ -125,16 +142,16 @@ class PowerWheelCard extends LitElement {
           </div>
         </div>
         <div class="row">
-          <div class="cell power" on-click="${e => this._handleClick(e, gridPowerState)}">
-            <ha-icon class$="${gridPowerClass}" icon="${gridPowerIcon}"></ha-icon>
-            <br/>${gridPowerStateStr} ${unitStr}
+          <div class="cell power" on-click="${e => this._handleClick(e, data.grid.stateObj)}">
+            <ha-icon class$="${data.grid.classValue}" icon="${data.grid.icon}"></ha-icon>
+            <br/>${data.grid.stateStr} ${unitStr}
           </div>
           <div class="cell">
             <ha-icon class$="${grid2homeClass}" icon="mdi:arrow-right"></ha-icon>
           </div>
-          <div class="cell power" on-click="${e => this._handleClick(e, homePowerState)}">
-            <ha-icon class$="${homePowerClass}" icon="${homePowerIcon}"></ha-icon>
-            <br/>${homePowerStateStr} ${unitStr}
+          <div class="cell power" on-click="${e => this._handleClick(e, data.home.stateObj)}">
+            <ha-icon class$="${data.home.classValue}" icon="${data.home.icon}"></ha-icon>
+            <br/>${data.home.stateStr} ${unitStr}
           </div>
         </div>
       </ha-card>

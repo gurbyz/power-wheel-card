@@ -1,5 +1,8 @@
 Changelog
 ====
+## 0.0.4
+### Improvements
+* Rewrite of the code.
 
 ## 0.0.3
 ### New features
