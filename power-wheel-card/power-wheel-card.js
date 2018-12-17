@@ -23,12 +23,14 @@ class PowerWheelCard extends LitElement {
     const stateStr = stateObj ? parseFloat(stateObj.state).toFixed(this.decimals) : 'unavailable';
     const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
     const classValue = this._generateClass(producingIsPositive, stateObj && parseFloat(stateObj.state));
+    const unit = stateObj && stateObj.attributes.unit_of_measurement ? stateObj.attributes.unit_of_measurement : 'unknown unit';
 
     return {
       stateObj,
       stateStr,
       icon,
-      classValue
+      classValue,
+      unit,
     };
   };
 
@@ -36,7 +38,7 @@ class PowerWheelCard extends LitElement {
     const data = {
       solar: {},
       grid: {},
-      home: {}
+      home: {},
     };
 
     data.solar = this._makePositionObject(hass, config.solar_power_entity, config.solar_power_icon, 'mdi:weather-sunny', true);
@@ -51,21 +53,18 @@ class PowerWheelCard extends LitElement {
           stateStr: (parseFloat(data.solar.stateObj.state) + parseFloat(data.grid.stateObj.state)).toFixed(this.decimals),
           icon: config.home_power_icon ? config.home_power_icon : 'mdi:home',
           classValue: this._generateClass(false, parseFloat(data.solar.stateObj.state) + parseFloat(data.grid.stateObj.state)),
+          unit: data.solar.unit === data.grid.unit ? data.solar.unit : 'unknown unit',
         };
       } else {
         data.home = {
           stateObj: {},
           stateStr: 'unavailable',
           icon: config.home_power_icon ? config.home_power_icon : 'mdi:home',
-          classValue: 'inactive'
+          classValue: 'inactive',
+          unit: 'unknown unit',
         };
       }
     }
-
-    const unitStr = data.solar.stateObj && data.grid.stateObj
-      && data.solar.stateObj.attributes.unit_of_measurement && data.grid.stateObj.attributes.unit_of_measurement
-      && data.solar.stateObj.attributes.unit_of_measurement == data.grid.stateObj.attributes.unit_of_measurement
-      ? data.solar.stateObj.attributes.unit_of_measurement : 'unknown unit';
 
     const solar2gridClass = data.grid.stateObj && parseFloat(data.grid.stateObj.state) < 0 ? 'active' : 'inactive';
     const solar2homeClass = data.solar.stateObj && parseFloat(data.solar.stateObj.state) > 0
@@ -101,7 +100,7 @@ class PowerWheelCard extends LitElement {
           text-align: center;
           width: 150px;
         }
-        ha-card .cell.power {
+        ha-card .cell.position {
           cursor: pointer;
         }
         ha-icon {
@@ -128,10 +127,7 @@ class PowerWheelCard extends LitElement {
           ${this.title}
         </div>
         <div class="row">
-          <div class="cell power" on-click="${e => this._handleClick(e, data.solar.stateObj)}">
-            <ha-icon class$="${data.solar.classValue}" icon="${data.solar.icon}"></ha-icon>
-            <br/>${data.solar.stateStr} ${unitStr}
-          </div>
+          ${this._positionCell(data.solar)}
         </div>
         <div class="row">
           <div class="cell">
@@ -142,21 +138,24 @@ class PowerWheelCard extends LitElement {
           </div>
         </div>
         <div class="row">
-          <div class="cell power" on-click="${e => this._handleClick(e, data.grid.stateObj)}">
-            <ha-icon class$="${data.grid.classValue}" icon="${data.grid.icon}"></ha-icon>
-            <br/>${data.grid.stateStr} ${unitStr}
-          </div>
+          ${this._positionCell(data.grid)}
           <div class="cell">
             <ha-icon class$="${grid2homeClass}" icon="mdi:arrow-right"></ha-icon>
           </div>
-          <div class="cell power" on-click="${e => this._handleClick(e, data.home.stateObj)}">
-            <ha-icon class$="${data.home.classValue}" icon="${data.home.icon}"></ha-icon>
-            <br/>${data.home.stateStr} ${unitStr}
-          </div>
+          ${this._positionCell(data.home)}
         </div>
       </ha-card>
     `;
   }
+
+  _positionCell(positionObj) {
+    return html`
+      <div class="cell position" on-click="${e => this._handleClick(e, positionObj.stateObj)}">
+        <ha-icon class$="${positionObj.classValue}" icon="${positionObj.icon}"></ha-icon>
+        <br/>${positionObj.stateStr} ${positionObj.unit}
+      </div>
+    `;
+  };
 
   _handleClick(ev, stateObj) {
     if (!stateObj) {
