@@ -1,6 +1,13 @@
 Changelog
 ====
 ## 0.0.4
+### New features
+* New optional card parameters `solor_energy_entity`, `grid_energy_entity` and `home_energy_entity` to feed the new *energy view* of the wheel.
+If you want to use the *energy view* the first two are required.
+The third one for *home energy* will be calculated if omitted.
+* A button to toggle between *power view* and the new *energy view*. The button is visible only when the *energy view* is available.
+* A card parameter `initial_view` to set the initial view to *power view* or *energy view*. Valid values are `"power"` (default) and `"energy"`. 
+* **BREAKING** Split up of card parameter `decimals` into `power_decimals` and `energy_decimals`. If you used `decimals` before, just rename it to `power_decimals`.
 ### Improvements
 * Rewrite of the code.
 
