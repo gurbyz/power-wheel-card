@@ -68,7 +68,7 @@ class PowerWheelCard extends LitElement {
     };
     let arrowData = {};
 
-    if (this.view === 'energy' && this.energy_capable) {
+    if (config.view === 'energy' && this.energy_capable) {
       data.solar = this._makePositionObject(hass, config.solar_energy_entity, config.solar_power_icon,
           'mdi:weather-sunny', this.energy_decimals, true);
       data.grid = this._makePositionObject(hass, config.grid_energy_entity, config.grid_power_icon,
@@ -171,7 +171,7 @@ class PowerWheelCard extends LitElement {
         }
       </style>
       <ha-card>
-        ${this.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recycle" on-click="${e => this._toggleView(e)}" title="Toggle view"></ha-icon>` : ''}        
+        ${this.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recycle" on-click="${e => this._toggleView(e, config)}" title="Toggle view"></ha-icon>` : ''}        
         <div class="header">
           ${this.title}
         </div>
@@ -204,6 +204,7 @@ class PowerWheelCard extends LitElement {
     return html`
       <div class="cell">
         <ha-icon class$="${arrowObj.classValue}" icon="${arrowObj.icon}"></ha-icon>
+        <div>&nbsp;${arrowObj.valueStr}&nbsp;</div>
       </div>
     `;
   };
@@ -221,11 +222,11 @@ class PowerWheelCard extends LitElement {
     this.shadowRoot.dispatchEvent(event);
   }
 
-  _toggleView(ev) {
-    if (this.view === 'power') {
-      this.view = 'energy';
+  _toggleView(ev, config) {
+    if (config.view === 'power') {
+      config.view = 'energy';
     } else {
-      this.view = 'power';
+      config.view = 'power';
     }
   }
 
@@ -255,7 +256,9 @@ class PowerWheelCard extends LitElement {
     if (config.initial_view && !['power', 'energy'].includes(config.initial_view)) {
       throw new Error("Initial_view should 'power' or 'energy'");
     }
-    this.view = config.initial_view ? config.initial_view : 'power';
+    if (!config.view) {
+      config.view = config.initial_view ? config.initial_view : 'power';
+    }
     this.energy_capable = config.solar_energy_entity && config.grid_energy_entity;
     this.config = config;
   }
