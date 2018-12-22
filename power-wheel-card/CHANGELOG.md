@@ -1,5 +1,22 @@
 Changelog
 ====
+## 0.0.4
+### New features
+* New optional card parameters `solor_energy_entity`, `grid_energy_entity` and `home_energy_entity` to feed the new *energy view* of the wheel.
+If you want to use the *energy view* the first two are required.
+The third one for *home energy* will be calculated if omitted.
+* A button to toggle between *power view* and the new *energy view*. The button is visible only when the *energy view* is available.
+* A card parameter `initial_view` to set the initial view to *power view* or *energy view*. Valid values are `"power"` (default) and `"energy"`. 
+* A card parameter `energy_decimals` to set the number of decimals used in the *energy view*.
+### Improvements
+* Rewrite of the code.
+* Preparations in the code for showing values near arrows in a future release.
+* A slightly better positioning of the icons.
+* **BREAKING.** Renamed card parameter `decimals` to `power_decimals`.
+* **BREAKING.** Renamed card parameter `solar_power_icon` to `solar_icon`.
+* **BREAKING.** Renamed card parameter `grid_power_icon` to `grid_icon`.
+* **BREAKING.** Renamed card parameter `home_power_icon` to `home_icon`.
+* **BREAKING.** Renamed card parameter `color_power_icons` to `color_icons`.
 
 ## 0.0.3
 ### New features
