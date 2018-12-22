@@ -69,11 +69,11 @@ class PowerWheelCard extends LitElement {
     let arrowData = {};
 
     if (config.view === 'energy' && this.energy_capable) {
-      data.solar = this._makePositionObject(hass, config.solar_energy_entity, config.solar_power_icon,
+      data.solar = this._makePositionObject(hass, config.solar_energy_entity, config.solar_icon,
           'mdi:weather-sunny', this.energy_decimals, true);
-      data.grid = this._makePositionObject(hass, config.grid_energy_entity, config.grid_power_icon,
+      data.grid = this._makePositionObject(hass, config.grid_energy_entity, config.grid_icon,
           'mdi:flash-circle', this.energy_decimals, false);
-      data.home = this._makeHomePositionObject(hass, data, config.home_energy_entity, config.home_power_icon,
+      data.home = this._makeHomePositionObject(hass, data, config.home_energy_entity, config.home_icon,
           'mdi:home', this.energy_decimals);
       arrowData = {
         solar2grid: {
@@ -90,11 +90,11 @@ class PowerWheelCard extends LitElement {
         },
       };
     } else {
-      data.solar = this._makePositionObject(hass, config.solar_power_entity, config.solar_power_icon,
+      data.solar = this._makePositionObject(hass, config.solar_power_entity, config.solar_icon,
           'mdi:weather-sunny', this.power_decimals, true);
-      data.grid = this._makePositionObject(hass, config.grid_power_entity, config.grid_power_icon,
+      data.grid = this._makePositionObject(hass, config.grid_power_entity, config.grid_icon,
           'mdi:flash-circle', this.power_decimals, false);
-      data.home = this._makeHomePositionObject(hass, data, config.home_power_entity, config.home_power_icon,
+      data.home = this._makeHomePositionObject(hass, data, config.home_power_entity, config.home_icon,
           'mdi:home', this.power_decimals);
       arrowData = {
         solar2grid: {
@@ -164,6 +164,7 @@ class PowerWheelCard extends LitElement {
           color: ${this.producingColor};
         }
         ha-icon#toggle-button {
+          padding-top: 4px;
           width: 24px;
           height: 24px;
           float: right;
@@ -246,11 +247,11 @@ class PowerWheelCard extends LitElement {
       throw new Error('Energy_decimals should be an integer');
     }
     this.energy_decimals = config.energy_decimals ? config.energy_decimals : 3;
-    this.colorPowerIcons = config.color_power_icons ? (config.color_power_icons == true) : false;
-    this.consumingColor = this.colorPowerIcons
+    this.colorIcons = config.color_icons ? (config.color_icons == true) : false;
+    this.consumingColor = this.colorIcons
       ? (config.consuming_color ? config.consuming_color : 'var(--label-badge-yellow, #f4b400)')
       : 'var(--state-icon-unavailable-color, #bdbdbd)';
-    this.producingColor = this.colorPowerIcons
+    this.producingColor = this.colorIcons
       ? (config.producing_color ? config.producing_color : 'var(--label-badge-green, #0da035)')
       : 'var(--state-icon-unavailable-color, #bdbdbd)';
     if (config.initial_view && !['power', 'energy'].includes(config.initial_view)) {
