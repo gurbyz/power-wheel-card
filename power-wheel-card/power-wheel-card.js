@@ -18,46 +18,36 @@ class PowerWheelCard extends LitElement {
     }
   };
 
-  _makePositionObject(hass, entity, configIcon, defaultIcon, decimals, producingIsPositive) {
+  _makePositionObject(hass, val, entity, configIcon, defaultIcon, decimals, producingIsPositive) {
+    const stateStr = typeof val === 'undefined' ? 'unavailable' : val.toFixed(decimals);
     const stateObj = hass.states[entity];
-    const stateStr = stateObj ? parseFloat(stateObj.state).toFixed(decimals) : 'unavailable';
     const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
-    const classValue = this._generateClass(producingIsPositive, stateObj && parseFloat(stateObj.state));
+    const classValue = this._generateClass(producingIsPositive, val);
     const unit = stateObj && stateObj.attributes.unit_of_measurement ? stateObj.attributes.unit_of_measurement : 'unknown unit';
 
     return {
       stateObj,
       stateStr,
+      val,
       icon,
       classValue,
       unit,
     };
   };
 
-  _makeHomePositionObject(hass, data, entity, configIcon, defaultIcon, decimals) {
-    let home = {};
-    if (entity) { // home power value by sensor
-      home = this._makePositionObject(hass, entity, configIcon, defaultIcon, decimals, false);
-    } else { // home power value by calculation
-      if (data.solar.stateObj && data.grid.stateObj) {
-        home = {
-          stateObj: {},
-          stateStr: (parseFloat(data.solar.stateObj.state) + parseFloat(data.grid.stateObj.state)).toFixed(decimals),
-          icon: configIcon ? configIcon : defaultIcon,
-          classValue: this._generateClass(false, parseFloat(data.solar.stateObj.state) + parseFloat(data.grid.stateObj.state)),
-          unit: data.solar.unit === data.grid.unit ? data.solar.unit : 'unknown unit',
-        };
-      } else {
-        home = {
-          stateObj: {},
-          stateStr: 'unavailable',
-          icon: configIcon ? configIcon : defaultIcon,
-          classValue: 'inactive',
-          unit: 'unknown unit',
-        };
-      }
-    }
-    return home;
+  _calculateSolarValue(hass, solar_entity) {
+    const solarStateObj = hass.states[solar_entity];
+    return solarStateObj ? parseFloat(solarStateObj.state) : undefined;
+  };
+
+  _calculateGridValue(hass, grid_entity) {
+    const gridStateObj = hass.states[grid_entity];
+    return gridStateObj ? parseFloat(gridStateObj.state) : undefined;
+  };
+
+  _calculateHomeValue(data) {
+    return typeof data.solar.val !== 'undefined' && typeof data.grid.val !== 'undefined'
+      ? data.solar.val + data.grid.val : undefined;
   };
 
   _render({ hass, config }) {
@@ -69,12 +59,15 @@ class PowerWheelCard extends LitElement {
     let arrowData = {};
 
     if (config.view === 'energy' && this.energy_capable) {
-      data.solar = this._makePositionObject(hass, config.solar_energy_entity, config.solar_icon,
+      data.solar.val = this._calculateSolarValue(hass, config.solar_energy_entity);
+      data.grid.val = this._calculateGridValue(hass, config.grid_energy_entity);
+      data.home.val = this._calculateHomeValue(data);
+      data.solar = this._makePositionObject(hass, data.solar.val, config.solar_energy_entity, config.solar_icon,
           'mdi:weather-sunny', this.energy_decimals, true);
-      data.grid = this._makePositionObject(hass, config.grid_energy_entity, config.grid_icon,
+      data.grid = this._makePositionObject(hass, data.grid.val, config.grid_energy_entity, config.grid_icon,
           'mdi:flash-circle', this.energy_decimals, false);
-      data.home = this._makeHomePositionObject(hass, data, config.home_energy_entity, config.home_icon,
-          'mdi:home', this.energy_decimals);
+      data.home = this._makePositionObject(hass, data.home.val, config.home_energy_entity, config.home_icon,
+          'mdi:home', this.energy_decimals, false);
       arrowData = {
         solar2grid: {
           icon: 'mdi:arrow-bottom-left',
@@ -90,26 +83,29 @@ class PowerWheelCard extends LitElement {
         },
       };
     } else {
-      data.solar = this._makePositionObject(hass, config.solar_power_entity, config.solar_icon,
+      data.solar.val = this._calculateSolarValue(hass, config.solar_power_entity);
+      data.grid.val = this._calculateGridValue(hass, config.grid_power_entity);
+      data.home.val = this._calculateHomeValue(data);
+      data.solar = this._makePositionObject(hass, data.solar.val, config.solar_power_entity, config.solar_icon,
           'mdi:weather-sunny', this.power_decimals, true);
-      data.grid = this._makePositionObject(hass, config.grid_power_entity, config.grid_icon,
+      data.grid = this._makePositionObject(hass, data.grid.val, config.grid_power_entity, config.grid_icon,
           'mdi:flash-circle', this.power_decimals, false);
-      data.home = this._makeHomePositionObject(hass, data, config.home_power_entity, config.home_icon,
-          'mdi:home', this.power_decimals);
+      data.home = this._makePositionObject(hass, data.home.val, config.home_power_entity, config.home_icon,
+          'mdi:home', this.power_decimals, false);
       arrowData = {
         solar2grid: {
           icon: 'mdi:arrow-bottom-left',
-          classValue: data.grid.stateObj && parseFloat(data.grid.stateObj.state) < 0 ? 'active' : 'inactive',
+          classValue: typeof data.grid.val !== 'undefined' && data.grid.val < 0 ? 'active' : 'inactive',
         },
         solar2home: {
           icon: 'mdi:arrow-bottom-right',
-          classValue: data.solar.stateObj && parseFloat(data.solar.stateObj.state) > 0
-          && data.grid.stateObj && parseFloat(data.home.stateStr) != 0 ? 'active' : 'inactive',
+          classValue: typeof data.solar.val !== 'undefined' && data.solar.val > 0
+          && typeof data.home.val !== 'undefined' && data.home.val != 0 ? 'active' : 'inactive',
         },
         grid2home: {
           icon: 'mdi:arrow-right',
-          classValue: data.grid.stateObj && parseFloat(data.grid.stateObj.state) > 0
-          && data.solar.stateObj && parseFloat(data.home.stateStr) != 0 ? 'active' : 'inactive',
+          classValue: typeof data.grid.val !== 'undefined' && data.grid.val > 0
+          && typeof data.home.val !== 'undefined' && data.home.val != 0 ? 'active' : 'inactive',
         },
       };
     }

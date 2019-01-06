@@ -1,5 +1,12 @@
 Changelog
 ====
+## 0.0.5
+### Improvements
+* Rewrite: separating calculating values in the code.
+* Value for home is calculated always (not taken from evt. sensor anymore).
+### Known issue
+* Temp: Unknown unit for home when entity is not supplied.
+
 ## 0.0.4
 ### New features
 * New optional card parameters `solor_energy_entity`, `grid_energy_entity` and `home_energy_entity` to feed the new *energy view* of the wheel.
