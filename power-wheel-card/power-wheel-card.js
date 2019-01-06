@@ -23,7 +23,6 @@ class PowerWheelCard extends LitElement {
     const stateObj = hass.states[entity];
     const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
     const classValue = this._generateClass(producingIsPositive, val);
-    const unit = stateObj && stateObj.attributes.unit_of_measurement ? stateObj.attributes.unit_of_measurement : 'unknown unit';
 
     return {
       stateObj,
@@ -31,7 +30,6 @@ class PowerWheelCard extends LitElement {
       val,
       icon,
       classValue,
-      unit,
     };
   };
 
@@ -50,6 +48,16 @@ class PowerWheelCard extends LitElement {
       ? data.solar.val + data.grid.val : undefined;
   };
 
+  _defineUnit(hass, solar_entity, grid_entity) {
+    const solarStateObj = hass.states[solar_entity];
+    const solarUnit = solarStateObj && solarStateObj.attributes.unit_of_measurement
+      ? solarStateObj.attributes.unit_of_measurement : 'unknown unit';
+    const gridStateObj = hass.states[grid_entity];
+    const gridUnit = gridStateObj && gridStateObj.attributes.unit_of_measurement
+      ? gridStateObj.attributes.unit_of_measurement : 'unknown unit';
+    return solarUnit === gridUnit ? solarUnit : 'units not equal';
+  };
+
   _render({ hass, config }) {
     let data = {
       solar: {},
@@ -57,11 +65,13 @@ class PowerWheelCard extends LitElement {
       home: {},
     };
     let arrowData = {};
+    let unit = '';
 
     if (config.view === 'energy' && this.energy_capable) {
       data.solar.val = this._calculateSolarValue(hass, config.solar_energy_entity);
       data.grid.val = this._calculateGridValue(hass, config.grid_energy_entity);
       data.home.val = this._calculateHomeValue(data);
+      unit = this._defineUnit(hass, config.solar_energy_entity, config.grid_energy_entity);
       data.solar = this._makePositionObject(hass, data.solar.val, config.solar_energy_entity, config.solar_icon,
           'mdi:weather-sunny', this.energy_decimals, true);
       data.grid = this._makePositionObject(hass, data.grid.val, config.grid_energy_entity, config.grid_icon,
@@ -86,6 +96,7 @@ class PowerWheelCard extends LitElement {
       data.solar.val = this._calculateSolarValue(hass, config.solar_power_entity);
       data.grid.val = this._calculateGridValue(hass, config.grid_power_entity);
       data.home.val = this._calculateHomeValue(data);
+      unit = this._defineUnit(hass, config.solar_power_entity, config.grid_power_entity);
       data.solar = this._makePositionObject(hass, data.solar.val, config.solar_power_entity, config.solar_icon,
           'mdi:weather-sunny', this.power_decimals, true);
       data.grid = this._makePositionObject(hass, data.grid.val, config.grid_power_entity, config.grid_icon,
@@ -127,6 +138,9 @@ class PowerWheelCard extends LitElement {
           display: flex;
           justify-content: space-between;
         }
+        ha-card .wheel {
+          position: relative;
+        }
         ha-card .row {
           display: flex;
           justify-content: center;
@@ -140,6 +154,20 @@ class PowerWheelCard extends LitElement {
         }
         ha-card .cell.position {
           cursor: pointer;
+        }
+        .unit-container {
+          position: absolute;
+          display: table;
+          width: 100%;
+          height: 230px;
+        }
+        .unit {
+          display: table-cell;
+          text-align: center;
+          vertical-align: middle;
+          cursor: pointer;
+          font-size: calc(1.5 * var(--paper-font-headline_-_font-size));
+          font-weight: bold;
         }
         ha-icon {
           transition: color 0.5s ease-in-out, filter 0.3s ease-in-out;
@@ -168,21 +196,28 @@ class PowerWheelCard extends LitElement {
         }
       </style>
       <ha-card>
-        ${this.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recycle" on-click="${e => this._toggleView(e, config)}" title="Toggle view"></ha-icon>` : ''}        
+        ${this.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recyclexxx" on-click="${e => this._toggleView(e, config)}" title="Toggle view"></ha-icon>` : ''}        
         <div class="header">
           ${this.title}
         </div>
-        <div class="row">
-          ${this._positionCell(data.solar)}
-        </div>
-        <div class="row">
-          ${this._arrowCell(arrowData.solar2grid)}
-          ${this._arrowCell(arrowData.solar2home)}
-        </div>
-        <div class="row">
-          ${this._positionCell(data.grid)}
-          ${this._arrowCell(arrowData.grid2home)}
-          ${this._positionCell(data.home)}
+        <div class="wheel">
+          <div class="unit-container">
+            <div class="unit" on-click="${e => this._toggleView(e, config)}" title="Toggle view">
+              ${unit}
+            </div>
+          </div>
+          <div class="row">
+            ${this._positionCell(data.solar)}
+          </div>
+          <div class="row">
+            ${this._arrowCell(arrowData.solar2grid)}
+            ${this._arrowCell(arrowData.solar2home)}
+          </div>
+          <div class="row">
+            ${this._positionCell(data.grid)}
+            ${this._arrowCell(arrowData.grid2home)}
+            ${this._positionCell(data.home)}
+          </div>
         </div>
       </ha-card>
     `;
@@ -192,7 +227,7 @@ class PowerWheelCard extends LitElement {
     return html`
       <div class="cell position" on-click="${e => this._handleClick(e, positionObj.stateObj)}">
         <ha-icon class$="${positionObj.classValue}" icon="${positionObj.icon}"></ha-icon>
-        <br/>${positionObj.stateStr} ${positionObj.unit}
+        <br/>${positionObj.stateStr}&nbsp;
       </div>
     `;
   };

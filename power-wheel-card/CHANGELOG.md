@@ -2,10 +2,10 @@ Changelog
 ====
 ## 0.0.5
 ### Improvements
+* Unit in the center of the wheel.
+* To switch views click the unit. (The button has been disabled.)
 * Rewrite: separating calculating values in the code.
 * Value for home is calculated always (not taken from evt. sensor anymore).
-### Known issue
-* Temp: Unknown unit for home when entity is not supplied.
 
 ## 0.0.4
 ### New features
