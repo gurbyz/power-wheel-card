@@ -7,6 +7,12 @@ Changelog
 ### Improvements
 * Rewrite: separating calculating values in the code.
 * Value for home will be calculated always and not taken from evt. home sensors anymore.
+* **BREAKING.** Card parameter `grid_power_entity` has been split into `grid_power_consumption_entity` and `grid_power_production_entity`.
+Both card parameters are required and should have positive values.
+The combined parameter `grid_power_entity` can still be used to supply the grid icon in the *power view*, but the power value isn't used anymore. 
+* **BREAKING.** Card parameter `grid_energy_entity` has been split into `grid_energy_consumption_entity` and `grid_energy_production_entity`.
+Both card parameters are required if you want to use the *energy view* and should have positive values.
+The combined parameter `grid_energy_entity` can still be used to supply the grid icon in the *energy view*, but the energy value isn't used anymore. 
 
 ## 0.0.4
 ### New features

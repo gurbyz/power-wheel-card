@@ -38,9 +38,11 @@ class PowerWheelCard extends LitElement {
     return solarStateObj ? parseFloat(solarStateObj.state) : undefined;
   };
 
-  _calculateGridValue(hass, grid_entity) {
-    const gridStateObj = hass.states[grid_entity];
-    return gridStateObj ? parseFloat(gridStateObj.state) : undefined;
+  _calculateGridValue(hass, grid_consumption_entity, grid_production_entity) {
+    const gridConsumptionStateObj = hass.states[grid_consumption_entity];
+    const gridProductionStateObj = hass.states[grid_production_entity];
+    return gridConsumptionStateObj && gridProductionStateObj
+      ? parseFloat(gridConsumptionStateObj.state) - parseFloat(gridProductionStateObj.state) : undefined;
   };
 
   _calculateHomeValue(data) {
@@ -48,14 +50,16 @@ class PowerWheelCard extends LitElement {
       ? data.solar.val + data.grid.val : undefined;
   };
 
-  _defineUnit(hass, solar_entity, grid_entity) {
-    const solarStateObj = hass.states[solar_entity];
-    const solarUnit = solarStateObj && solarStateObj.attributes.unit_of_measurement
-      ? solarStateObj.attributes.unit_of_measurement : 'unknown unit';
-    const gridStateObj = hass.states[grid_entity];
-    const gridUnit = gridStateObj && gridStateObj.attributes.unit_of_measurement
-      ? gridStateObj.attributes.unit_of_measurement : 'unknown unit';
-    return solarUnit === gridUnit ? solarUnit : 'units not equal';
+  _getEntityUnit(stateObj) {
+    return stateObj && stateObj.attributes.unit_of_measurement
+      ? stateObj.attributes.unit_of_measurement : 'unknown unit';
+  };
+
+  _defineUnit(hass, solar_entity, grid_consumption_entity, grid_production_entity) {
+    const solarUnit = this._getEntityUnit(hass.states[solar_entity]);
+    const gridConsumptionUnit = this._getEntityUnit(hass.states[grid_consumption_entity]);
+    const gridProductionUnit = this._getEntityUnit(hass.states[grid_production_entity]);
+    return solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit ? solarUnit : 'units not equal';
   };
 
   _render({ hass, config }) {
@@ -69,9 +73,9 @@ class PowerWheelCard extends LitElement {
 
     if (config.view === 'energy' && this.energy_capable) {
       data.solar.val = this._calculateSolarValue(hass, config.solar_energy_entity);
-      data.grid.val = this._calculateGridValue(hass, config.grid_energy_entity);
+      data.grid.val = this._calculateGridValue(hass, config.grid_energy_consumption_entity, config.grid_energy_production_entity);
       data.home.val = this._calculateHomeValue(data);
-      unit = this._defineUnit(hass, config.solar_energy_entity, config.grid_energy_entity);
+      unit = this._defineUnit(hass, config.solar_energy_entity, config.grid_energy_consumption_entity, config.grid_energy_production_entity);
       data.solar = this._makePositionObject(hass, data.solar.val, config.solar_energy_entity, config.solar_icon,
           'mdi:weather-sunny', this.energy_decimals, true);
       data.grid = this._makePositionObject(hass, data.grid.val, config.grid_energy_entity, config.grid_icon,
@@ -94,9 +98,9 @@ class PowerWheelCard extends LitElement {
       };
     } else {
       data.solar.val = this._calculateSolarValue(hass, config.solar_power_entity);
-      data.grid.val = this._calculateGridValue(hass, config.grid_power_entity);
+      data.grid.val = this._calculateGridValue(hass, config.grid_power_consumption_entity, config.grid_power_production_entity);
       data.home.val = this._calculateHomeValue(data);
-      unit = this._defineUnit(hass, config.solar_power_entity, config.grid_power_entity);
+      unit = this._defineUnit(hass, config.solar_power_entity, config.grid_power_consumption_entity, config.grid_power_production_entity);
       data.solar = this._makePositionObject(hass, data.solar.val, config.solar_power_entity, config.solar_icon,
           'mdi:weather-sunny', this.power_decimals, true);
       data.grid = this._makePositionObject(hass, data.grid.val, config.grid_power_entity, config.grid_icon,
@@ -165,9 +169,11 @@ class PowerWheelCard extends LitElement {
           display: table-cell;
           text-align: center;
           vertical-align: middle;
-          cursor: pointer;
           font-size: calc(1.5 * var(--paper-font-headline_-_font-size));
           font-weight: bold;
+        }
+        .unit.toggle {
+          cursor: pointer;
         }
         ha-icon {
           transition: color 0.5s ease-in-out, filter 0.3s ease-in-out;
@@ -202,9 +208,7 @@ class PowerWheelCard extends LitElement {
         </div>
         <div class="wheel">
           <div class="unit-container">
-            <div class="unit" on-click="${e => this._toggleView(e, config)}" title="Toggle view">
-              ${unit}
-            </div>
+            ${this.energy_capable ? html`<div class="unit toggle" on-click="${e => this._toggleView(e, config)}" title="Toggle view">${unit}</div>` : html`<div class="unit">${unit}</div>`}
           </div>
           <div class="row">
             ${this._positionCell(data.solar)}
@@ -266,8 +270,11 @@ class PowerWheelCard extends LitElement {
     if (!config.solar_power_entity) {
       throw new Error('You need to define a solar_power_entity');
     }
-    if (!config.grid_power_entity) {
-      throw new Error('You need to define a grid_power_entity');
+    if (!config.grid_power_consumption_entity) {
+      throw new Error('You need to define a grid_power_consumption_entity');
+    }
+    if (!config.grid_power_production_entity) {
+      throw new Error('You need to define a grid_power_production_entity');
     }
     this.title = config.title ? config.title : 'Power wheel';
     if (config.power_decimals && !Number.isInteger(config.power_decimals)) {
@@ -291,7 +298,8 @@ class PowerWheelCard extends LitElement {
     if (!config.view) {
       config.view = config.initial_view ? config.initial_view : 'power';
     }
-    this.energy_capable = config.solar_energy_entity && config.grid_energy_entity;
+    this.energy_capable = config.solar_energy_entity && config.grid_energy_consumption_entity
+      && config.grid_energy_production_entity;
     this.config = config;
   }
 
