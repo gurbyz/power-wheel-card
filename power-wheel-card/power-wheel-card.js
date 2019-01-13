@@ -33,21 +33,46 @@ class PowerWheelCard extends LitElement {
     };
   };
 
+  _makeArrowObject(val, icon, decimals) {
+    const valueStr = typeof val === 'undefined' ? 'unavailable' : val.toFixed(decimals);
+    const classValue = typeof val !== 'undefined' && val > 0 ? 'active' : 'inactive';
+
+    return {
+      valueStr,
+      val,
+      icon,
+      classValue
+    }
+  };
+
   _calculateSolarValue(hass, solar_entity) {
     const solarStateObj = hass.states[solar_entity];
     return solarStateObj ? parseFloat(solarStateObj.state) : undefined;
   };
 
-  _calculateGridValue(hass, grid_consumption_entity, grid_production_entity) {
+  _calculateGrid2HomeValue(hass, grid_consumption_entity) {
     const gridConsumptionStateObj = hass.states[grid_consumption_entity];
+    return gridConsumptionStateObj ? parseFloat(gridConsumptionStateObj.state) : undefined;
+  };
+
+  _calculateSolar2GridValue(hass, grid_production_entity) {
     const gridProductionStateObj = hass.states[grid_production_entity];
-    return gridConsumptionStateObj && gridProductionStateObj
-      ? parseFloat(gridConsumptionStateObj.state) - parseFloat(gridProductionStateObj.state) : undefined;
+    return gridProductionStateObj ? parseFloat(gridProductionStateObj.state) : undefined;
+  };
+
+  _calculateGridValue(data) {
+    return typeof data.grid2home.val !== 'undefined' && typeof data.solar2grid.val !== 'undefined'
+      ? data.grid2home.val - data.solar2grid.val : undefined;
   };
 
   _calculateHomeValue(data) {
     return typeof data.solar.val !== 'undefined' && typeof data.grid.val !== 'undefined'
       ? data.solar.val + data.grid.val : undefined;
+  };
+
+  _calculateSolar2HomeValue(data) {
+    return typeof data.solar.val !== 'undefined' && typeof data.solar2grid.val !== 'undefined'
+      ? data.solar.val - data.solar2grid.val : undefined;
   };
 
   _getEntityUnit(stateObj) {
@@ -65,16 +90,21 @@ class PowerWheelCard extends LitElement {
   _render({ hass, config }) {
     let data = {
       solar: {},
+      solar2grid: {},
+      solar2home: {},
       grid: {},
+      grid2home: {},
       home: {},
     };
-    let arrowData = {};
     let unit = '';
 
     if (config.view === 'energy' && this.energy_capable) {
       data.solar.val = this._calculateSolarValue(hass, config.solar_energy_entity);
-      data.grid.val = this._calculateGridValue(hass, config.grid_energy_consumption_entity, config.grid_energy_production_entity);
+      data.grid2home.val = this._calculateGrid2HomeValue(hass, config.grid_energy_consumption_entity);
+      data.solar2grid.val = this._calculateSolar2GridValue(hass, config.grid_energy_production_entity);
+      data.grid.val = this._calculateGridValue(data);
       data.home.val = this._calculateHomeValue(data);
+      data.solar2home.val = this._calculateSolar2HomeValue(data);
       unit = this._defineUnit(hass, config.solar_energy_entity, config.grid_energy_consumption_entity, config.grid_energy_production_entity);
       data.solar = this._makePositionObject(hass, data.solar.val, config.solar_energy_entity, config.solar_icon,
           'mdi:weather-sunny', this.energy_decimals, true);
@@ -82,24 +112,16 @@ class PowerWheelCard extends LitElement {
           'mdi:flash-circle', this.energy_decimals, false);
       data.home = this._makePositionObject(hass, data.home.val, config.home_energy_entity, config.home_icon,
           'mdi:home', this.energy_decimals, false);
-      arrowData = {
-        solar2grid: {
-          icon: 'mdi:arrow-bottom-left',
-          classValue: 'inactive',
-        },
-        solar2home: {
-          icon: 'mdi:arrow-bottom-right',
-          classValue: 'inactive',
-        },
-        grid2home: {
-          icon: 'mdi:arrow-right',
-          classValue: 'inactive',
-        },
-      };
+      data.solar2grid = this._makeArrowObject(data.solar2grid.val, 'mdi:arrow-bottom-left', this.energy_decimals);
+      data.solar2home = this._makeArrowObject(data.solar2home.val, 'mdi:arrow-bottom-right', this.energy_decimals);
+      data.grid2home = this._makeArrowObject(data.grid2home.val, 'mdi:arrow-right', this.energy_decimals);
     } else {
       data.solar.val = this._calculateSolarValue(hass, config.solar_power_entity);
-      data.grid.val = this._calculateGridValue(hass, config.grid_power_consumption_entity, config.grid_power_production_entity);
+      data.grid2home.val = this._calculateGrid2HomeValue(hass, config.grid_power_consumption_entity);
+      data.solar2grid.val = this._calculateSolar2GridValue(hass, config.grid_power_production_entity);
+      data.grid.val = this._calculateGridValue(data);
       data.home.val = this._calculateHomeValue(data);
+      data.solar2home.val = this._calculateSolar2HomeValue(data);
       unit = this._defineUnit(hass, config.solar_power_entity, config.grid_power_consumption_entity, config.grid_power_production_entity);
       data.solar = this._makePositionObject(hass, data.solar.val, config.solar_power_entity, config.solar_icon,
           'mdi:weather-sunny', this.power_decimals, true);
@@ -107,22 +129,9 @@ class PowerWheelCard extends LitElement {
           'mdi:flash-circle', this.power_decimals, false);
       data.home = this._makePositionObject(hass, data.home.val, config.home_power_entity, config.home_icon,
           'mdi:home', this.power_decimals, false);
-      arrowData = {
-        solar2grid: {
-          icon: 'mdi:arrow-bottom-left',
-          classValue: typeof data.grid.val !== 'undefined' && data.grid.val < 0 ? 'active' : 'inactive',
-        },
-        solar2home: {
-          icon: 'mdi:arrow-bottom-right',
-          classValue: typeof data.solar.val !== 'undefined' && data.solar.val > 0
-          && typeof data.home.val !== 'undefined' && data.home.val != 0 ? 'active' : 'inactive',
-        },
-        grid2home: {
-          icon: 'mdi:arrow-right',
-          classValue: typeof data.grid.val !== 'undefined' && data.grid.val > 0
-          && typeof data.home.val !== 'undefined' && data.home.val != 0 ? 'active' : 'inactive',
-        },
-      };
+      data.solar2grid = this._makeArrowObject(data.solar2grid.val, 'mdi:arrow-bottom-left', this.power_decimals);
+      data.solar2home = this._makeArrowObject(data.solar2home.val, 'mdi:arrow-bottom-right', this.power_decimals);
+      data.grid2home = this._makeArrowObject(data.grid2home.val, 'mdi:arrow-right', this.power_decimals);
     }
 
     return html`
@@ -158,6 +167,10 @@ class PowerWheelCard extends LitElement {
         }
         ha-card .cell.position {
           cursor: pointer;
+          font-weight: bold;
+        }
+        ha-card .cell.arrow {
+          color: var(--state-icon-unavailable-color, #bdbdbd);
         }
         .unit-container {
           position: absolute;
@@ -214,12 +227,12 @@ class PowerWheelCard extends LitElement {
             ${this._positionCell(data.solar)}
           </div>
           <div class="row">
-            ${this._arrowCell(arrowData.solar2grid)}
-            ${this._arrowCell(arrowData.solar2home)}
+            ${this._arrowCell(data.solar2grid)}
+            ${this._arrowCell(data.solar2home)}
           </div>
           <div class="row">
             ${this._positionCell(data.grid)}
-            ${this._arrowCell(arrowData.grid2home)}
+            ${this._arrowCell(data.grid2home)}
             ${this._positionCell(data.home)}
           </div>
         </div>
@@ -238,7 +251,7 @@ class PowerWheelCard extends LitElement {
 
   _arrowCell(arrowObj) {
     return html`
-      <div class="cell">
+      <div class="cell arrow">
         <ha-icon class$="${arrowObj.classValue}" icon="${arrowObj.icon}"></ha-icon>
         <div>&nbsp;${arrowObj.valueStr}&nbsp;</div>
       </div>

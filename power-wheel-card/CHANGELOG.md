@@ -4,6 +4,8 @@ Changelog
 ### New features
 * Unit is displayed in the center of the wheel.
 * **BREAKING.** To switch views click the unit. (The button has been disabled.)
+* Arrow coloring now also in *energy view*. Because of this feature I needed the breaking changes below.
+* Values near arrows. Because of this feature I needed the breaking changes below.
 ### Improvements
 * Rewrite: separating calculating values in the code.
 * Value for home will be calculated always and not taken from evt. home sensors anymore.

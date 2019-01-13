@@ -16,7 +16,7 @@ Features of the custom power-wheel-card:
   Input for the calculation is the consumed grid energy and the produced grid energy.
 * Calculates the energy that your home is consuming: home energy.
   Input for the calculation is the (produced) solar energy and the consumed and produced grid energy.
-* Displays the transition between these powers as arrows. (In *power view* only.)
+* Displays the transition between these power and energy values as arrows with a value.
   E.g. if your solar power panels produce power, the arrow from solar to home turns active.
   And if your solar power panels produce enough power to deliver some back to the grid, the arrow from solar to grid turns active.
 * Optionally uses icons of your own choice, which can be set by card parameters or taken from your `customize:` sensor settings.
