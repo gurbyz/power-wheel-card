@@ -7,7 +7,8 @@ An intuïtive way to represent the power and energy that your home is consuming 
 ## Features
 Features of the custom power-wheel-card:
 * Displays the three values (solar, grid and home) in 'a wheel'.
-* Has different views for showing power values and showing energy values: the *power view* and the *energy view*. The initial view can be set. Click the unit to switch between views.
+* Has different views for showing power values, showing energy values and showing costs/savings: the *power view*, the *energy view* resp. the *money view*.
+  The initial view can be set. Click the unit to switch between views.
 * Calculates the current power that you nett consume from the grid: grid power.
   Input for the calculation is the consumed grid power and the produced grid power.
 * Calculates the current power that your home is consuming: home power.
@@ -16,7 +17,8 @@ Features of the custom power-wheel-card:
   Input for the calculation is the consumed grid energy and the produced grid energy.
 * Calculates the energy that your home is consuming: home energy.
   Input for the calculation is the (produced) solar energy and the consumed and produced grid energy.
-* Displays the transition between these power and energy values as arrows with a value.
+* Calculates the costs/savings for all the energy values.
+* Displays the transition between these power, energy and money values as arrows with a value.
   E.g. if your solar power panels produce power, the arrow from solar to home turns active.
   And if your solar power panels produce enough power to deliver some back to the grid, the arrow from solar to grid turns active.
 * Optionally uses icons of your own choice, which can be set by card parameters or taken from your `customize:` sensor settings.
@@ -83,11 +85,12 @@ Extra sensors based on your heavily updating DSMR sensors will let your database
 
 ## Requirements for the *energy view*
 The *energy view* itself is not required. As a result you don't have to specify any *energy view* related card parameters. 
-The toggle button for switching views won't be displayed.
+The toggle function to switch between views will be disabled.
 
 > **Tip.** You can skip this paragraph and [start](#instructions) with a more simple setup first. 
 
 But if you want the *energy view*:
+1. Comply to all the requirements of the *power view* first.
 1. Decide what kind of energy sensors you want to use. You could use your *smart meter counters* directly, but using self made sensors for e.g. *energy consumed or produced since last midnight* could provide more meaningful information on your power-wheel-card.
 Especially since a future release will be able to convert the values into costs and savings. Then you would be able to see the actual energy costs/savings today. 
 1. You need to have a working sensor for your solar energy. Write down the entity id of this sensor. This is *YOUR_SOLAR_ENERGY_SENSOR* in the instructions below.
@@ -105,6 +108,15 @@ Especially since a future release will be able to convert the values into costs 
 You don't need a sensor for your (nett) grid energy but you can use it if you have it available and want to use its icon. The value for grid energy always will be calculated.
 
 You don't need a sensor for your home energy, but you can use it if you have it available and want to use its icon. The value for home energy always will be calculated.
+
+## Requirements for the *money view*
+The *money view* itself is not required. As a result you don't have to specify any *money view* related card parameters. 
+The toggle function to switch to the *money view* will be disabled.
+
+But if you want the *money view*:
+1. Comply to all the requirements of the *energy view* first.
+2. Supply the card parameter `energy_price`.
+
 
 ## Instructions
 1. Check the requirements above. If you don't comply to the requirements, the card won't be much of use for you or just won't work.
@@ -147,11 +159,14 @@ There are many more card parameters available, but it's advised to start with th
 |solar_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your solar energy sensor. E.g. `sensor.YOUR_SOLAR_ENERGY_SENSOR`. See requirements above.|
 |grid_energy_consumption_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your grid energy consumption sensor. E.g. `sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_energy_production_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your grid energy production sensor. E.g. `sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR`. See requirements above.|
+|energy_price|float|optional|Default the *money view* will not be enabled.|The price of your energy per unit of energy. E.g. `0.20`.|
+|money_unit|string|optional|`"€"`|The unit of `energy_price`. This unit will be used for displaying all money values.|
 |solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
 |grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:flash-circle"` will be used.|Icon for grid power and energy.|
 |home_icon|string|optional|The icon of your own customized home sensor(s) if its entity parameter is set. If not available, then `"mdi:home"` will be used.|Icon for home power and energy.|
 |power_decimals|integer|optional|`0`|Number of decimals for the power values.|
 |energy_decimals|integer|optional|`3`|Number of decimals for the energy values.|
+|money_decimals|integer|optional|`2`|Number of decimals for the money values.|
 |color_icons|boolean|optional|`false`|To color the consuming icons green and the producing icons yellow. This setting only is affecting the three big icons for *solar*, *home* and *grid*. The arrows have colors by default.|
 |consuming_color|string|optional|The yellow color for `--label-badge-yellow` from your theme. If not available, then `"#f4b400"` will be used.|CSS color code for consuming power icons if `color_icons` is set to `true`. Examples: `"orange"`, `"#ffcc66"` or `"rgb(200,100,50)"`. Don't forget the quotation marks when using the `#` color notation.|
 |producing_color|string|optional|The green color for `--label-badge-green` from your theme. If not available, then `"#0da035"` will be used.|CSS color code for producing power icons if `color_icons` is set to `true`.|
@@ -196,11 +211,14 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   solar_energy_entity: sensor.YOUR_SOLAR_ENERGY_SENSOR
   grid_energy_consumption_entity: sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR
   grid_energy_production_entity: sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR
+  energy_price: 0.20
+  money_unit: "$"
   solar_icon: "mdi:white-balance-sunny"
   grid_icon: "mdi:flash"
   home_icon: "mdi:home-assistant"
   power_decimals: 2
   energy_decimals: 2
+  money_decimals: 0
   color_icons: true
   consuming_color: "#33ff33"
   producing_color: "#dd5500"

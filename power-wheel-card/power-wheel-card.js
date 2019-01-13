@@ -80,11 +80,12 @@ class PowerWheelCard extends LitElement {
       ? stateObj.attributes.unit_of_measurement : 'unknown unit';
   };
 
-  _defineUnit(hass, solar_entity, grid_consumption_entity, grid_production_entity) {
+  _defineUnit(hass, view, solar_entity, grid_consumption_entity, grid_production_entity, moneyUnit) {
     const solarUnit = this._getEntityUnit(hass.states[solar_entity]);
     const gridConsumptionUnit = this._getEntityUnit(hass.states[grid_consumption_entity]);
     const gridProductionUnit = this._getEntityUnit(hass.states[grid_production_entity]);
-    return solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit ? solarUnit : 'units not equal';
+    return solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit
+      ? (view === 'money' ? moneyUnit : solarUnit) : 'units not equal';
   };
 
   _render({ hass, config }) {
@@ -98,14 +99,33 @@ class PowerWheelCard extends LitElement {
     };
     let unit = '';
 
-    if (config.view === 'energy' && this.energy_capable) {
+    if (config.view === 'money' && this.money_capable) {
+      data.solar.val = config.energy_price * this._calculateSolarValue(hass, config.solar_energy_entity);
+      data.grid2home.val = config.energy_price * this._calculateGrid2HomeValue(hass, config.grid_energy_consumption_entity);
+      data.solar2grid.val = config.energy_price * this._calculateSolar2GridValue(hass, config.grid_energy_production_entity);
+      data.grid.val = this._calculateGridValue(data);
+      data.home.val = this._calculateHomeValue(data);
+      data.solar2home.val = this._calculateSolar2HomeValue(data);
+      unit = this._defineUnit(hass, config.view, config.solar_energy_entity,
+        config.grid_energy_consumption_entity, config.grid_energy_production_entity, this.money_unit);
+      data.solar = this._makePositionObject(hass, data.solar.val, config.solar_energy_entity, config.solar_icon,
+        'mdi:weather-sunny', this.money_decimals, true);
+      data.grid = this._makePositionObject(hass, data.grid.val, config.grid_energy_entity, config.grid_icon,
+        'mdi:flash-circle', this.money_decimals, false);
+      data.home = this._makePositionObject(hass, data.home.val, config.home_energy_entity, config.home_icon,
+        'mdi:home', this.money_decimals, false);
+      data.solar2grid = this._makeArrowObject(data.solar2grid.val, 'mdi:arrow-bottom-left', this.money_decimals);
+      data.solar2home = this._makeArrowObject(data.solar2home.val, 'mdi:arrow-bottom-right', this.money_decimals);
+      data.grid2home = this._makeArrowObject(data.grid2home.val, 'mdi:arrow-right', this.money_decimals);
+    } else if (config.view === 'energy' && this.energy_capable) {
       data.solar.val = this._calculateSolarValue(hass, config.solar_energy_entity);
       data.grid2home.val = this._calculateGrid2HomeValue(hass, config.grid_energy_consumption_entity);
       data.solar2grid.val = this._calculateSolar2GridValue(hass, config.grid_energy_production_entity);
       data.grid.val = this._calculateGridValue(data);
       data.home.val = this._calculateHomeValue(data);
       data.solar2home.val = this._calculateSolar2HomeValue(data);
-      unit = this._defineUnit(hass, config.solar_energy_entity, config.grid_energy_consumption_entity, config.grid_energy_production_entity);
+      unit = this._defineUnit(hass, config.view, config.solar_energy_entity,
+        config.grid_energy_consumption_entity, config.grid_energy_production_entity, this.money_unit);
       data.solar = this._makePositionObject(hass, data.solar.val, config.solar_energy_entity, config.solar_icon,
           'mdi:weather-sunny', this.energy_decimals, true);
       data.grid = this._makePositionObject(hass, data.grid.val, config.grid_energy_entity, config.grid_icon,
@@ -122,7 +142,8 @@ class PowerWheelCard extends LitElement {
       data.grid.val = this._calculateGridValue(data);
       data.home.val = this._calculateHomeValue(data);
       data.solar2home.val = this._calculateSolar2HomeValue(data);
-      unit = this._defineUnit(hass, config.solar_power_entity, config.grid_power_consumption_entity, config.grid_power_production_entity);
+      unit = this._defineUnit(hass, config.view, config.solar_power_entity,
+        config.grid_power_consumption_entity, config.grid_power_production_entity, this.money_unit);
       data.solar = this._makePositionObject(hass, data.solar.val, config.solar_power_entity, config.solar_icon,
           'mdi:weather-sunny', this.power_decimals, true);
       data.grid = this._makePositionObject(hass, data.grid.val, config.grid_power_entity, config.grid_icon,
@@ -272,10 +293,22 @@ class PowerWheelCard extends LitElement {
   }
 
   _toggleView(ev, config) {
-    if (config.view === 'power') {
-      config.view = 'energy';
-    } else {
-      config.view = 'power';
+    switch (config.view) {
+      case 'power':
+        config.view = 'energy';
+        break;
+      case 'energy':
+        if (this.money_capable) {
+          config.view = 'money';
+        } else {
+          config.view = 'power';
+        }
+        break;
+      case 'money':
+        config.view = 'power';
+        break;
+      default:
+        config.view = 'power';
     }
   }
 
@@ -298,6 +331,11 @@ class PowerWheelCard extends LitElement {
       throw new Error('Energy_decimals should be an integer');
     }
     this.energy_decimals = config.energy_decimals ? config.energy_decimals : 3;
+    if (config.money_decimals && !Number.isInteger(config.money_decimals)) {
+      throw new Error('Money_decimals should be an integer');
+    }
+    this.money_decimals = config.money_decimals ? config.money_decimals : 2;
+    this.money_unit = config.money_unit ? config.money_unit : '€';
     this.colorIcons = config.color_icons ? (config.color_icons == true) : false;
     this.consumingColor = this.colorIcons
       ? (config.consuming_color ? config.consuming_color : 'var(--label-badge-yellow, #f4b400)')
@@ -305,14 +343,15 @@ class PowerWheelCard extends LitElement {
     this.producingColor = this.colorIcons
       ? (config.producing_color ? config.producing_color : 'var(--label-badge-green, #0da035)')
       : 'var(--state-icon-unavailable-color, #bdbdbd)';
-    if (config.initial_view && !['power', 'energy'].includes(config.initial_view)) {
-      throw new Error("Initial_view should 'power' or 'energy'");
+    if (config.initial_view && !['power', 'energy', 'money'].includes(config.initial_view)) {
+      throw new Error("Initial_view should 'power', 'energy' or 'money'");
     }
     if (!config.view) {
       config.view = config.initial_view ? config.initial_view : 'power';
     }
     this.energy_capable = config.solar_energy_entity && config.grid_energy_consumption_entity
       && config.grid_energy_production_entity;
+    this.money_capable = this.energy_capable && config.energy_price;
     this.config = config;
   }
 
