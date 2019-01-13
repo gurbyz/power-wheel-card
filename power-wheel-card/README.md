@@ -161,10 +161,10 @@ Some extra parameters for advanced users who use dynamic icons in their HA setup
 
 | Parameter | Type | Mandatory? | Default | Description |
 |-----------|------|------------|---------|-------------|
-|home_power_entity|string|optional||Entity id of your home power sensor if you want to use its icon in the *power view* instead of supplying a static `home_icon` on card level.|
-|grid_power_entity|string|optional||Entity id of your grid power sensor if you want to use its icon in the *power view* instead of supplying a static `grid_icon` on card level.|
-|home_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your home energy sensor if you want to use its icon in the *energy view* instead of supplying a static `home_icon` on card level.|
-|grid_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your grid energy sensor if you want to use its icon in the *energy view* instead of supplying a static `grid_icon` on card level.|
+|home_power_entity|string|optional|Default the icon specified in `home_icon` will be used. If not specified `"mdi:home"` will be used.|Entity id of your home power sensor if you want to use its icon in the *power view* instead of supplying a static `home_icon` on card level.|
+|grid_power_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:flash-circle"` will be used.|Entity id of your grid power sensor if you want to use its icon in the *power view* instead of supplying a static `grid_icon` on card level.|
+|home_energy_entity|string|optional|Default the icon specified in `home_icon` will be used. If not specified `"mdi:home"` will be used.|Entity id of your home energy sensor if you want to use its icon in the *energy view* instead of supplying a static `home_icon` on card level.|
+|grid_energy_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:flash-circle"` will be used.|Entity id of your grid energy sensor if you want to use its icon in the *energy view* instead of supplying a static `grid_icon` on card level.|
 
 
 ### More about icons
@@ -191,9 +191,11 @@ A more advanced example for in the `ui-lovelace.yaml` file:
 - type: "custom:power-wheel-card"
   title: "Power distribution"
   solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
-  grid_power_entity: sensor.YOUR_GRID_POWER_SENSOR
+  grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
+  grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
   solar_energy_entity: sensor.YOUR_SOLAR_ENERGY_SENSOR
-  grid_energy_entity: sensor.YOUR_GRID_ENERGY_SENSOR
+  grid_energy_consumption_entity: sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR
+  grid_energy_production_entity: sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR
   solar_icon: "mdi:white-balance-sunny"
   grid_icon: "mdi:flash"
   home_icon: "mdi:home-assistant"
