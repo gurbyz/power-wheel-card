@@ -170,7 +170,7 @@ There are many more card parameters available, but it's advised to start with th
 |color_icons|boolean|optional|`false`|To color the consuming icons green and the producing icons yellow. This setting only is affecting the three big icons for *solar*, *home* and *grid*. The arrows have colors by default.|
 |consuming_color|string|optional|The yellow color for `--label-badge-yellow` from your theme. If not available, then `"#f4b400"` will be used.|CSS color code for consuming power icons if `color_icons` is set to `true`. Examples: `"orange"`, `"#ffcc66"` or `"rgb(200,100,50)"`. Don't forget the quotation marks when using the `#` color notation.|
 |producing_color|string|optional|The green color for `--label-badge-green` from your theme. If not available, then `"#0da035"` will be used.|CSS color code for producing power icons if `color_icons` is set to `true`.|
-|initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view* and `"energy"` for *energy view*.|
+|initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|
 
 Some extra parameters for advanced users who use dynamic icons in their HA setup and want to use them in the power-wheel-card: 
 
@@ -184,7 +184,7 @@ Some extra parameters for advanced users who use dynamic icons in their HA setup
 
 ### More about icons
 The icons for solar and grid can be set by card parameters as shown in the tables above.
-If you don't specify them as card parameters, the icons are taken from your own sensors for solar power and grid power (in the *power view*) and from your own sensors for solar energy and grid energy (in the *energy view*).
+If you don't specify them as card parameters, the icons are taken from your own sensors for solar power and grid power (in the *power view*) and from your own sensors for solar energy and grid energy (in the *energy view* and *money view*).
 You could have specified those with the `customize:` option for `homeassistant` in your `configuration.yaml`.
 
 If you haven't set up any icons for them, default icons will be used in all views. For solar: `mdi:weather-sunny`; and for grid: `mdi:flash-circle`.
