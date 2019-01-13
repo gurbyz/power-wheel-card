@@ -1,11 +1,12 @@
 Changelog
 ====
 ## 0.0.5
+### New features
+* Unit is displayed in the center of the wheel.
+* **BREAKING.** To switch views click the unit. (The button has been disabled.)
 ### Improvements
-* Unit in the center of the wheel.
-* To switch views click the unit. (The button has been disabled.)
 * Rewrite: separating calculating values in the code.
-* Value for home is calculated always (not taken from evt. sensor anymore).
+* Value for home will be calculated always and not taken from evt. home sensors anymore.
 
 ## 0.0.4
 ### New features

@@ -7,10 +7,10 @@ An intuïtive way to represent the power and energy that your home is consuming 
 ## Features
 Features of the custom power-wheel-card:
 * Displays the three values (solar, grid and home) in 'a wheel'.
-* Has different views for showing power values and showing energy values: the *power view* and the *energy view*. The initial view can be set. There is a toggle button to switch between views.
-* Optionally calculates the current power that your home is consuming: home power.
+* Has different views for showing power values and showing energy values: the *power view* and the *energy view*. The initial view can be set. Click the unit to switch between views.
+* Calculates the current power that your home is consuming: home power.
   Input for the calculation is the (produced) solar power and the (consumed or produced) grid power.
-* Optionally calculates the energy that your home is consuming: home energy.
+* Calculates the energy that your home is consuming: home energy.
   Input for the calculation is the (produced) solar energy and the (consumed or produced) grid energy.
 * Displays the transition between these powers as arrows. (In *power view* only.)
   E.g. if your solar power panels produce power, the arrow from solar to home turns active.
@@ -26,17 +26,17 @@ Features of the custom power-wheel-card:
 ## Requirements for the *power view*
 1. You need to have a working sensor for your solar power. Write down the entity id of this sensor. This is *YOUR_SOLAR_POWER_SENSOR* in the instructions below.
     - This sensor has a `unit_of_measurement` set up, e.g. `'W'` or `'kW'`.
-    - The sensor value should be of type *int* or *float*.
+    - The sensor value should always be parsable to an *int* or *float*.
     - The sensor value should be positive.
     - The sensor could have an icon (optional) that will override the default icon in the power-wheel-card if the card parameter `solar_icon` is not used.
 1. You need to have a working sensor for your grid power. Write down the entity id of this sensor. This is *YOUR_GRID_POWER_SENSOR* in the instructions below.
     - This sensor has **the same** `unit_of_measurement` set up as the sensor for solar power.
     - Preferably this sensor has the same update interval as the sensor for solar power. (If not, the calculated value for home power can give unreal results sometimes.)
-    - The sensor value should be of type *int* or *float*.
+    - The sensor value should always be parsable to an *int* or *float*.
     - The sensor value should be **negative** for **producing** power to the grid and **positive** for **consuming** power of the grid.
     - The sensor could have an icon (optional) that will override the default icon in the power-wheel-card if the card parameter `grid_icon` is not used.
 
-Nb. You don't need a sensor for your home power, but you can use if you have it available. The value will be calculated if your don't supply this sensor as card parameter.
+Nb. You don't need a sensor for your home power, but you can use it if you have it available and want to use its icon. The value for home power always will be calculated. 
 
 ### Example requirements configuration
 This is not the configuration of the power-wheel-card itself, but an example configuration that's needed to have input sensors for the power-wheel-card.
@@ -91,7 +91,7 @@ Especially since a future release will be able to convert the values into costs 
     - The sensor value should be **negative** for **producing** energy to the grid and **positive** for **consuming** energy of the grid.
     - The sensor could have an icon (optional) that will override the default con in the power-wheel-card if the card parameter `grid_icon` is not used.
 
-Nb. You don't need a sensor for your home energy, but you can use if you have it available. The value will be calculated if your don't supply this sensor as card parameter.
+Nb. You don't need a sensor for your home energy, but you can use it if you have it available and want to use its icon. The value for home energy always will be calculated.
 
 ## Instructions
 1. Check the requirements above. If you don't comply to the requirements, the card won't be much of use for you or just won't work.
@@ -105,7 +105,7 @@ resources:
     type: module
 ```
 
-> **Note.** The actual number in `v=A_NUMBER` isn't relevant. You can increase the number whenever updating the source code to avoid having to manually clear the cache of your browsers and mobile apps.
+> **Note.** The actual number in `v=A_NUMBER` isn't relevant. You have to increase the number whenever updating the source code to avoid having to manually clear the cache of your browsers and mobile apps.
 
 5. Include a configuration for the power-wheel-card in your `ui-lovelace.yaml` file:
 
@@ -129,10 +129,10 @@ There are many more card parameters available, but it's advised to start with th
 |title|string|optional|`"Power wheel"`|Title of the card.|
 |solar_power_entity|string|**required**||Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
 |grid_power_entity|string|**required**||Entity id of your grid power sensor. E.g. `sensor.YOUR_GRID_POWER_SENSOR`. See requirements above.|
-|home_power_entity|string|optional|Default the home power value will be calculated.|Entity id of your home power sensor.|
+|home_power_entity|string|optional||Entity id of your home power sensor if you want to use its icon instead of supplying `home_icon'.|
 |solar_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your solar energy sensor. E.g. `sensor.YOUR_SOLAR_ENERGY_SENSOR`. See requirements above.|
 |grid_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your grid energy sensor. E.g. `sensor.YOUR_GRID_ENERGY_SENSOR`. See requirements above.|
-|home_energy_entity|string|optional|Default the *energy view* will not be enabled. If `solar_energy_entity` and `grid_energy_entity` are set, then default the home energy value will be calculated.|Entity id of your home energy sensor.|
+|home_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your home energy sensor if you want to use its icon instead of supplying `home_icon`.|
 |solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
 |grid_icon|string|optional|The icon of your own customized grid sensor(s). If not available, then `"mdi:flash-circle"` will be used.|Icon for grid power and energy.|
 |home_icon|string|optional|The icon of your own customized home sensor(s) if its entity parameter is set. If not available, then `"mdi:home"` will be used.|Icon for home power and energy.|
