@@ -155,6 +155,11 @@ class PowerWheelCard extends LitElement {
       data.grid2home = this._makeArrowObject(data.grid2home.val, 'mdi:arrow-right', this.power_decimals);
     }
 
+    // todo: [Feature] Auto toggle view
+    // setTimeout(() => {
+    //   this._toggleView({}, config);
+    // }, 5000);
+
     return html`
       <style>
         ha-card {
