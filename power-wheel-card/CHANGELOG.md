@@ -1,6 +1,6 @@
 Changelog
 ====
-## 0.0.5
+## 0.0.6
 ### New features
 * Unit is displayed in the center of the wheel.
 * **BREAKING.** To switch views click the unit. The button has been removed.
@@ -20,6 +20,10 @@ Changelog
 * **BREAKING.** Card parameter `grid_energy_entity` has been split into `grid_energy_consumption_entity` and `grid_energy_production_entity`.
   Both card parameters are required if you want to use the *energy view* and should have positive values.
   The combined parameter `grid_energy_entity` can still be used to supply the grid icon in the *energy view*, but the energy value isn't used anymore. 
+
+## 0.0.5
+### Fixes
+* Switch from unpkg.com to unpkg-gcp.firebaseapp.com for broken lit-html dependency.
 
 ## 0.0.4
 ### New features
