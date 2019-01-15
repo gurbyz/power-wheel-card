@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.0.5
+### Fixes
+* Switch from unpkg.com to unpkg-gcp.firebaseapp.com for broken lit-html dependency.
+
 ## 0.0.4
 ### New features
 * New optional card parameters `solor_energy_entity`, `grid_energy_entity` and `home_energy_entity` to feed the new *energy view* of the wheel.
