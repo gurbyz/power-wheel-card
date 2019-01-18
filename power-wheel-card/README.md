@@ -28,6 +28,7 @@ Features of the custom power-wheel-card:
 
 ![example1](./example_power_view.gif "The power-wheel-card displaying the power view")
 ![example2](./example_energy_view.gif "The power-wheel-card displaying the energy view")
+![example3](./example_money_view.gif "The power-wheel-card displaying the money view")
 
 ## Requirements for the *power view*
 1. You need to have a working sensor for your solar power. Write down the entity id of this sensor. This is *YOUR_SOLAR_POWER_SENSOR* in the instructions below.
