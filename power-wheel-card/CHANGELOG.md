@@ -3,6 +3,8 @@ Changelog
 ## 0.0.7
 ### Improvements
 * Upgrade to lit-element 0.6.5.
+### Fixes
+* Switch back from unpkg-gcp.firebaseapp.com to unpkg.com again because of CORS error.
 
 ## 0.0.6
 ### New features
