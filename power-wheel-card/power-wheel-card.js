@@ -1,6 +1,6 @@
 import {
   LitElement, html
-} from 'https://unpkg-gcp.firebaseapp.com/@polymer/lit-element@^0.6.5/lit-element.js?module';
+} from 'https://unpkg.com/@polymer/lit-element@^0.6.5/lit-element.js?module';
 
 class PowerWheelCard extends LitElement {
   static get properties() {
