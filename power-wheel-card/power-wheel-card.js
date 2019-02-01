@@ -94,7 +94,7 @@ class PowerWheelCard extends LitElement {
     const gridConsumptionUnit = this._getEntityUnit(this.hass.states[grid_consumption_entity]);
     const gridProductionUnit = this._getEntityUnit(this.hass.states[grid_production_entity]);
     return solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit
-      ? (this.view === 'money' ? this.config.moneyUnit : solarUnit) : 'units not equal';
+      ? (this.view === 'money' ? this.config.money_unit : solarUnit) : 'units not equal';
   };
 
   constructor() {
@@ -264,12 +264,12 @@ class PowerWheelCard extends LitElement {
             ${this._positionCell(this.data.solar)}
           </div>
           <div class="row">
-            ${this._arrowCell(this.data.solar2grid)}
-            ${this._arrowCell(this.data.solar2home)}
+            ${this._arrowCell(this.data.solar2grid, this.data.solar.val)}
+            ${this._arrowCell(this.data.solar2home, this.data.solar.val)}
           </div>
           <div class="row">
             ${this._positionCell(this.data.grid)}
-            ${this._arrowCell(this.data.grid2home)}
+            ${this._arrowCell(this.data.grid2home, this.data.grid.val)}
             ${this._positionCell(this.data.home)}
           </div>
         </div>
@@ -281,16 +281,16 @@ class PowerWheelCard extends LitElement {
     return html`
       <div class="cell position" @click="${e => this._handleClick(e, positionObj.stateObj)}">
         <ha-icon class="${positionObj.classValue}" icon="${positionObj.icon}"></ha-icon>
-        <br/>${positionObj.stateStr}&nbsp;
+        <br/>${positionObj.val === 0 ? '' : positionObj.stateStr}&nbsp;
       </div>
     `;
   };
 
-  _arrowCell(arrowObj) {
+  _arrowCell(arrowObj, hideValue) {
     return html`
       <div class="cell arrow">
         <ha-icon class="${arrowObj.classValue}" icon="${arrowObj.icon}"></ha-icon>
-        <div>&nbsp;${arrowObj.valueStr}&nbsp;</div>
+        <div>&nbsp;${arrowObj.val === 0 || arrowObj.val === hideValue ? '' : arrowObj.valueStr}&nbsp;</div>
       </div>
     `;
   };
