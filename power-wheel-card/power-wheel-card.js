@@ -167,7 +167,7 @@ class PowerWheelCard extends LitElement {
 
     // todo: [Feature] Auto toggle view
     // setTimeout(() => {
-    //   this._toggleView({}, config);
+    //   this._toggleView();
     // }, 5000);
 
     return html`
@@ -253,13 +253,13 @@ class PowerWheelCard extends LitElement {
         }
       </style>
       <ha-card>
-        ${this.config.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recyclexxx" @click="${e => this._toggleView(e)}" title="Toggle view"></ha-icon>` : ''}        
+        ${this.config.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recyclexxx" @click="${() => this._toggleView()}" title="Toggle view"></ha-icon>` : ''}        
         <div class="header">
           ${this.config.title}
         </div>
         <div class="wheel">
           <div class="unit-container">
-            ${this.config.energy_capable ? html`<div class="unit toggle" @click="${e => this._toggleView(e)}" title="Toggle view">${this.unit}</div>` : html`<div class="unit">${this.unit}</div>`}
+            ${this.config.energy_capable ? html`<div class="unit toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.unit}</div>` : html`<div class="unit">${this.unit}</div>`}
           </div>
           <div class="row">
             ${this._positionCell(this.data.solar)}
@@ -309,7 +309,7 @@ class PowerWheelCard extends LitElement {
     this.shadowRoot.dispatchEvent(event);
   }
 
-  _toggleView(ev) {
+  _toggleView() {
     switch (this.view) {
       case 'power':
         this.view = 'energy';
