@@ -28,17 +28,18 @@ class PowerWheelCard extends LitElement {
   };
 
   _makePositionObject(val, entity, configIcon, defaultIcon, decimals, producingIsPositive) {
-    const stateStr = typeof val === 'undefined' ? 'unavailable' : val.toFixed(decimals);
+    const valueStr = typeof val === 'undefined' ? 'unavailable' : val.toFixed(decimals);
     const stateObj = this.hass.states[entity];
     const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
     const classValue = this._generateClass(producingIsPositive, val);
 
     return {
       stateObj,
-      stateStr,
+      valueStr,
       val,
       icon,
       classValue,
+      hasSensor: !!stateObj,
     };
   };
 
@@ -138,11 +139,13 @@ class PowerWheelCard extends LitElement {
         width: 150px;
       }
       ha-card .cell.position {
-        cursor: pointer;
         font-weight: bold;
       }
       ha-card .cell.arrow {
         color: var(--state-icon-unavailable-color, #bdbdbd);
+      }
+      ha-card .cell.sensor {
+        cursor: pointer;
       }
       .value {
           min-height: 16px;
@@ -266,44 +269,34 @@ class PowerWheelCard extends LitElement {
             ${this.config.energy_capable ? html`<div class="unit toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.unit}</div>` : html`<div class="unit">${this.unit}</div>`}
           </div>
           <div class="row">
-            ${this._positionCell(this.data.solar)}
+            ${this._cell(this.data.solar, 'position', 0)}
           </div>
           <div class="row">
-            ${this._arrowCell(this.data.solar2grid, this.data.solar.val)}
-            ${this._arrowCell(this.data.solar2home, this.data.solar.val)}
+            ${this._cell(this.data.solar2grid, 'arrow', this.data.solar.val)}
+            ${this._cell(this.data.solar2home, 'arrow', this.data.solar.val)}
           </div>
           <div class="row">
-            ${this._positionCell(this.data.grid)}
-            ${this._arrowCell(this.data.grid2home, this.data.grid.val)}
-            ${this._positionCell(this.data.home)}
+            ${this._cell(this.data.grid, 'position', 0)}
+            ${this._cell(this.data.grid2home, 'arrow', this.data.grid.val)}
+            ${this._cell(this.data.home, 'position', 0)}
           </div>
         </div>
       </ha-card>
     `;
   }
 
-  _positionCell(positionObj) {
+  _cell(cellObj, cellType, hideValue) {
     return html`
-      <div class="cell position" @click="${e => this._handleClick(e, positionObj.stateObj)}">
-        <ha-icon class="${positionObj.classValue}" icon="${positionObj.icon}"></ha-icon>
-        <div class="value">${positionObj.val === 0 ? '' : positionObj.stateStr}</div>
+      <div class="cell ${cellType} ${cellObj.hasSensor ? 'sensor' : ''}" 
+            @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
+            title="${cellObj.hasSensor ? 'More info':''}">
+        <ha-icon class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
+        <div class="value">${cellObj.val === 0 || cellObj.val === hideValue ? '' : cellObj.valueStr}</div>
       </div>
     `;
   };
 
-  _arrowCell(arrowObj, hideValue) {
-    return html`
-      <div class="cell arrow">
-        <ha-icon class="${arrowObj.classValue}" icon="${arrowObj.icon}"></ha-icon>
-        <div class="value">${arrowObj.val === 0 || arrowObj.val === hideValue ? '' : arrowObj.valueStr}</div>
-      </div>
-    `;
-  };
-
-  _handleClick(ev, stateObj) {
-    if (!stateObj) {
-      return;
-    }
+  _handleClick(stateObj) {
     const event = new Event('hass-more-info', {
       bubbles: true,
       cancelable: true,

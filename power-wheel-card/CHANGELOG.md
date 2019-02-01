@@ -7,6 +7,8 @@ Changelog
 * Immediate response when you click to toggle between views. 
 * Using the local version of lit-element.
 * Code improvements.
+### Fixes
+* More-info dialogues only for icons that have a sensor.
 
 ## 0.0.7
 ### Improvements
