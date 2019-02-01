@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.0.8
+### Improvements
+* Immediate response when you click to toggle between views. 
+
 ## 0.0.7
 ### Improvements
 * Upgrade to lit-element 0.6.5.

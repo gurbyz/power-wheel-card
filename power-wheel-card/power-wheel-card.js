@@ -1,3 +1,9 @@
+/**
+ *
+ * power-wheel-card version 0.0.8
+ *
+ */
+
 import {
   LitElement, html
 } from 'https://unpkg.com/@polymer/lit-element@^0.6.5/lit-element.js?module';
@@ -7,6 +13,7 @@ class PowerWheelCard extends LitElement {
     return {
       hass: Object,
       config: Object,
+      view: { type: String },
     }
   };
 
@@ -80,12 +87,12 @@ class PowerWheelCard extends LitElement {
       ? stateObj.attributes.unit_of_measurement : 'unknown unit';
   };
 
-  _defineUnit(hass, view, solar_entity, grid_consumption_entity, grid_production_entity, moneyUnit) {
+  _defineUnit(hass, solar_entity, grid_consumption_entity, grid_production_entity, moneyUnit) {
     const solarUnit = this._getEntityUnit(hass.states[solar_entity]);
     const gridConsumptionUnit = this._getEntityUnit(hass.states[grid_consumption_entity]);
     const gridProductionUnit = this._getEntityUnit(hass.states[grid_production_entity]);
     return solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit
-      ? (view === 'money' ? moneyUnit : solarUnit) : 'units not equal';
+      ? (this.view === 'money' ? moneyUnit : solarUnit) : 'units not equal';
   };
 
   render() {
@@ -99,14 +106,14 @@ class PowerWheelCard extends LitElement {
     };
     let unit = '';
 
-    if (this.config.view === 'money' && this.money_capable) {
+    if (this.view === 'money' && this.money_capable) {
       data.solar.val = this.config.energy_price * this._calculateSolarValue(this.hass, this.config.solar_energy_entity);
       data.grid2home.val = this.config.energy_price * this._calculateGrid2HomeValue(this.hass, this.config.grid_energy_consumption_entity);
       data.solar2grid.val = this.config.energy_price * this._calculateSolar2GridValue(this.hass, this.config.grid_energy_production_entity);
       data.grid.val = this._calculateGridValue(data);
       data.home.val = this._calculateHomeValue(data);
       data.solar2home.val = this._calculateSolar2HomeValue(data);
-      unit = this._defineUnit(this.hass, this.config.view, this.config.solar_energy_entity,
+      unit = this._defineUnit(this.hass, this.config.solar_energy_entity,
         this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity, this.money_unit);
       data.solar = this._makePositionObject(this.hass, data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
         'mdi:weather-sunny', this.money_decimals, true);
@@ -117,14 +124,14 @@ class PowerWheelCard extends LitElement {
       data.solar2grid = this._makeArrowObject(data.solar2grid.val, 'mdi:arrow-bottom-left', this.money_decimals);
       data.solar2home = this._makeArrowObject(data.solar2home.val, 'mdi:arrow-bottom-right', this.money_decimals);
       data.grid2home = this._makeArrowObject(data.grid2home.val, 'mdi:arrow-right', this.money_decimals);
-    } else if (this.config.view === 'energy' && this.energy_capable) {
+    } else if (this.view === 'energy' && this.energy_capable) {
       data.solar.val = this._calculateSolarValue(this.hass, this.config.solar_energy_entity);
       data.grid2home.val = this._calculateGrid2HomeValue(this.hass, this.config.grid_energy_consumption_entity);
       data.solar2grid.val = this._calculateSolar2GridValue(this.hass, this.config.grid_energy_production_entity);
       data.grid.val = this._calculateGridValue(data);
       data.home.val = this._calculateHomeValue(data);
       data.solar2home.val = this._calculateSolar2HomeValue(data);
-      unit = this._defineUnit(this.hass, this.config.view, this.config.solar_energy_entity,
+      unit = this._defineUnit(this.hass, this.config.solar_energy_entity,
         this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity, this.money_unit);
       data.solar = this._makePositionObject(this.hass, data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.energy_decimals, true);
@@ -142,7 +149,7 @@ class PowerWheelCard extends LitElement {
       data.grid.val = this._calculateGridValue(data);
       data.home.val = this._calculateHomeValue(data);
       data.solar2home.val = this._calculateSolar2HomeValue(data);
-      unit = this._defineUnit(this.hass, this.config.view, this.config.solar_power_entity,
+      unit = this._defineUnit(this.hass, this.config.solar_power_entity,
         this.config.grid_power_consumption_entity, this.config.grid_power_production_entity, this.money_unit);
       data.solar = this._makePositionObject(this.hass, data.solar.val, this.config.solar_power_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.power_decimals, true);
@@ -241,13 +248,13 @@ class PowerWheelCard extends LitElement {
         }
       </style>
       <ha-card>
-        ${this.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recyclexxx" @click="${e => this._toggleView(e, this.config)}" title="Toggle view"></ha-icon>` : ''}        
+        ${this.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recyclexxx" @click="${e => this._toggleView(e)}" title="Toggle view"></ha-icon>` : ''}        
         <div class="header">
           ${this.title}
         </div>
         <div class="wheel">
           <div class="unit-container">
-            ${this.energy_capable ? html`<div class="unit toggle" @click="${e => this._toggleView(e, this.config)}" title="Toggle view">${unit}</div>` : html`<div class="unit">${unit}</div>`}
+            ${this.energy_capable ? html`<div class="unit toggle" @click="${e => this._toggleView(e)}" title="Toggle view">${unit}</div>` : html`<div class="unit">${unit}</div>`}
           </div>
           <div class="row">
             ${this._positionCell(data.solar)}
@@ -297,23 +304,23 @@ class PowerWheelCard extends LitElement {
     this.shadowRoot.dispatchEvent(event);
   }
 
-  _toggleView(ev, config) {
-    switch (config.view) {
+  _toggleView(ev) {
+    switch (this.view) {
       case 'power':
-        config.view = 'energy';
+        this.view = 'energy';
         break;
       case 'energy':
         if (this.money_capable) {
-          config.view = 'money';
+          this.view = 'money';
         } else {
-          config.view = 'power';
+          this.view = 'power';
         }
         break;
       case 'money':
-        config.view = 'power';
+        this.view = 'power';
         break;
       default:
-        config.view = 'power';
+        this.view = 'power';
     }
   }
 
@@ -351,9 +358,7 @@ class PowerWheelCard extends LitElement {
     if (config.initial_view && !['power', 'energy', 'money'].includes(config.initial_view)) {
       throw new Error("Initial_view should 'power', 'energy' or 'money'");
     }
-    if (!config.view) {
-      config.view = config.initial_view ? config.initial_view : 'power';
-    }
+    this.view = config.initial_view ? config.initial_view : 'power';
     this.energy_capable = config.solar_energy_entity && config.grid_energy_consumption_entity
       && config.grid_energy_production_entity;
     this.money_capable = this.energy_capable && config.energy_price;
