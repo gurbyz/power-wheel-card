@@ -3,8 +3,9 @@ Changelog
 ## 0.0.8
 ### New features
 * Zero values are suppressed. The values on the arrows are visible only when relevant. E.g. on a sunny day when part of your solar panel energy went to the grid and the other part went to your home.
+* More-info dialogues for arrows that have a sensor.
 ### Improvements
-* Immediate response when you click to toggle between views. 
+* Immediate response when you click on the unit to toggle between views. 
 * Using the local version of lit-element.
 * Code improvements.
 ### Fixes
