@@ -155,14 +155,14 @@ class PowerWheelCard extends LitElement {
         }
       .unit-container {
         position: absolute;
-        display: table;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 100%;
         height: 230px;
       }
       .unit {
-        display: table-cell;
-        text-align: center;
-        vertical-align: middle;
+        padding: 3px 10px;
         font-size: calc(1.5 * var(--paper-font-headline_-_font-size));
       }
       .unit.toggle {

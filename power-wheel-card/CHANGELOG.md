@@ -10,6 +10,7 @@ Changelog
 * Code improvements.
 ### Fixes
 * More-info dialogues only for icons that have a sensor.
+* Reduced clickable area for toggling the view.
 
 ## 0.0.7
 ### Improvements
