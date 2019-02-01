@@ -13,6 +13,7 @@ class PowerWheelCard extends LitElement {
       hass: Object,
       config: Object,
       data: { type: Object },
+      style: { type: String },
       unit: { type: String },
       view: { type: String },
     }
@@ -106,6 +107,81 @@ class PowerWheelCard extends LitElement {
       grid2home: {},
       home: {},
     };
+    this.style = `
+      ha-card {
+        padding: 16px;
+      }
+      ha-card .header {
+        font-family: var(--paper-font-headline_-_font-family);
+        -webkit-font-smoothing: var(--paper-font-headline_-_-webkit-font-smoothing);
+        font-size: var(--paper-font-headline_-_font-size);
+        font-weight: var(--paper-font-headline_-_font-weight);
+        letter-spacing: var(--paper-font-headline_-_letter-spacing);
+        line-height: var(--paper-font-headline_-_line-height);
+        color: var(--primary-text-color);
+        padding: 4px 0 12px;
+        display: flex;
+        justify-content: space-between;
+      }
+      ha-card .wheel {
+        position: relative;
+      }
+      ha-card .row {
+        display: flex;
+        justify-content: center;
+        padding: 8px;
+        align-items: center;
+        height: 60px;
+      }
+      ha-card .cell {
+        text-align: center;
+        width: 150px;
+      }
+      ha-card .cell.position {
+        cursor: pointer;
+        font-weight: bold;
+      }
+      ha-card .cell.arrow {
+        color: var(--state-icon-unavailable-color, #bdbdbd);
+      }
+      .value {
+          min-height: 16px;
+        }
+      .unit-container {
+        position: absolute;
+        display: table;
+        width: 100%;
+        height: 230px;
+      }
+      .unit {
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+        font-size: calc(1.5 * var(--paper-font-headline_-_font-size));
+      }
+      .unit.toggle {
+        cursor: pointer;
+      }
+      ha-icon {
+        transition: color 0.5s ease-in-out, filter 0.3s ease-in-out;
+        color: var(--paper-item-icon-color, #44739e);
+        width: 48px;
+        height: 48px;
+      }
+      ha-icon.active {
+        color: var(--paper-item-icon-active-color, #fdd835);
+      }
+      ha-icon.inactive {
+        color: var(--state-icon-unavailable-color, #bdbdbd);
+      }
+      ha-icon#toggle-button {
+        padding-top: 4px;
+        width: 24px;
+        height: 24px;
+        float: right;
+        cursor: pointer;
+      }
+    `;
   };
 
   render() {
@@ -172,84 +248,12 @@ class PowerWheelCard extends LitElement {
 
     return html`
       <style>
-        ha-card {
-          padding: 16px;
-        }
-        ha-card .header {
-          font-family: var(--paper-font-headline_-_font-family);
-          -webkit-font-smoothing: var(--paper-font-headline_-_-webkit-font-smoothing);
-          font-size: var(--paper-font-headline_-_font-size);
-          font-weight: var(--paper-font-headline_-_font-weight);
-          letter-spacing: var(--paper-font-headline_-_letter-spacing);
-          line-height: var(--paper-font-headline_-_line-height);
-          color: var(--primary-text-color);
-          padding: 4px 0 12px;
-          display: flex;
-          justify-content: space-between;
-        }
-        ha-card .wheel {
-          position: relative;
-        }
-        ha-card .row {
-          display: flex;
-          justify-content: center;
-          padding: 8px;
-          align-items: center;
-          height: 60px;
-        }
-        ha-card .cell {
-          text-align: center;
-          width: 150px;
-        }
-        ha-card .cell.position {
-          cursor: pointer;
-          font-weight: bold;
-        }
-        ha-card .cell.arrow {
-          color: var(--state-icon-unavailable-color, #bdbdbd);
-        }
-        .value {
-          min-height: 16px;
-        }
-        .unit-container {
-          position: absolute;
-          display: table;
-          width: 100%;
-          height: 230px;
-        }
-        .unit {
-          display: table-cell;
-          text-align: center;
-          vertical-align: middle;
-          font-size: calc(1.5 * var(--paper-font-headline_-_font-size));
-        }
-        .unit.toggle {
-          cursor: pointer;
-        }
-        ha-icon {
-          transition: color 0.5s ease-in-out, filter 0.3s ease-in-out;
-          color: var(--paper-item-icon-color, #44739e);
-          width: 48px;
-          height: 48px;
-        }
-        ha-icon.active {
-          color: var(--paper-item-icon-active-color, #fdd835);
-        }
-        ha-icon.inactive {
-          color: var(--state-icon-unavailable-color, #bdbdbd);
-        }
+        ${this.style}
         ha-icon.consuming {
           color: ${this.config.consuming_color};
         }
         ha-icon.producing {
           color: ${this.config.producing_color};
-        }
-        ha-icon#toggle-button {
-          padding-top: 4px;
-          width: 24px;
-          height: 24px;
-          float: right;
-          cursor: pointer;
         }
       </style>
       <ha-card>
