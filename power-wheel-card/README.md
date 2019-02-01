@@ -18,9 +18,10 @@ Features of the custom power-wheel-card:
 * Calculates the energy that your home is consuming: home energy.
   Input for the calculation is the (produced) solar energy and the consumed and produced grid energy.
 * Calculates the costs/savings for all the energy values.
-* Displays the transition between these power, energy and money values as arrows with a value.
+* Displays the transition between these power, energy and money values as arrows.
   E.g. if your solar power panels produce power, the arrow from solar to home turns active.
   And if your solar power panels produce enough power to deliver some back to the grid, the arrow from solar to grid turns active.
+* Zero values are suppressed. The values on the arrows are visible only when relevant. E.g. on a sunny day when part of your solar panel energy went to the grid and the other part went to your home.
 * Optionally uses icons of your own choice, which can be set by card parameters or taken from your `customize:` sensor settings.
 * Optionally colors the consuming icons yellow and the producing icons green. You can choose your own colors for consuming and producing.
 * Works for default theme and custom themes that use [standard CSS vars](https://github.com/home-assistant/home-assistant-polymer/blob/master/src/resources/ha-style.js).

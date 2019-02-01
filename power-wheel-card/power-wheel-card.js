@@ -4,9 +4,8 @@
  *
  */
 
-import {
-  LitElement, html
-} from 'https://unpkg.com/@polymer/lit-element@^0.6.5/lit-element.js?module';
+const LitElement = Object.getPrototypeOf(customElements.get("hui-error-entity-row"));
+const html = LitElement.prototype.html;
 
 class PowerWheelCard extends LitElement {
   static get properties() {
