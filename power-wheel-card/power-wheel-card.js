@@ -208,6 +208,9 @@ class PowerWheelCard extends LitElement {
         ha-card .cell.arrow {
           color: var(--state-icon-unavailable-color, #bdbdbd);
         }
+        .value {
+          min-height: 16px;
+        }
         .unit-container {
           position: absolute;
           display: table;
@@ -219,7 +222,6 @@ class PowerWheelCard extends LitElement {
           text-align: center;
           vertical-align: middle;
           font-size: calc(1.5 * var(--paper-font-headline_-_font-size));
-          font-weight: bold;
         }
         .unit.toggle {
           cursor: pointer;
@@ -280,7 +282,7 @@ class PowerWheelCard extends LitElement {
     return html`
       <div class="cell position" @click="${e => this._handleClick(e, positionObj.stateObj)}">
         <ha-icon class="${positionObj.classValue}" icon="${positionObj.icon}"></ha-icon>
-        <br/>${positionObj.val === 0 ? '' : positionObj.stateStr}&nbsp;
+        <div class="value">${positionObj.val === 0 ? '' : positionObj.stateStr}</div>
       </div>
     `;
   };
@@ -289,7 +291,7 @@ class PowerWheelCard extends LitElement {
     return html`
       <div class="cell arrow">
         <ha-icon class="${arrowObj.classValue}" icon="${arrowObj.icon}"></ha-icon>
-        <div>&nbsp;${arrowObj.val === 0 || arrowObj.val === hideValue ? '' : arrowObj.valueStr}&nbsp;</div>
+        <div class="value">${arrowObj.val === 0 || arrowObj.val === hideValue ? '' : arrowObj.valueStr}</div>
       </div>
     `;
   };
