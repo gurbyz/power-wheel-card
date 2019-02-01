@@ -3,6 +3,7 @@ Changelog
 ## 0.0.8
 ### Improvements
 * Immediate response when you click to toggle between views. 
+* Code improvements.
 
 ## 0.0.7
 ### Improvements
