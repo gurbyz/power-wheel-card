@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.0.9-dev
+### Improvements
+* Performance. Update only on specific hass changes.
+
 ## 0.0.8
 ### New features
 * All zero values are suppressed. And values on the arrows are visible only when relevant. E.g. on a sunny day when part of your produced solar panel energy was returned to the grid and the other part was consumed by your home.
