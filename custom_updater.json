@@ -1,6 +1,6 @@
 {
   "power-wheel-card": {
-    "updated_at": "2019-02-01",
+    "updated_at": "2019-02-02",
     "version": "0.0.8",
     "remote_location": "https://raw.githubusercontent.com/gurbyz/custom-cards-lovelace/master/power-wheel-card/power-wheel-card.js",
     "visit_repo": "https://github.com/gurbyz/custom-cards-lovelace/tree/master/power-wheel-card",
