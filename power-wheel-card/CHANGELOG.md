@@ -3,6 +3,7 @@ Changelog
 ## 0.0.9-dev
 ### Improvements
 * Performance. Update only on specific hass changes.
+* Don't suppress zero values on solar, home and grid icon; only on arrows.
 
 ## 0.0.8
 ### New features

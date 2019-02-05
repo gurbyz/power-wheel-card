@@ -293,16 +293,16 @@ class PowerWheelCard extends LitElement {
             ${this.config.energy_capable ? html`<div class="unit toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.unit}</div>` : html`<div class="unit">${this.unit}</div>`}
           </div>
           <div class="row">
-            ${this._cell(this.data.solar, 'position', 0)}
+            ${this._cell(this.data.solar, 'position')}
           </div>
           <div class="row">
             ${this._cell(this.data.solar2grid, 'arrow', this.data.solar.val)}
             ${this._cell(this.data.solar2home, 'arrow', this.data.solar.val)}
           </div>
           <div class="row">
-            ${this._cell(this.data.grid, 'position', 0)}
+            ${this._cell(this.data.grid, 'position')}
             ${this._cell(this.data.grid2home, 'arrow', this.data.grid.val)}
-            ${this._cell(this.data.home, 'position', 0)}
+            ${this._cell(this.data.home, 'position')}
           </div>
         </div>
       </ha-card>
@@ -317,7 +317,7 @@ class PowerWheelCard extends LitElement {
             @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
             title="${cellObj.hasSensor ? `More info${cellObj.stateObj.attributes.friendly_name ? ':\n' + cellObj.stateObj.attributes.friendly_name : ''}` : ''}">
         <ha-icon class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
-        <div class="value">${cellObj.val === 0 || cellObj.val === hideValue ? '' : cellObj.valueStr}</div>
+        <div class="value">${cellType === 'arrow' && (cellObj.val === 0 || cellObj.val === hideValue) ? '' : cellObj.valueStr}</div>
       </div>
     `;
   }
