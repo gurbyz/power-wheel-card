@@ -9,6 +9,7 @@ Features of the custom power-wheel-card:
 * Displays the three values (solar, grid and home) in 'a wheel'.
 * Has different views for showing power values, showing energy values and showing costs/savings: the *power view*, the *energy view* resp. the *money view*.
   The initial view can be set. Click the unit to switch between views.
+  You can specify a different card title per view.
 * Calculates the current power that you nett consume from the grid: grid power.
   Input for the calculation is the consumed grid power and the produced grid power.
 * Calculates the current power that your home is consuming: home power.
@@ -154,7 +155,10 @@ There are many more card parameters available, but it's advised to start with th
 | Parameter | Type | Mandatory? | Default | Description |
 |-----------|------|------------|---------|-------------|
 |type|string|**required**||Type of the card. Use `"custom:power-wheel-card"`.|
-|title|string|optional|`"Power wheel"`|Title of the card.|
+|title|string|optional|`"Power wheel"`|Title of the card in all views, if not overridden with a title per view.|
+|title_power|string|optional|Value of `title`.|Title of the card in *power view*.|
+|title_energy|string|optional|Value of `title`.|Title of the card in *energy view*.|
+|title_money|string|optional|Value of `title`.|Title of the card in *money view*.|
 |solar_power_entity|string|**required**||Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
 |grid_power_consumption_entity|string|**required**||Entity id of your grid power consumption sensor. E.g. `sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_power_production_entity|string|**required**||Entity id of your grid power production sensor. E.g. `sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR`. See requirements above.|
@@ -206,7 +210,9 @@ homeassistant:
 A more advanced example for in the `ui-lovelace.yaml` file:
 ```yaml
 - type: "custom:power-wheel-card"
-  title: "Power distribution"
+  title_power: "Power distribution"
+  title_energy: "Energy distribution"
+  title_money: "Energy costs/savings"
   solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
   grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
   grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR

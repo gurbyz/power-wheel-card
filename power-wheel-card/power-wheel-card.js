@@ -15,6 +15,7 @@ class PowerWheelCard extends LitElement {
       data: { type: Object },
       sensors: { type: Array },
       style: { type: String },
+      titles: { type: Array },
       unit: { type: String },
       view: { type: String },
     }
@@ -286,7 +287,7 @@ class PowerWheelCard extends LitElement {
       <ha-card>
         ${this.config.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recyclexxx" @click="${() => this._toggleView()}" title="Toggle view"></ha-icon>` : ''}        
         <div class="header">
-          ${this.config.title}
+          ${this.titles[this.view]}
         </div>
         <div class="wheel">
           <div class="unit-container">
@@ -381,6 +382,9 @@ class PowerWheelCard extends LitElement {
       throw new Error('You need to define a grid_power_production_entity');
     }
     config.title = config.title ? config.title : 'Power wheel';
+    config.title_power = config.title_power ? config.title_power : config.title;
+    config.title_energy = config.title_energy ? config.title_energy : config.title;
+    config.title_money = config.title_money ? config.title_money : config.title;
     if (config.power_decimals && !Number.isInteger(config.power_decimals)) {
       throw new Error('Power_decimals should be an integer');
     }
@@ -412,6 +416,11 @@ class PowerWheelCard extends LitElement {
     this.sensors = this._getSensors(config);
     console.info(`%cpower-wheel-card%cRegistered sensors: ${this.sensors.join(', ')}`, "color: green; font-weight: bold", "");
     this.view = config.initial_view;
+    this.titles = {
+      power: config.title_power,
+      energy: config.title_energy,
+      money: config.title_money
+    };
     this.config = config;
   }
 
