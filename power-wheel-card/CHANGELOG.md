@@ -4,6 +4,9 @@ Changelog
 ### Features
 * Set a different title per view by using optional card parameters `title_power`, `title_energy` and/or `title_money`.
   All three card parameters default to the value of card parameter `title`.
+* Auto-toggle between views. Click the recycle icon to turn on and off the auto-toggle.
+  The initial auto-toggle state can  be set by optional card parameter `initial_auto_toggle_view`.
+  The period between views can be set by optional card parameter `auto_toggle_view_period` (in seconds).
 ### Improvements
 * Performance. Update only on specific changes of the `hass` object.
 * Don't suppress zero values on solar, home and grid icon; only on arrows.

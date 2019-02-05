@@ -12,6 +12,8 @@ class PowerWheelCard extends LitElement {
     return {
       hass: { type: Object },
       config: { type: Object },
+      autoToggleView: { type: Boolean },
+      autoToggleViewTimerId: { type: Number },
       data: { type: Object },
       sensors: { type: Array },
       style: { type: String },
@@ -269,10 +271,13 @@ class PowerWheelCard extends LitElement {
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_power_consumption_entity, 'mdi:arrow-right', this.config.power_decimals);
     }
 
-    // todo: [Feature] Auto toggle view
-    // setTimeout(() => {
-    //   this._toggleView();
-    // }, 5000);
+    if (this.autoToggleView) {
+      this.autoToggleViewTimerId = this.autoToggleViewTimerId || setInterval(() => {
+        this._toggleViewHelper();
+      }, this.config.auto_toggle_view_period * 1000);
+    } else if (this.autoToggleViewTimerId) {
+      this.autoToggleViewTimerId = clearInterval(this.autoToggleViewTimerId);
+    }
 
     return html`
       <style>
@@ -285,7 +290,7 @@ class PowerWheelCard extends LitElement {
         }
       </style>
       <ha-card>
-        ${this.config.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recyclexxx" @click="${() => this._toggleView()}" title="Toggle view"></ha-icon>` : ''}        
+        ${this.config.energy_capable ? html`<ha-icon id="toggle-button" class="${this.autoToggleView ? `active` : `inactive`}" icon="mdi:recycle" @click="${() => this._toggleAutoToggleView()}" title="Turn ${this.autoToggleView ? `off` : `on`} auto-toggle"></ha-icon>` : ''}        
         <div class="header">
           ${this.titles[this.view]}
         </div>
@@ -333,7 +338,19 @@ class PowerWheelCard extends LitElement {
     this.shadowRoot.dispatchEvent(event);
   }
 
+  _toggleAutoToggleView() {
+    if (!this.autoToggleView) {
+      this._toggleViewHelper();
+    }
+    this.autoToggleView = !this.autoToggleView;
+  }
+
   _toggleView() {
+    this.autoToggleView = false;
+    this._toggleViewHelper();
+  }
+
+  _toggleViewHelper() {
     switch (this.view) {
       case 'power':
         this.view = 'energy';
@@ -412,7 +429,13 @@ class PowerWheelCard extends LitElement {
       && config.grid_energy_production_entity;
     config.money_capable = config.energy_capable && config.energy_price;
     config.initial_view = config.initial_view ? config.initial_view : 'power';
+    config.initial_auto_toggle_view = config.initial_auto_toggle_view ? (config.initial_auto_toggle_view == true) : false;
+    if (config.auto_toggle_view_period && !Number.isInteger(config.auto_toggle_view_period)) {
+      throw new Error('Auto_toggle_view_period should be an integer');
+    }
+    config.auto_toggle_view_period = config.auto_toggle_view_period ? config.auto_toggle_view_period : 10;
 
+    this.autoToggleView = config.initial_auto_toggle_view;
     this.sensors = this._getSensors(config);
     console.info(`%cpower-wheel-card%cRegistered sensors: ${this.sensors.join(', ')}`, "color: green; font-weight: bold", "");
     this.view = config.initial_view;
@@ -421,7 +444,7 @@ class PowerWheelCard extends LitElement {
       energy: config.title_energy,
       money: config.title_money
     };
-    this.config = config;
+    this.config = { ...config };
   }
 
   /* HA functions */

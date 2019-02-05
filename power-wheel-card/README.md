@@ -9,7 +9,10 @@ Features of the custom power-wheel-card:
 * Displays the three values (solar, grid and home) in 'a wheel'.
 * Has different views for showing power values, showing energy values and showing costs/savings: the *power view*, the *energy view* resp. the *money view*.
   The initial view can be set. Click the unit to switch between views.
-  You can specify a different card title per view.
+* Has options for a different card title per view.
+* Can auto-toggle between views.
+  Click the recycle icon to turn on or off the auto-toggle and use a card parameter for the initial state of the auto-toggle.
+  Has an option to set the period between views in seconds.
 * Calculates the current power that you nett consume from the grid: grid power.
   Input for the calculation is the consumed grid power and the produced grid power.
 * Calculates the current power that your home is consuming: home power.
@@ -177,6 +180,8 @@ There are many more card parameters available, but it's advised to start with th
 |consuming_color|string|optional|The yellow color for `--label-badge-yellow` from your theme. If not available, then `"#f4b400"` will be used.|CSS color code for consuming power icons if `color_icons` is set to `true`. Examples: `"orange"`, `"#ffcc66"` or `"rgb(200,100,50)"`. Don't forget the quotation marks when using the `#` color notation.|
 |producing_color|string|optional|The green color for `--label-badge-green` from your theme. If not available, then `"#0da035"` will be used.|CSS color code for producing power icons if `color_icons` is set to `true`.|
 |initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|
+|initial_auto_toggle_view|boolean|optional|`false`|The initial state of the auto-toggle for views.|
+|auto_toggle_view_period|integer|optional|`10`|Period between views when auto-toggle for views is turned on.|
 
 Some extra parameters for advanced users who use dynamic icons in their HA setup and want to use them in the power-wheel-card: 
 
@@ -231,6 +236,8 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   consuming_color: "#33ff33"
   producing_color: "#dd5500"
   initial_view: "energy"
+  initial_auto_toggle_view: true
+  auto_toggle_view_period: 5
 ```
 
 ## License
