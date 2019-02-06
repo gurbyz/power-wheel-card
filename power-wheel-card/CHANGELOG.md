@@ -1,6 +1,6 @@
 Changelog
 ====
-## 0.0.9-dev
+## 0.0.9
 ### Features
 * Set a different title per view by using optional card parameters `title_power`, `title_energy` and/or `title_money`.
   All three card parameters default to the value of card parameter `title`.
@@ -10,6 +10,7 @@ Changelog
 ### Improvements
 * Performance. Update only on specific changes of the `hass` object.
 * Don't suppress zero values on solar, home and grid icon; only on arrows.
+* More explanation in the readme about which sensor to use for what card parameter.
 
 ## 0.0.8
 ### New features

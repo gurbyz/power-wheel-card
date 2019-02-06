@@ -1,6 +1,6 @@
 /**
  *
- * power-wheel-card version 0.0.9-dev
+ * power-wheel-card version 0.0.9
  *
  */
 
@@ -437,7 +437,7 @@ class PowerWheelCard extends LitElement {
 
     this.autoToggleView = config.initial_auto_toggle_view;
     this.sensors = this._getSensors(config);
-    console.info(`%cpower-wheel-card%cRegistered sensors: ${this.sensors.join(', ')}`, "color: green; font-weight: bold", "");
+    // console.info(`%cpower-wheel-card%cRegistered sensors: ${this.sensors.join(', ')}`, "color: green; font-weight: bold", "");
     this.view = config.initial_view;
     this.titles = {
       power: config.title_power,
