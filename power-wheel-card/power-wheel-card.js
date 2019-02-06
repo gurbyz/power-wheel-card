@@ -1,6 +1,6 @@
 /**
  *
- * power-wheel-card version 0.0.8
+ * power-wheel-card version 0.0.9
  *
  */
 
@@ -10,14 +10,20 @@ const html = LitElement.prototype.html;
 class PowerWheelCard extends LitElement {
   static get properties() {
     return {
-      hass: Object,
-      config: Object,
+      hass: { type: Object },
+      config: { type: Object },
+      autoToggleView: { type: Boolean },
+      autoToggleViewTimerId: { type: Number },
       data: { type: Object },
+      sensors: { type: Array },
       style: { type: String },
+      titles: { type: Array },
       unit: { type: String },
       view: { type: String },
     }
-  };
+  }
+  
+  /* Card functions */
 
   _generateClass(producingIsPositive, value) {
     if (producingIsPositive) {
@@ -25,7 +31,7 @@ class PowerWheelCard extends LitElement {
     } else {
       return value > 0 ? 'consuming' : ((value < 0) ? 'producing' : 'inactive');
     }
-  };
+  }
 
   _makePositionObject(val, entity, configIcon, defaultIcon, decimals, producingIsPositive) {
     const valueStr = typeof val === 'undefined' ? 'unavailable' : val.toFixed(decimals);
@@ -40,8 +46,8 @@ class PowerWheelCard extends LitElement {
       icon,
       classValue,
       hasSensor: !!stateObj && this.view !== 'money',
-    };
-  };
+    }
+  }
 
   _makeArrowObject(val, entity, icon, decimals) {
     const valueStr = typeof val === 'undefined' ? 'unavailable' : val.toFixed(decimals);
@@ -56,42 +62,42 @@ class PowerWheelCard extends LitElement {
       classValue,
       hasSensor: !!stateObj,
     }
-  };
+  }
 
   _calculateSolarValue(solar_entity) {
     const solarStateObj = this.hass.states[solar_entity];
     return solarStateObj ? parseFloat(solarStateObj.state) : undefined;
-  };
+  }
 
   _calculateGrid2HomeValue(grid_consumption_entity) {
     const gridConsumptionStateObj = this.hass.states[grid_consumption_entity];
     return gridConsumptionStateObj ? parseFloat(gridConsumptionStateObj.state) : undefined;
-  };
+  }
 
   _calculateSolar2GridValue(grid_production_entity) {
     const gridProductionStateObj = this.hass.states[grid_production_entity];
     return gridProductionStateObj ? parseFloat(gridProductionStateObj.state) : undefined;
-  };
+  }
 
   _calculateGridValue() {
     return typeof this.data.grid2home.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
       ? this.data.grid2home.val - this.data.solar2grid.val : undefined;
-  };
+  }
 
   _calculateHomeValue() {
     return typeof this.data.solar.val !== 'undefined' && typeof this.data.grid.val !== 'undefined'
       ? this.data.solar.val + this.data.grid.val : undefined;
-  };
+  }
 
   _calculateSolar2HomeValue() {
     return typeof this.data.solar.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
       ? this.data.solar.val - this.data.solar2grid.val : undefined;
-  };
+  }
 
   _getEntityUnit(stateObj) {
     return stateObj && stateObj.attributes.unit_of_measurement
       ? stateObj.attributes.unit_of_measurement : 'unknown unit';
-  };
+  }
 
   _defineUnit(solar_entity, grid_consumption_entity, grid_production_entity) {
     const solarUnit = this._getEntityUnit(this.hass.states[solar_entity]);
@@ -99,7 +105,9 @@ class PowerWheelCard extends LitElement {
     const gridProductionUnit = this._getEntityUnit(this.hass.states[grid_production_entity]);
     return solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit
       ? (this.view === 'money' ? this.config.money_unit : solarUnit) : 'units not equal';
-  };
+  }
+
+  /* Lit functions */
 
   constructor() {
     super();
@@ -188,7 +196,23 @@ class PowerWheelCard extends LitElement {
         cursor: pointer;
       }
     `;
-  };
+  }
+
+  _sensorChangeDetected(oldValue) {
+    return this.sensors.reduce((change, sensor) => {
+      return change || this.hass.states[sensor].state !== oldValue.states[sensor].state;
+    }, false);
+  }
+
+  shouldUpdate(changedProperties) {
+    let update = true;
+    changedProperties.forEach((oldValue, propName) => {
+      if (propName === "hass" && oldValue) {
+        update = update && this._sensorChangeDetected(oldValue);
+      }
+    });
+    return update;
+  }
 
   render() {
     if (this.view === 'money' && this.config.money_capable) {
@@ -247,10 +271,13 @@ class PowerWheelCard extends LitElement {
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_power_consumption_entity, 'mdi:arrow-right', this.config.power_decimals);
     }
 
-    // todo: [Feature] Auto toggle view
-    // setTimeout(() => {
-    //   this._toggleView();
-    // }, 5000);
+    if (this.autoToggleView) {
+      this.autoToggleViewTimerId = this.autoToggleViewTimerId || setInterval(() => {
+        this._toggleViewHelper();
+      }, this.config.auto_toggle_view_period * 1000);
+    } else if (this.autoToggleViewTimerId) {
+      this.autoToggleViewTimerId = clearInterval(this.autoToggleViewTimerId);
+    }
 
     return html`
       <style>
@@ -263,30 +290,32 @@ class PowerWheelCard extends LitElement {
         }
       </style>
       <ha-card>
-        ${this.config.energy_capable ? html`<ha-icon id="toggle-button" icon="mdi:recyclexxx" @click="${() => this._toggleView()}" title="Toggle view"></ha-icon>` : ''}        
+        ${this.config.energy_capable ? html`<ha-icon id="toggle-button" class="${this.autoToggleView ? `active` : `inactive`}" icon="mdi:recycle" @click="${() => this._toggleAutoToggleView()}" title="Turn ${this.autoToggleView ? `off` : `on`} auto-toggle"></ha-icon>` : ''}        
         <div class="header">
-          ${this.config.title}
+          ${this.titles[this.view]}
         </div>
         <div class="wheel">
           <div class="unit-container">
             ${this.config.energy_capable ? html`<div class="unit toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.unit}</div>` : html`<div class="unit">${this.unit}</div>`}
           </div>
           <div class="row">
-            ${this._cell(this.data.solar, 'position', 0)}
+            ${this._cell(this.data.solar, 'position')}
           </div>
           <div class="row">
             ${this._cell(this.data.solar2grid, 'arrow', this.data.solar.val)}
             ${this._cell(this.data.solar2home, 'arrow', this.data.solar.val)}
           </div>
           <div class="row">
-            ${this._cell(this.data.grid, 'position', 0)}
+            ${this._cell(this.data.grid, 'position')}
             ${this._cell(this.data.grid2home, 'arrow', this.data.grid.val)}
-            ${this._cell(this.data.home, 'position', 0)}
+            ${this._cell(this.data.home, 'position')}
           </div>
         </div>
       </ha-card>
     `;
   }
+  
+  /* Template functions */
 
   _cell(cellObj, cellType, hideValue) {
     return html`
@@ -294,10 +323,10 @@ class PowerWheelCard extends LitElement {
             @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
             title="${cellObj.hasSensor ? `More info${cellObj.stateObj.attributes.friendly_name ? ':\n' + cellObj.stateObj.attributes.friendly_name : ''}` : ''}">
         <ha-icon class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
-        <div class="value">${cellObj.val === 0 || cellObj.val === hideValue ? '' : cellObj.valueStr}</div>
+        <div class="value">${cellType === 'arrow' && (cellObj.val === 0 || cellObj.val === hideValue) ? '' : cellObj.valueStr}</div>
       </div>
     `;
-  };
+  }
 
   _handleClick(stateObj) {
     const event = new Event('hass-more-info', {
@@ -309,7 +338,19 @@ class PowerWheelCard extends LitElement {
     this.shadowRoot.dispatchEvent(event);
   }
 
+  _toggleAutoToggleView() {
+    if (!this.autoToggleView) {
+      this._toggleViewHelper();
+    }
+    this.autoToggleView = !this.autoToggleView;
+  }
+
   _toggleView() {
+    this.autoToggleView = false;
+    this._toggleViewHelper();
+  }
+
+  _toggleViewHelper() {
     switch (this.view) {
       case 'power':
         this.view = 'energy';
@@ -328,6 +369,24 @@ class PowerWheelCard extends LitElement {
         this.view = 'power';
     }
   }
+  
+  /* Config functions */
+
+  _getSensors(config) {
+    return [
+      "solar_power_entity",
+      "grid_power_consumption_entity",
+      "grid_power_production_entity",
+      "solar_energy_entity",
+      "grid_energy_consumption_entity",
+      "grid_energy_production_entity",
+    ].reduce((sensors, cardParameter) => {
+      if (config.hasOwnProperty(cardParameter)) {
+        sensors.push(config[cardParameter]);
+      }
+      return sensors;
+    }, []);
+  }
 
   setConfig(config) {
     if (!config.solar_power_entity) {
@@ -340,6 +399,9 @@ class PowerWheelCard extends LitElement {
       throw new Error('You need to define a grid_power_production_entity');
     }
     config.title = config.title ? config.title : 'Power wheel';
+    config.title_power = config.title_power ? config.title_power : config.title;
+    config.title_energy = config.title_energy ? config.title_energy : config.title;
+    config.title_money = config.title_money ? config.title_money : config.title;
     if (config.power_decimals && !Number.isInteger(config.power_decimals)) {
       throw new Error('Power_decimals should be an integer');
     }
@@ -367,9 +429,25 @@ class PowerWheelCard extends LitElement {
       && config.grid_energy_production_entity;
     config.money_capable = config.energy_capable && config.energy_price;
     config.initial_view = config.initial_view ? config.initial_view : 'power';
+    config.initial_auto_toggle_view = config.initial_auto_toggle_view ? (config.initial_auto_toggle_view == true) : false;
+    if (config.auto_toggle_view_period && !Number.isInteger(config.auto_toggle_view_period)) {
+      throw new Error('Auto_toggle_view_period should be an integer');
+    }
+    config.auto_toggle_view_period = config.auto_toggle_view_period ? config.auto_toggle_view_period : 10;
+
+    this.autoToggleView = config.initial_auto_toggle_view;
+    this.sensors = this._getSensors(config);
+    // console.info(`%cpower-wheel-card%cRegistered sensors: ${this.sensors.join(', ')}`, "color: green; font-weight: bold", "");
     this.view = config.initial_view;
-    this.config = config;
+    this.titles = {
+      power: config.title_power,
+      energy: config.title_energy,
+      money: config.title_money
+    };
+    this.config = { ...config };
   }
+
+  /* HA functions */
 
   getCardSize() {
     return 5;
