@@ -194,6 +194,7 @@ There are many more card parameters available, but it's advised to start with th
 |initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|
 |initial_auto_toggle_view|boolean|optional|`false`|The initial state of the auto-toggle for views.|
 |auto_toggle_view_period|integer|optional|`10`|Period in seconds between views when auto-toggle for views is turned on.|
+|debug|boolean|optional|`false`|Logs debug information in the console of your browser. Useful when you want to investigate or register an issue.|
 
 Some extra parameters for advanced users who use dynamic icons in their HA setup and want to use them in the power-wheel-card: 
 

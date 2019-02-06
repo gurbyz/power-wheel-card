@@ -1,8 +1,11 @@
 /**
  *
- * power-wheel-card version 0.0.9
+ * power-wheel-card by Gerben ten Hove
+ * https://github.com/gurbyz/custom-cards-lovelace/tree/master/power-wheel-card
  *
  */
+
+const __VERSION = "0.0.10-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-error-entity-row"));
 const html = LitElement.prototype.html;
@@ -107,6 +110,12 @@ class PowerWheelCard extends LitElement {
       ? (this.view === 'money' ? this.config.money_unit : solarUnit) : 'units not equal';
   }
 
+  _logConsole(message) {
+    if (this.config.debug) {
+      console.info(`%cpower-wheel-card%c\n${message}`, "color: green; font-weight: bold", "");
+    }
+  }
+
   /* Lit functions */
 
   constructor() {
@@ -196,6 +205,21 @@ class PowerWheelCard extends LitElement {
         cursor: pointer;
       }
     `;
+  }
+
+  firstUpdated() {
+    if (this.config.debug) {
+      const scripts = document.getElementsByTagName("script");
+      let src = '404';
+      Object.keys(scripts).forEach((key) => {
+        let pos = scripts[key].src.indexOf("power-wheel-card.js");
+        if (pos !== -1) src = (scripts[key].src.substr(pos));
+      });
+      let line = `Version: ${__VERSION}\nLovelace resource: ${src}\nHA version: ${this.hass.config.version}`;
+      line += `\nReport issues here: https://github.com/gurbyz/custom-cards-lovelace/issues`;
+      line += `\nProcessed config: ${JSON.stringify(this.config, '', ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, '', ' ')}`;
+      this._logConsole(line);
+    }
   }
 
   _sensorChangeDetected(oldValue) {
@@ -425,19 +449,19 @@ class PowerWheelCard extends LitElement {
     if (config.initial_view && !['power', 'energy', 'money'].includes(config.initial_view)) {
       throw new Error("Initial_view should 'power', 'energy' or 'money'");
     }
-    config.energy_capable = config.solar_energy_entity && config.grid_energy_consumption_entity
-      && config.grid_energy_production_entity;
-    config.money_capable = config.energy_capable && config.energy_price;
+    config.energy_capable = !!(config.solar_energy_entity && config.grid_energy_consumption_entity
+      && config.grid_energy_production_entity);
+    config.money_capable = !!(config.energy_capable && config.energy_price);
     config.initial_view = config.initial_view ? config.initial_view : 'power';
     config.initial_auto_toggle_view = config.initial_auto_toggle_view ? (config.initial_auto_toggle_view == true) : false;
     if (config.auto_toggle_view_period && !Number.isInteger(config.auto_toggle_view_period)) {
       throw new Error('Auto_toggle_view_period should be an integer');
     }
     config.auto_toggle_view_period = config.auto_toggle_view_period ? config.auto_toggle_view_period : 10;
+    config.debug = config.debug ? config.debug : false;
 
     this.autoToggleView = config.initial_auto_toggle_view;
     this.sensors = this._getSensors(config);
-    // console.info(`%cpower-wheel-card%cRegistered sensors: ${this.sensors.join(', ')}`, "color: green; font-weight: bold", "");
     this.view = config.initial_view;
     this.titles = {
       power: config.title_power,

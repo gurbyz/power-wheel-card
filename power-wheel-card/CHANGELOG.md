@@ -1,5 +1,10 @@
 Changelog
 ====
+## 0.0.10-dev
+### Features
+* New `debug` parameter for logging debug information in the console of the browser.
+Useful when you want to investigate or register an issue. 
+
 ## 0.0.9
 ### Features
 * Set a different title per view by using optional card parameters `title_power`, `title_energy` and/or `title_money`.
