@@ -4,6 +4,8 @@ Changelog
 ### Features
 * New `debug` parameter for logging debug information in the console of the browser.
 Useful when you want to investigate or register an issue. 
+### Improvements
+* Replaced default grid icon `mdi:flash-circle` with `mdi:transmission-tower` which is available since HA 0.87.0.
 
 ## 0.0.9
 ### Features

@@ -251,7 +251,7 @@ class PowerWheelCard extends LitElement {
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
         'mdi:weather-sunny', this.config.money_decimals, true);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
-        'mdi:flash-circle', this.config.money_decimals, false);
+        'mdi:transmission-tower', this.config.money_decimals, false);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_energy_entity, this.config.home_icon,
         'mdi:home', this.config.money_decimals, false);
       this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, false, 'mdi:arrow-bottom-left', this.config.money_decimals);
@@ -269,7 +269,7 @@ class PowerWheelCard extends LitElement {
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.energy_decimals, true);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
-          'mdi:flash-circle', this.config.energy_decimals, false);
+          'mdi:transmission-tower', this.config.energy_decimals, false);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_energy_entity, this.config.home_icon,
           'mdi:home', this.config.energy_decimals, false);
       this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, this.config.grid_energy_production_entity, 'mdi:arrow-bottom-left', this.config.energy_decimals);
@@ -287,7 +287,7 @@ class PowerWheelCard extends LitElement {
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_power_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.power_decimals, true);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_power_entity, this.config.grid_icon,
-          'mdi:flash-circle', this.config.power_decimals, false);
+          'mdi:transmission-tower', this.config.power_decimals, false);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_power_entity, this.config.home_icon,
           'mdi:home', this.config.power_decimals, false);
       this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, this.config.grid_power_production_entity, 'mdi:arrow-bottom-left', this.config.power_decimals);
