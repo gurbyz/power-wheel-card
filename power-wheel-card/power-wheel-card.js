@@ -9,6 +9,7 @@ const __VERSION = "0.0.10-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-error-entity-row"));
 const html = LitElement.prototype.html;
+const css = LitElement.prototype.css;
 
 class PowerWheelCard extends LitElement {
   static get properties() {
@@ -19,11 +20,90 @@ class PowerWheelCard extends LitElement {
       autoToggleViewTimerId: { type: Number },
       data: { type: Object },
       sensors: { type: Array },
-      style: { type: String },
       titles: { type: Array },
       unit: { type: String },
       view: { type: String },
     }
+  }
+
+  static get styles() {
+    return css`
+      ha-card {
+        padding: 16px;
+      }
+      ha-card .header {
+        font-family: var(--paper-font-headline_-_font-family);
+        -webkit-font-smoothing: var(--paper-font-headline_-_-webkit-font-smoothing);
+        font-size: var(--paper-font-headline_-_font-size);
+        font-weight: var(--paper-font-headline_-_font-weight);
+        letter-spacing: var(--paper-font-headline_-_letter-spacing);
+        line-height: var(--paper-font-headline_-_line-height);
+        color: var(--primary-text-color);
+        padding: 4px 0 12px;
+        display: flex;
+        justify-content: space-between;
+      }
+      ha-card .wheel {
+        position: relative;
+      }
+      ha-card .row {
+        display: flex;
+        justify-content: center;
+        padding: 8px;
+        align-items: center;
+        height: 60px;
+      }
+      ha-card .cell {
+        text-align: center;
+        width: 150px;
+      }
+      ha-card .cell.position {
+        font-weight: bold;
+      }
+      ha-card .cell.arrow {
+        color: var(--state-icon-unavailable-color, #bdbdbd);
+      }
+      ha-card .cell.sensor {
+        cursor: pointer;
+      }
+      .value {
+          min-height: 16px;
+        }
+      .unit-container {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 230px;
+      }
+      .unit {
+        padding: 3px 10px;
+        font-size: calc(1.5 * var(--paper-font-headline_-_font-size));
+      }
+      .unit.toggle {
+        cursor: pointer;
+      }
+      ha-icon {
+        transition: color 0.5s ease-in-out, filter 0.3s ease-in-out;
+        color: var(--paper-item-icon-color, #44739e);
+        width: 48px;
+        height: 48px;
+      }
+      ha-icon.active {
+        color: var(--paper-item-icon-active-color, #fdd835);
+      }
+      ha-icon.inactive {
+        color: var(--state-icon-unavailable-color, #bdbdbd);
+      }
+      ha-icon#toggle-button {
+        padding-top: 4px;
+        width: 24px;
+        height: 24px;
+        float: right;
+        cursor: pointer;
+      }
+    `;
   }
   
   /* Card functions */
@@ -128,83 +208,6 @@ class PowerWheelCard extends LitElement {
       grid2home: {},
       home: {},
     };
-    this.style = `
-      ha-card {
-        padding: 16px;
-      }
-      ha-card .header {
-        font-family: var(--paper-font-headline_-_font-family);
-        -webkit-font-smoothing: var(--paper-font-headline_-_-webkit-font-smoothing);
-        font-size: var(--paper-font-headline_-_font-size);
-        font-weight: var(--paper-font-headline_-_font-weight);
-        letter-spacing: var(--paper-font-headline_-_letter-spacing);
-        line-height: var(--paper-font-headline_-_line-height);
-        color: var(--primary-text-color);
-        padding: 4px 0 12px;
-        display: flex;
-        justify-content: space-between;
-      }
-      ha-card .wheel {
-        position: relative;
-      }
-      ha-card .row {
-        display: flex;
-        justify-content: center;
-        padding: 8px;
-        align-items: center;
-        height: 60px;
-      }
-      ha-card .cell {
-        text-align: center;
-        width: 150px;
-      }
-      ha-card .cell.position {
-        font-weight: bold;
-      }
-      ha-card .cell.arrow {
-        color: var(--state-icon-unavailable-color, #bdbdbd);
-      }
-      ha-card .cell.sensor {
-        cursor: pointer;
-      }
-      .value {
-          min-height: 16px;
-        }
-      .unit-container {
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 230px;
-      }
-      .unit {
-        padding: 3px 10px;
-        font-size: calc(1.5 * var(--paper-font-headline_-_font-size));
-      }
-      .unit.toggle {
-        cursor: pointer;
-      }
-      ha-icon {
-        transition: color 0.5s ease-in-out, filter 0.3s ease-in-out;
-        color: var(--paper-item-icon-color, #44739e);
-        width: 48px;
-        height: 48px;
-      }
-      ha-icon.active {
-        color: var(--paper-item-icon-active-color, #fdd835);
-      }
-      ha-icon.inactive {
-        color: var(--state-icon-unavailable-color, #bdbdbd);
-      }
-      ha-icon#toggle-button {
-        padding-top: 4px;
-        width: 24px;
-        height: 24px;
-        float: right;
-        cursor: pointer;
-      }
-    `;
   }
 
   firstUpdated() {
@@ -305,7 +308,6 @@ class PowerWheelCard extends LitElement {
 
     return html`
       <style>
-        ${this.style}
         ha-icon.consuming {
           color: ${this.config.consuming_color};
         }
