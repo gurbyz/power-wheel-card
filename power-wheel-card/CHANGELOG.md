@@ -7,6 +7,7 @@ Useful when you want to investigate or register an issue.
 ### Improvements
 * Replaced default grid icon `mdi:flash-circle` with `mdi:transmission-tower` which is available since HA 0.87.0.
 * Render styles according to the latest lit-element in HA 0.87.0.
+* Validation on HA sensors in the config. Display an error when a sensor couldn't be found.
 
 ## 0.0.9
 ### Features

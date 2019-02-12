@@ -19,6 +19,7 @@ class PowerWheelCard extends LitElement {
       autoToggleView: { type: Boolean },
       autoToggleViewTimerId: { type: Number },
       data: { type: Object },
+      error: { type: String },
       sensors: { type: Array },
       titles: { type: Array },
       unit: { type: String },
@@ -102,6 +103,13 @@ class PowerWheelCard extends LitElement {
         height: 24px;
         float: right;
         cursor: pointer;
+      }
+      .error {
+        display: block;
+        background-color: #ef5350;
+        color: white;
+        padding: 8px;
+        font-weight: 500;
       }
     `;
   }
@@ -210,19 +218,33 @@ class PowerWheelCard extends LitElement {
     };
   }
 
+  _lovelaceResource() {
+    const scripts = document.getElementsByTagName("script");
+    let src = '404';
+    Object.keys(scripts).forEach((key) => {
+      let pos = scripts[key].src.indexOf("power-wheel-card.js");
+      if (pos !== -1) src = (scripts[key].src.substr(pos));
+    });
+    return src;
+  }
+
+  _validateSensors() {
+    this.sensors.forEach(sensor => {
+      if (!this.hass.states[sensor]) {
+        this.error = `HA Entity "${sensor}" couldn't be found. Check your power-wheel-card config.`;
+        console.error(this.error);
+      }
+    });
+  }
+
   firstUpdated() {
     if (this.config.debug) {
-      const scripts = document.getElementsByTagName("script");
-      let src = '404';
-      Object.keys(scripts).forEach((key) => {
-        let pos = scripts[key].src.indexOf("power-wheel-card.js");
-        if (pos !== -1) src = (scripts[key].src.substr(pos));
-      });
-      let line = `Version: ${__VERSION}\nLovelace resource: ${src}\nHA version: ${this.hass.config.version}`;
+      let line = `Version: ${__VERSION}\nLovelace resource: ${this._lovelaceResource()}\nHA version: ${this.hass.config.version}`;
       line += `\nReport issues here: https://github.com/gurbyz/custom-cards-lovelace/issues`;
       line += `\nProcessed config: ${JSON.stringify(this.config, '', ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, '', ' ')}`;
       this._logConsole(line);
     }
+    this._validateSensors();
   }
 
   _sensorChangeDetected(oldValue) {
@@ -316,6 +338,7 @@ class PowerWheelCard extends LitElement {
         }
       </style>
       <ha-card>
+        ${this.error ? html`<div class="error">Error: ${this.error}</div>` : ''}
         ${this.config.energy_capable ? html`<ha-icon id="toggle-button" class="${this.autoToggleView ? `active` : `inactive`}" icon="mdi:recycle" @click="${() => this._toggleAutoToggleView()}" title="Turn ${this.autoToggleView ? `off` : `on`} auto-toggle"></ha-icon>` : ''}        
         <div class="header">
           ${this.titles[this.view]}
