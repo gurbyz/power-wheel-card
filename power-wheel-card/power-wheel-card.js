@@ -21,8 +21,8 @@ class PowerWheelCard extends LitElement {
       data: { type: Object },
       error: { type: String },
       sensors: { type: Array },
-      titles: { type: Array },
-      unit: { type: String },
+      titles: { type: Object },
+      units: { type: Object },
       view: { type: String },
     }
   }
@@ -185,19 +185,6 @@ class PowerWheelCard extends LitElement {
       ? this.data.solar.val - this.data.solar2grid.val : undefined;
   }
 
-  _getEntityUnit(stateObj) {
-    return stateObj && stateObj.attributes.unit_of_measurement
-      ? stateObj.attributes.unit_of_measurement : 'unknown unit';
-  }
-
-  _defineUnit(solar_entity, grid_consumption_entity, grid_production_entity) {
-    const solarUnit = this._getEntityUnit(this.hass.states[solar_entity]);
-    const gridConsumptionUnit = this._getEntityUnit(this.hass.states[grid_consumption_entity]);
-    const gridProductionUnit = this._getEntityUnit(this.hass.states[grid_production_entity]);
-    return solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit
-      ? (this.view === 'money' ? this.config.money_unit : solarUnit) : 'units not equal';
-  }
-
   _logConsole(message) {
     if (this.config.debug) {
       console.info(`%cpower-wheel-card%c\n${message}`, "color: green; font-weight: bold", "");
@@ -216,6 +203,7 @@ class PowerWheelCard extends LitElement {
       grid2home: {},
       home: {},
     };
+    this.units = {};
   }
 
   _lovelaceResource() {
@@ -237,6 +225,34 @@ class PowerWheelCard extends LitElement {
     });
   }
 
+  _getSensorUnit(stateObj) {
+    return stateObj && stateObj.attributes.unit_of_measurement
+      ? stateObj.attributes.unit_of_measurement : 'unknown unit';
+  }
+
+  _defineUnit(solar_entity, grid_consumption_entity, grid_production_entity) {
+    const solarUnit = this._getSensorUnit(this.hass.states[solar_entity]);
+    const gridConsumptionUnit = this._getSensorUnit(this.hass.states[grid_consumption_entity]);
+    const gridProductionUnit = this._getSensorUnit(this.hass.states[grid_production_entity]);
+    if (solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit) {
+      return solarUnit;
+    } else {
+      this.error = `Attribute "unit_of_measurement" is not set for one of the sensors or not equal to the other sensor units.`;
+      console.error(this.error);
+      return 'error';
+    }
+  }
+
+  _defineUnits() {
+    return {
+      power: this._defineUnit(this.config.solar_power_entity,
+        this.config.grid_power_consumption_entity, this.config.grid_power_production_entity),
+      energy: this._defineUnit(this.config.solar_energy_entity,
+        this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity),
+      money: this.config.money_unit,
+    }
+  }
+
   firstUpdated() {
     if (this.config.debug) {
       let line = `Version: ${__VERSION}\nLovelace resource: ${this._lovelaceResource()}\nHA version: ${this.hass.config.version}`;
@@ -245,6 +261,7 @@ class PowerWheelCard extends LitElement {
       this._logConsole(line);
     }
     this._validateSensors();
+    this.units = this._defineUnits();
   }
 
   _sensorChangeDetected(oldValue) {
@@ -271,8 +288,6 @@ class PowerWheelCard extends LitElement {
       this.data.grid.val = this._calculateGridValue();
       this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
-      this.unit = this._defineUnit(this.config.solar_energy_entity,
-        this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity);
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
         'mdi:weather-sunny', this.config.money_decimals, true);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
@@ -289,8 +304,6 @@ class PowerWheelCard extends LitElement {
       this.data.grid.val = this._calculateGridValue();
       this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
-      this.unit = this._defineUnit(this.config.solar_energy_entity,
-        this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity);
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.energy_decimals, true);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
@@ -307,8 +320,6 @@ class PowerWheelCard extends LitElement {
       this.data.grid.val = this._calculateGridValue();
       this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
-      this.unit = this._defineUnit(this.config.solar_power_entity,
-        this.config.grid_power_consumption_entity, this.config.grid_power_production_entity);
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_power_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.power_decimals, true);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_power_entity, this.config.grid_icon,
@@ -345,7 +356,7 @@ class PowerWheelCard extends LitElement {
         </div>
         <div class="wheel">
           <div class="unit-container">
-            ${this.config.energy_capable ? html`<div class="unit toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.unit}</div>` : html`<div class="unit">${this.unit}</div>`}
+            ${this.config.energy_capable ? html`<div class="unit toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.units[this.view]}</div>` : html`<div class="unit">${this.units[this.view]}</div>`}
           </div>
           <div class="row">
             ${this._cell(this.data.solar, 'position')}
