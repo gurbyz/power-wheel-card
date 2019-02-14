@@ -1,0 +1,26 @@
+{
+  "name": "custom-cards-lovelace",
+  "homepage": "https://github.com/gurbyz/custom-cards-lovelace",
+  "authors": [
+    "Gerben ten Hove"
+  ],
+  "description": "Custom cards for the Lovelace UI of Home Assistant",
+  "main": "",
+  "keywords": [
+    "home assistant",
+    "lovelace",
+    "custom card"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "web-component-tester": "^6.5.0",
+    "webcomponentsjs": "^2.2.7"
+  }
+}
