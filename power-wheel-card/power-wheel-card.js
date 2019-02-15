@@ -28,7 +28,7 @@ class PowerWheelCard extends LitElement {
   }
 
   static get styles() {
-    return css`
+    return [css`
       ha-card {
         padding: 16px;
       }
@@ -111,7 +111,7 @@ class PowerWheelCard extends LitElement {
         padding: 8px;
         font-weight: 500;
       }
-    `;
+    `];
   }
   
   /* Card functions */
@@ -209,9 +209,14 @@ class PowerWheelCard extends LitElement {
   _lovelaceResource() {
     const scripts = document.getElementsByTagName("script");
     let src = '404';
-    Object.keys(scripts).forEach((key) => {
+    Object.keys(scripts).some((key) => {
       let pos = scripts[key].src.indexOf("power-wheel-card.js");
-      if (pos !== -1) src = (scripts[key].src.substr(pos));
+      if (pos !== -1) {
+        src = scripts[key].src.substr(pos);
+        return true;
+      } else {
+        return false;
+      }
     });
     return src;
   }
@@ -271,11 +276,15 @@ class PowerWheelCard extends LitElement {
   }
 
   shouldUpdate(changedProperties) {
+    // Don't update when there is a new value for a hass property that's not a registered sensor.
+    // Update in all other cases, e.g. when there is a change of config or old values are undefined.
     let update = true;
-    changedProperties.forEach((oldValue, propName) => {
+    [ ...changedProperties.keys() ].some((propName) => {
+      const oldValue = changedProperties.get(propName);
       if (propName === "hass" && oldValue) {
         update = update && this._sensorChangeDetected(oldValue);
       }
+      return !update;
     });
     return update;
   }
