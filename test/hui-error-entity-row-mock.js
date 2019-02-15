@@ -1,4 +1,6 @@
-import { LitElement } from "lit-element";
+import { LitElement, css as litCss } from "lit-element";
+
+LitElement.prototype.css = litCss;
 
 class HuiErrorEntityRow extends LitElement {}
 
