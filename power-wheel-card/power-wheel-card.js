@@ -203,6 +203,8 @@ class PowerWheelCard extends LitElement {
       grid2home: {},
       home: {},
     };
+    this.sensors = [];
+    this.titles = {};
     this.units = {};
   }
 
@@ -360,7 +362,7 @@ class PowerWheelCard extends LitElement {
       <ha-card>
         ${this.error ? html`<div class="error">Error: ${this.error}</div>` : ''}
         ${this.config.energy_capable ? html`<ha-icon id="toggle-button" class="${this.autoToggleView ? `active` : `inactive`}" icon="mdi:recycle" @click="${() => this._toggleAutoToggleView()}" title="Turn ${this.autoToggleView ? `off` : `on`} auto-toggle"></ha-icon>` : ''}        
-        <div class="header">
+        <div id="title" class="header">
           ${this.titles[this.view]}
         </div>
         <div class="wheel">
@@ -368,16 +370,16 @@ class PowerWheelCard extends LitElement {
             ${this.config.energy_capable ? html`<div class="unit toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.units[this.view]}</div>` : html`<div class="unit">${this.units[this.view]}</div>`}
           </div>
           <div class="row">
-            ${this._cell(this.data.solar, 'position')}
+            ${this._cell('solar', this.data.solar, 'position')}
           </div>
           <div class="row">
-            ${this._cell(this.data.solar2grid, 'arrow', this.data.solar.val)}
-            ${this._cell(this.data.solar2home, 'arrow', this.data.solar.val)}
+            ${this._cell('solar2grid', this.data.solar2grid, 'arrow', this.data.solar.val)}
+            ${this._cell('solar2home', this.data.solar2home, 'arrow', this.data.solar.val)}
           </div>
           <div class="row">
-            ${this._cell(this.data.grid, 'position')}
-            ${this._cell(this.data.grid2home, 'arrow', this.data.grid.val)}
-            ${this._cell(this.data.home, 'position')}
+            ${this._cell('grid', this.data.grid, 'position')}
+            ${this._cell('grid2home', this.data.grid2home, 'arrow', this.data.grid.val)}
+            ${this._cell('home', this.data.home, 'position')}
           </div>
         </div>
       </ha-card>
@@ -386,13 +388,14 @@ class PowerWheelCard extends LitElement {
   
   /* Template functions */
 
-  _cell(cellObj, cellType, hideValue) {
+  _cell(id, cellObj, cellType, hideValue) {
     return html`
-      <div class="cell ${cellType} ${cellObj.hasSensor ? 'sensor' : ''}" 
+      <div id="cell-${id}"
+            class="cell ${cellType} ${cellObj.hasSensor ? 'sensor' : ''}" 
             @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
             title="${cellObj.hasSensor ? `More info${cellObj.stateObj.attributes.friendly_name ? ':\n' + cellObj.stateObj.attributes.friendly_name : ''}` : ''}">
-        <ha-icon class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
-        <div class="value">${cellType === 'arrow' && (cellObj.val === 0 || cellObj.val === hideValue) ? '' : cellObj.valueStr}</div>
+        <ha-icon id="icon-${id}" class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
+        <div id="value-${id}" class="value">${cellType === 'arrow' && (cellObj.val === 0 || cellObj.val === hideValue) ? '' : cellObj.valueStr}</div>
       </div>
     `;
   }
