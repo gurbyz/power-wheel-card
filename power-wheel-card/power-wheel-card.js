@@ -78,11 +78,11 @@ class PowerWheelCard extends LitElement {
         width: 100%;
         height: 230px;
       }
-      .unit {
+      #unit {
         padding: 3px 10px;
         font-size: calc(1.5 * var(--paper-font-headline_-_font-size));
       }
-      .unit.toggle {
+      #unit.toggle {
         cursor: pointer;
       }
       ha-icon {
@@ -367,7 +367,7 @@ class PowerWheelCard extends LitElement {
         </div>
         <div class="wheel">
           <div class="unit-container">
-            ${this.config.energy_capable ? html`<div class="unit toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.units[this.view]}</div>` : html`<div class="unit">${this.units[this.view]}</div>`}
+            ${this.config.energy_capable ? html`<div id="unit" class="toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.units[this.view]}</div>` : html`<div id="unit">${this.units[this.view]}</div>`}
           </div>
           <div class="row">
             ${this._cell('solar', this.data.solar, 'position')}
