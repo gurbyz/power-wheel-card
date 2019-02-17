@@ -19,6 +19,8 @@ class PowerWheelCard extends LitElement {
       autoToggleView: { type: Boolean },
       autoToggleViewTimerId: { type: Number },
       data: { type: Object },
+      energy_capable: { type: Boolean },
+      money_capable: { type: Boolean },
       error: { type: String },
       sensors: { type: Array },
       titles: { type: Object },
@@ -292,7 +294,7 @@ class PowerWheelCard extends LitElement {
   }
 
   render() {
-    if (this.view === 'money' && this.config.money_capable) {
+    if (this.view === 'money' && this.money_capable) {
       this.data.solar.val = this.config.energy_price * this._calculateSolarValue(this.config.solar_energy_entity);
       this.data.grid2home.val = this.config.energy_price * this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity);
       this.data.solar2grid.val = this.config.energy_price * this._calculateSolar2GridValue(this.config.grid_energy_production_entity);
@@ -308,7 +310,7 @@ class PowerWheelCard extends LitElement {
       this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, false, 'mdi:arrow-bottom-left', this.config.money_decimals);
       this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', this.config.money_decimals);
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, false, 'mdi:arrow-right', this.config.money_decimals);
-    } else if (this.view === 'energy' && this.config.energy_capable) {
+    } else if (this.view === 'energy' && this.energy_capable) {
       this.data.solar.val = this._calculateSolarValue(this.config.solar_energy_entity);
       this.data.grid2home.val = this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity);
       this.data.solar2grid.val = this._calculateSolar2GridValue(this.config.grid_energy_production_entity);
@@ -361,13 +363,13 @@ class PowerWheelCard extends LitElement {
       </style>
       <ha-card>
         ${this.error ? html`<div class="error">Error: ${this.error}</div>` : ''}
-        ${this.config.energy_capable ? html`<ha-icon id="toggle-button" class="${this.autoToggleView ? `active` : `inactive`}" icon="mdi:recycle" @click="${() => this._toggleAutoToggleView()}" title="Turn ${this.autoToggleView ? `off` : `on`} auto-toggle"></ha-icon>` : ''}        
+        ${this.energy_capable ? html`<ha-icon id="toggle-button" class="${this.autoToggleView ? `active` : `inactive`}" icon="mdi:recycle" @click="${() => this._toggleAutoToggleView()}" title="Turn ${this.autoToggleView ? `off` : `on`} auto-toggle"></ha-icon>` : ''}        
         <div id="title" class="header">
           ${this.titles[this.view]}
         </div>
         <div class="wheel">
           <div class="unit-container">
-            ${this.config.energy_capable ? html`<div id="unit" class="toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.units[this.view]}</div>` : html`<div id="unit">${this.units[this.view]}</div>`}
+            ${this.energy_capable ? html`<div id="unit" class="toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.units[this.view]}</div>` : html`<div id="unit">${this.units[this.view]}</div>`}
           </div>
           <div class="row">
             ${this._cell('solar', this.data.solar, 'position')}
@@ -428,7 +430,7 @@ class PowerWheelCard extends LitElement {
         this.view = 'energy';
         break;
       case 'energy':
-        if (this.config.money_capable) {
+        if (this.money_capable) {
           this.view = 'money';
         } else {
           this.view = 'power';
@@ -497,9 +499,6 @@ class PowerWheelCard extends LitElement {
     if (config.initial_view && !['power', 'energy', 'money'].includes(config.initial_view)) {
       throw new Error("Initial_view should 'power', 'energy' or 'money'");
     }
-    config.energy_capable = !!(config.solar_energy_entity && config.grid_energy_consumption_entity
-      && config.grid_energy_production_entity);
-    config.money_capable = !!(config.energy_capable && config.energy_price);
     config.initial_view = config.initial_view ? config.initial_view : 'power';
     config.initial_auto_toggle_view = config.initial_auto_toggle_view ? (config.initial_auto_toggle_view == true) : false;
     if (config.auto_toggle_view_period && !Number.isInteger(config.auto_toggle_view_period)) {
@@ -508,6 +507,9 @@ class PowerWheelCard extends LitElement {
     config.auto_toggle_view_period = config.auto_toggle_view_period ? config.auto_toggle_view_period : 10;
     config.debug = config.debug ? config.debug : false;
 
+    this.energy_capable = !!(config.solar_energy_entity && config.grid_energy_consumption_entity
+      && config.grid_energy_production_entity);
+    this.money_capable = !!(this.energy_capable && config.energy_price);
     this.autoToggleView = config.initial_auto_toggle_view;
     this.sensors = this._getSensors(config);
     this.view = config.initial_view;
