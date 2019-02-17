@@ -240,33 +240,38 @@ class PowerWheelCard extends LitElement {
   _validateSensors() {
     this.sensors.forEach(sensor => {
       if (!this.hass.states[sensor]) {
-        this._addMessage('error', `HA Entity "${sensor}" couldn't be found. Check your power-wheel-card config.`);
+        this._addMessage('error', `Entity "${sensor}" not found in HA.`);
       }
     });
   }
 
-  _getSensorUnit(stateObj) {
-    return stateObj && stateObj.attributes.unit_of_measurement
-      ? stateObj.attributes.unit_of_measurement : 'unknown unit';
+  _getSensorUnit(entity) {
+    const stateObj = this.hass.states[entity];
+    const unit = stateObj && stateObj.attributes.unit_of_measurement
+      ? stateObj.attributes.unit_of_measurement : undefined;
+    if (!unit) {
+      this._addMessage('error', `Attribute "unit_of_measurement" for the entity "${entity}" not found in HA.`);
+    }
+    return unit;
   }
 
-  _defineUnit(solar_entity, grid_consumption_entity, grid_production_entity) {
-    const solarUnit = this._getSensorUnit(this.hass.states[solar_entity]);
-    const gridConsumptionUnit = this._getSensorUnit(this.hass.states[grid_consumption_entity]);
-    const gridProductionUnit = this._getSensorUnit(this.hass.states[grid_production_entity]);
+  _defineUnit(viewName, solar_entity, grid_consumption_entity, grid_production_entity) {
+    const solarUnit = this._getSensorUnit(solar_entity);
+    const gridConsumptionUnit = this._getSensorUnit(grid_consumption_entity);
+    const gridProductionUnit = this._getSensorUnit(grid_production_entity);
     if (solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit) {
       return solarUnit;
     } else {
-      this._addMessage('error', `Attribute "unit_of_measurement" is not set for one of the sensors or not equal to the other sensor units.`);
+      this._addMessage('error', `Units not equal for all sensors for the ${viewName} view.`);
       return 'error';
     }
   }
 
   _defineUnits() {
     return {
-      power: this._defineUnit(this.config.solar_power_entity,
+      power: this._defineUnit('Power', this.config.solar_power_entity,
         this.config.grid_power_consumption_entity, this.config.grid_power_production_entity),
-      energy: this._defineUnit(this.config.solar_energy_entity,
+      energy: this._defineUnit('Energy', this.config.solar_energy_entity,
         this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity),
       money: this.config.money_unit,
     }

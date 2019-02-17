@@ -4,7 +4,7 @@ Changelog
 ### New features
 * New `debug` parameter for logging debug information in the console of the browser.
 Useful when you want to investigate or register an issue.
-* Errors and warnings are displayed in the card.
+* Errors and warnings are displayed in the card if they occur after the config step of HA Lovelace.
 ### Improvements
 * Setup for automated testing of the card.
 * Replaced default grid icon `mdi:flash-circle` with `mdi:transmission-tower` which is available since HA 0.87.0.
