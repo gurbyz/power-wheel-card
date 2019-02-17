@@ -21,7 +21,7 @@ class PowerWheelCard extends LitElement {
       data: { type: Object },
       energy_capable: { type: Boolean },
       money_capable: { type: Boolean },
-      error: { type: String },
+      messages: { type: Array },
       sensors: { type: Array },
       titles: { type: Object },
       units: { type: Object },
@@ -106,12 +106,18 @@ class PowerWheelCard extends LitElement {
         float: right;
         cursor: pointer;
       }
-      .error {
+      .message {
         display: block;
-        background-color: #ef5350;
         color: white;
         padding: 8px;
         font-weight: 500;
+        margin-bottom: 3px;
+      }
+      .message.error {
+        background-color: #ef5350;
+      }
+      .message.warn {
+        background-color: #fdd835;
       }
     `];
   }
@@ -205,6 +211,7 @@ class PowerWheelCard extends LitElement {
       grid2home: {},
       home: {},
     };
+    this.messages = [];
     this.sensors = [];
     this.titles = {};
     this.units = {};
@@ -225,11 +232,15 @@ class PowerWheelCard extends LitElement {
     return src;
   }
 
+  _addMessage(type, text) {
+    this.messages = [ ...this.messages, { type: type, text: text } ];
+    console[type](text);
+  }
+
   _validateSensors() {
     this.sensors.forEach(sensor => {
       if (!this.hass.states[sensor]) {
-        this.error = `HA Entity "${sensor}" couldn't be found. Check your power-wheel-card config.`;
-        console.error(this.error);
+        this._addMessage('error', `HA Entity "${sensor}" couldn't be found. Check your power-wheel-card config.`);
       }
     });
   }
@@ -246,8 +257,7 @@ class PowerWheelCard extends LitElement {
     if (solarUnit === gridConsumptionUnit && gridConsumptionUnit === gridProductionUnit) {
       return solarUnit;
     } else {
-      this.error = `Attribute "unit_of_measurement" is not set for one of the sensors or not equal to the other sensor units.`;
-      console.error(this.error);
+      this._addMessage('error', `Attribute "unit_of_measurement" is not set for one of the sensors or not equal to the other sensor units.`);
       return 'error';
     }
   }
@@ -268,6 +278,7 @@ class PowerWheelCard extends LitElement {
       line += `\nReport issues here: https://github.com/gurbyz/custom-cards-lovelace/issues`;
       line += `\nProcessed config: ${JSON.stringify(this.config, '', ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, '', ' ')}`;
       this._logConsole(line);
+      this._addMessage('warn', 'Debug mode is on.');
     }
     this._validateSensors();
     this.units = this._defineUnits();
@@ -362,7 +373,7 @@ class PowerWheelCard extends LitElement {
         }
       </style>
       <ha-card>
-        ${this.error ? html`<div class="error">Error: ${this.error}</div>` : ''}
+        ${this.messages.length ? this.messages.map((message) => { return html`<div class="message ${message.type}">${message.text}</div>`}) : ''}
         ${this.energy_capable ? html`<ha-icon id="toggle-button" class="${this.autoToggleView ? `active` : `inactive`}" icon="mdi:recycle" @click="${() => this._toggleAutoToggleView()}" title="Turn ${this.autoToggleView ? `off` : `on`} auto-toggle"></ha-icon>` : ''}        
         <div id="title" class="header">
           ${this.titles[this.view]}

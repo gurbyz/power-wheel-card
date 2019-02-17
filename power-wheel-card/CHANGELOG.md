@@ -1,22 +1,22 @@
 Changelog
 ====
 ## 0.0.10-dev
-### Features
+### New features
 * New `debug` parameter for logging debug information in the console of the browser.
 Useful when you want to investigate or register an issue.
-* Error display in the card.
+* Errors and warnings are displayed in the card.
 ### Improvements
+* Setup for automated testing of the card.
 * Replaced default grid icon `mdi:flash-circle` with `mdi:transmission-tower` which is available since HA 0.87.0.
 * Render styles according to version 2.0.0-rc.5 of lit-element in HA 0.87.0.
 * Validation on HA sensors in the config. Display an error when a sensor couldn't be found.
 E.g. when a user makes a typo in the config.
 * Improved error display on validation of units of sensors.
 * Performance improvement on unit definition. Define once instead of on each render.
-* Setup for automated testing of the card.
 * Code improvements. Small performance improvements.
 
 ## 0.0.9
-### Features
+### New features
 * Set a different title per view by using optional card parameters `title_power`, `title_energy` and/or `title_money`.
   All three card parameters default to the value of card parameter `title`.
 * Auto-toggle between views. Click the recycle icon to turn on and off the auto-toggle.
