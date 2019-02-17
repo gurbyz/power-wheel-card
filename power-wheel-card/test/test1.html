@@ -52,30 +52,24 @@
       };
 
       card.setAttribute('hass', JSON.stringify(hass));
-      card.setAttribute('config', JSON.stringify(config));
-
-      document.addEventListener('WebComponentsReady', () => {
-        card.setConfig(config);
-      });
+      card.setConfig(config);
 
     });
 
-    // todo: Some tests are done too early; the value isn't there yet.
-
     test('uses correct color values', (done) => {
-      // If correct values, the other tests can just check for class values 'inactive', 'consuming' and 'producing'.
+      // After testing this, the other tests can just check for class values 'inactive', 'consuming' and 'producing'.
       flush(() => {
-        // assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('#icon-solar'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Solar icon color should be #bdbdbd');
-        // assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('#icon-grid'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Grid icon color should be #bdbdbd');
-        // assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('#icon-home'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Home icon color should be #bdbdbd');
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('#icon-solar'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Solar icon color should be #bdbdbd');
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('#icon-grid'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Grid icon color should be #bdbdbd');
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('#icon-home'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Home icon color should be #bdbdbd');
         done();
       });
     });
 
     test('displays correct values', (done) => {
       flush(() => {
-        // assert.equal(card.shadowRoot.querySelector('#title').innerText, "Power wheel");
-        // assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W");
+        assert.equal(card.shadowRoot.querySelector('#title').innerText, "Power wheel");
+        assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W");
         done();
       });
     });
