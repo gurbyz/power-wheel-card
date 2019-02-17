@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../bower_components/web-component-tester/browser.js"></script>
+  <script type="module" src="../../test/hui-error-entity-row-mock.js"></script>
+  <script type="module" src="../power-wheel-card.js"></script>
+</head>
+<body>
+<test-fixture id="simple">
+  <template>
+    <power-wheel-card></power-wheel-card>
+  </template>
+</test-fixture>
+<script>
+  suite('<power-wheel-card> with icon coloring', () => {
+    let card, hass, config;
+
+    setup(() => {
+      card = fixture('simple');
+      config = {
+        type: "custom:power-wheel-card",
+        solar_power_entity: "sensor.solar_power",
+        grid_power_consumption_entity: "sensor.grid_power_consumption",
+        grid_power_production_entity: "sensor.grid_power_production",
+        color_icons: true,
+      };
+      hass = {
+        states: {
+          "sensor.solar_power" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.solar_power",
+            state: "500",
+          },
+          "sensor.grid_power_consumption" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.grid_power_consumption",
+            state: "1800",
+          },
+          "sensor.grid_power_production" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.grid_power_production",
+            state: "0",
+          },
+        },
+      };
+      card.setAttribute('hass', JSON.stringify(hass));
+      card.setConfig(config);
+    });
+
+    test('has config values', (done) => {
+      flush(() => {
+        assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');
+        assert.equal(card.config.consuming_color, 'var(--label-badge-yellow, #f4b400)', 'Card parameter consuming_color should be yellow');
+        assert.equal(card.config.producing_color, 'var(--label-badge-green, #0da035)', 'Card parameter producing_color should be green');
+        done();
+      });
+    });
+
+    test('uses color values', (done) => {
+      flush(() => {
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(244, 180, 0)', 'Consuming icon color should be #f4b400');
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.producing'), null).getPropertyValue('color'), 'rgb(13, 160, 53)', 'Producing icon color should be #0da035');
+        done();
+      });
+    });
+
+  });
+</script>
+</body>
+</html>
