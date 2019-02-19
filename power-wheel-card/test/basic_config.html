@@ -107,8 +107,7 @@
     test('displays values', (done) => {
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#title').innerText, "Power wheel");
-        // todo: Test timing issue
-        // assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W");
+        assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W");
         done();
       });
     });

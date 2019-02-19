@@ -249,7 +249,7 @@ class PowerWheelCard extends LitElement {
     const stateObj = this.hass.states[entity];
     const unit = stateObj && stateObj.attributes.unit_of_measurement
       ? stateObj.attributes.unit_of_measurement : undefined;
-    if (!unit) {
+    if (stateObj && !unit) {
       this._addMessage('error', `Attribute "unit_of_measurement" for the entity "${entity}" not found in HA.`);
     }
     return unit;
