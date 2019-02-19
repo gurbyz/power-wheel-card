@@ -7,7 +7,7 @@
 
 const __VERSION = "0.0.10-dev";
 
-const LitElement = Object.getPrototypeOf(customElements.get("hui-error-entity-row"));
+const LitElement = Object.getPrototypeOf(customElements.get("home-assistant-main"));
 const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 

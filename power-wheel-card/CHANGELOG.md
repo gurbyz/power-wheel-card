@@ -14,6 +14,8 @@ E.g. when a user makes a typo in the config.
 * Improved error display on validation of units of sensors.
 * Performance improvement on unit definition. Define once instead of on each render.
 * Code improvements. Small performance improvements.
+### Fixes
+* Fix for disappearing `hui-error-entity-row` in HA 0.88.0 which would break the card.
 
 ## 0.0.9
 ### New features
