@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.0.10-dev";
+const __VERSION = "0.0.10";
 
 const LitElement = Object.getPrototypeOf(customElements.get("home-assistant-main"));
 const html = LitElement.prototype.html;
