@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../bower_components/web-component-tester/browser.js"></script>
+  <script type="module" src="../../test/home-assistant-main-mock.js"></script>
+  <script type="module" src="../power-wheel-card.js"></script>
+</head>
+<body>
+<test-fixture id="simple">
+  <template>
+    <power-wheel-card></power-wheel-card>
+  </template>
+</test-fixture>
+<script>
+  suite('<power-wheel-card> with most basic config', () => {
+    let card, hass, config;
+
+    /** Tests are extended in energy_capable. **/
+
+    setup(() => {
+      card = fixture('simple');
+      config = {
+        type: "custom:power-wheel-card",
+        solar_power_entity: "sensor.solar_power",
+        grid_power_consumption_entity: "sensor.grid_power_consumption",
+        grid_power_production_entity: "sensor.grid_power_production",
+      };
+      hass = {
+        states: {
+          "sensor.solar_power" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.solar_power",
+            state: "500.1",
+          },
+          "sensor.grid_power_consumption" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.grid_power_consumption",
+            state: "1799.9",
+          },
+          "sensor.grid_power_production" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.grid_power_production",
+            state: "0",
+          },
+        },
+      };
+      card.setAttribute('hass', JSON.stringify(hass));
+      card.setConfig(config);
+    });
+
+    const setCardProducingToGrid = () => {
+      hass.states['sensor.grid_power_consumption'].state = "0";
+      hass.states['sensor.grid_power_production'].state = "50";
+      card.setAttribute('hass', JSON.stringify(hass));
+    };
+
+    test('has set default config values', (done) => {
+      flush(() => {
+        assert.isFalse(card.config.color_icons, 'Card parameter color_icons should be default false');
+        assert.isFalse(card.config.debug, 'Card parameter debug should be default false');
+        assert.equal(card.config.title, 'Power wheel', 'Card parameter title should have default value');
+        assert.equal(card.config.title_power, 'Power wheel', 'Card parameter title_power should have default value');
+        assert.equal(card.config.title_energy, 'Power wheel', 'Card parameter title_energy should have default value');
+        assert.equal(card.config.title_money, 'Power wheel', 'Card parameter title_money should have default value');
+        assert.equal(card.config.power_decimals, 0, 'Card parameter power_decimals should have default value');
+        assert.equal(card.config.energy_decimals, 3, 'Card parameter energy_decimals should have default value');
+        assert.equal(card.config.money_decimals, 2, 'Card parameter money_decimals should have default value');
+        assert.equal(card.config.money_unit, '€', 'Card parameter money_unit should have default value');
+        assert.equal(card.config.consuming_color, 'var(--state-icon-unavailable-color, #bdbdbd)', 'Card parameter consuming_color should have default value');
+        assert.equal(card.config.producing_color, 'var(--state-icon-unavailable-color, #bdbdbd)', 'Card parameter producing_color should have default value');
+        assert.equal(card.config.initial_view, 'power', 'Card parameter initial_view should have default value');
+        assert.isFalse(card.config.initial_auto_toggle_view, 'Card parameter initial_auto_toggle_view should be default false');
+        assert.equal(card.config.auto_toggle_view_period, 10, 'Card parameter auto_toggle_view_period should have default value');
+        done();
+      });
+    });
+
+    test('has set card property values after setConfig', (done) => {
+      flush(() => {
+        assert.isFalse(card.energy_capable, 'Card property energy_capable should be default false');
+        assert.isFalse(card.money_capable, 'Card property money_capable should be default false');
+        assert.isFalse(card.autoToggleView, 'Card property autoToggleView should be default false');
+        assert.deepEqual(card.sensors, [ "sensor.solar_power", "sensor.grid_power_consumption", "sensor.grid_power_production" ], 'Card property sensors should have default value');
+        assert.equal(card.view, 'power', 'Card property view should have default value');
+        assert.deepEqual(card.titles, { power: 'Power wheel', energy: 'Power wheel', money: 'Power wheel' }, 'Card property titles should have default value');
+        done();
+      });
+    });
+
+    test('has no warnings or errors', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelectorAll('.message').length, 0, 'Number of messages should be zero');
+        done();
+      });
+    });
+
+    test('uses color values', (done) => {
+      // After testing this, the other tests can just check for class values 'inactive', 'consuming' and 'producing'.
+      flush(() => {
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Consuming icon color should be #bdbdbd');
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.producing'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Producing icon color should be #bdbdbd');
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.active'), null).getPropertyValue('color'), 'rgb(253, 216, 53)', 'Active arrow icon color should be #fdd835');
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.inactive'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Inactive arrow icon color should be #bdbdbd');
+        done();
+      });
+    });
+
+    test('displays values', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#title').innerText, "Power wheel");
+        assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W");
+        done();
+      });
+    });
+
+    test('has ui elements', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelectorAll('#toggle-button').length, 0, 'Toggle button shouldn\'t be there');
+        assert.isFalse(card.shadowRoot.querySelector('#unit').classList.contains('toggle'), 'Unit shouldn\'t be toggleable');
+        assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:weather-sunny', 'Solar icon should be default icon');
+        assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:transmission-tower', 'Grid icon should be default icon');
+        assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home', 'Home icon should be default icon');
+        done();
+      });
+    });
+
+    test('displays values when consuming from the grid', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '1800', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '2300', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
+        done();
+      });
+    });
+
+    test('has ui elements when consuming from the grid', (done) => {
+      flush(() => {
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar').classList.contains('producing'), 'Solar icon should be producing');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-grid').classList.contains('consuming'), 'Grid icon should be consuming');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-home').classList.contains('consuming'), 'Home icon should be consuming');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2grid').classList.contains('inactive'), 'Solar2Grid arrow icon should be inactive');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2home').classList.contains('active'), 'Solar2Home arrow icon should be active');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-grid2home').classList.contains('active'), 'Grid2Home arrow icon should be active');
+        done();
+      });
+    });
+
+    test('displays values when producing to the grid', (done) => {
+      setCardProducingToGrid();
+
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-50', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '450', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '50', 'Solar2Grid arrow should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '450', 'Solar2Home arrow should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
+        done();
+      });
+    });
+
+    test('has ui elements when producing to the grid', (done) => {
+      setCardProducingToGrid();
+
+      flush(() => {
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar').classList.contains('producing'), 'Solar icon should be producing');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-grid').classList.contains('producing'), 'Grid icon should be producing');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-home').classList.contains('consuming'), 'Home icon should be consuming');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2grid').classList.contains('active'), 'Solar2Grid arrow icon should be active');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2home').classList.contains('active'), 'Solar2Home arrow icon should be active');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-grid2home').classList.contains('inactive'), 'Grid2Home arrow icon should be inactive');
+        done();
+      });
+    });
+
+  });
+</script>
+</body>
+</html>

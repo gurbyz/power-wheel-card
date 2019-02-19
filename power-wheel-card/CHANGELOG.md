@@ -1,7 +1,24 @@
 Changelog
 ====
+## 0.0.10
+### New features
+* New `debug` parameter for logging debug information in the console of the browser.
+Useful when you want to investigate or register an issue.
+* Errors and warnings are displayed in the card if they occur after the config step of HA Lovelace.
+### Improvements
+* Setup for automated testing of the card. 142 tests to start with.
+* Replaced default grid icon `mdi:flash-circle` with `mdi:transmission-tower` which is available since HA 0.87.0.
+* Render styles according to version 2.0.0-rc.5 of lit-element in HA 0.87.0.
+* Validation on HA sensors in the config. Display an error when a sensor couldn't be found.
+E.g. when a user makes a typo in the config.
+* Improved error display on validation of units of sensors.
+* Performance improvement on unit definition. Define once instead of on each render.
+* Code improvements. Small performance improvements.
+### Fixes
+* Fix for disappearing `hui-error-entity-row` in HA 0.88.0 which would break the card.
+
 ## 0.0.9
-### Features
+### New features
 * Set a different title per view by using optional card parameters `title_power`, `title_energy` and/or `title_money`.
   All three card parameters default to the value of card parameter `title`.
 * Auto-toggle between views. Click the recycle icon to turn on and off the auto-toggle.

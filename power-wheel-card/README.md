@@ -183,7 +183,7 @@ There are many more card parameters available, but it's advised to start with th
 |energy_price|float|optional|Default the *money view* will not be enabled.|The price of your energy per unit of energy. E.g. `0.20`.|
 |money_unit|string|optional|`"€"`|The unit of `energy_price`. This unit will be used for displaying all money values.|
 |solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
-|grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:flash-circle"` will be used.|Icon for grid power and energy.|
+|grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:transmission-tower"` will be used.|Icon for grid power and energy.|
 |home_icon|string|optional|The icon of your own customized home sensor(s) if its entity parameter is set. If not available, then `"mdi:home"` will be used.|Icon for home power and energy.|
 |power_decimals|integer|optional|`0`|Number of decimals for the power values.|
 |energy_decimals|integer|optional|`3`|Number of decimals for the energy values.|
@@ -194,15 +194,16 @@ There are many more card parameters available, but it's advised to start with th
 |initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|
 |initial_auto_toggle_view|boolean|optional|`false`|The initial state of the auto-toggle for views.|
 |auto_toggle_view_period|integer|optional|`10`|Period in seconds between views when auto-toggle for views is turned on.|
+|debug|boolean|optional|`false`|Logs debug information in the console of your browser. Useful when you want to investigate or register an issue.|
 
 Some extra parameters for advanced users who use dynamic icons in their HA setup and want to use them in the power-wheel-card: 
 
 | Parameter | Type | Mandatory? | Default | Description |
 |-----------|------|------------|---------|-------------|
 |home_power_entity|string|optional|Default the icon specified in `home_icon` will be used. If not specified `"mdi:home"` will be used.|Entity id of your home power sensor if you want to use its icon in the *power view* instead of supplying a static `home_icon` on card level.|
-|grid_power_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:flash-circle"` will be used.|Entity id of your grid power sensor if you want to use its icon in the *power view* instead of supplying a static `grid_icon` on card level.|
+|grid_power_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:transmission-tower"` will be used.|Entity id of your grid power sensor if you want to use its icon in the *power view* instead of supplying a static `grid_icon` on card level.|
 |home_energy_entity|string|optional|Default the icon specified in `home_icon` will be used. If not specified `"mdi:home"` will be used.|Entity id of your home energy sensor if you want to use its icon in the *energy view* instead of supplying a static `home_icon` on card level.|
-|grid_energy_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:flash-circle"` will be used.|Entity id of your grid energy sensor if you want to use its icon in the *energy view* instead of supplying a static `grid_icon` on card level.|
+|grid_energy_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:transmission-tower"` will be used.|Entity id of your grid energy sensor if you want to use its icon in the *energy view* instead of supplying a static `grid_icon` on card level.|
 
 
 ### More about icons
@@ -210,7 +211,7 @@ The icons for solar and grid can be set by card parameters as shown in the table
 If you don't specify them as card parameters, the icons are taken from your own sensors for solar power and grid power (in the *power view*) and from your own sensors for solar energy and grid energy (in the *energy view* and *money view*).
 You could have specified those with the `customize:` option for `homeassistant` in your `configuration.yaml`.
 
-If you haven't set up any icons for them, default icons will be used in all views. For solar: `mdi:weather-sunny`; and for grid: `mdi:flash-circle`.
+If you haven't set up any icons for them, default icons will be used in all views. For solar: `mdi:weather-sunny`; and for grid: `mdi:transmission-tower`.
 
 An example for reusing the icons of your sensors used in the *power view*, to be put in `configuration.yaml`:
 

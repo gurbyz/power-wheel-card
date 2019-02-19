@@ -1,0 +1,29 @@
+{
+  "name": "custom-cards-lovelace",
+  "version": "0.0.0",
+  "description": "Custom cards for the Lovelace UI of Home Assistant",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "wct"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gurbyz/custom-cards-lovelace.git"
+  },
+  "keywords": [
+    "home assistant",
+    "lovelace",
+    "custom card"
+  ],
+  "author": "Gerben ten Hove",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/gurbyz/custom-cards-lovelace/issues"
+  },
+  "homepage": "https://github.com/gurbyz/custom-cards-lovelace#readme",
+  "devDependencies": {
+    "lit-element": "^2.0.0"
+  }
+}
