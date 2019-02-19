@@ -14,10 +14,10 @@
   </template>
 </test-fixture>
 <script>
-  suite('<power-wheel-card> with configured icons', () => {
+  suite('<power-wheel-card> with configured icon colors', () => {
     let card, hass, config;
 
-    /** Tests are based on icons_by_customize. **/
+    /** Tests are based on color_icons. **/
 
     setup(() => {
       card = fixture('simple');
@@ -26,18 +26,15 @@
         solar_power_entity: "sensor.solar_power",
         grid_power_consumption_entity: "sensor.grid_power_consumption",
         grid_power_production_entity: "sensor.grid_power_production",
-        grid_power_entity: "sensor.grid_power",
-        home_power_entity: "sensor.home_power",
-        solar_icon: "mdi:solar-power",
-        grid_icon: "mdi:flash",
-        home_icon: "mdi:home-circle",
+        color_icons: true,
+        consuming_color: "red",
+        producing_color: "green",
       };
       hass = {
         states: {
           "sensor.solar_power" : {
             attributes: {
               unit_of_measurement: "W",
-              icon: "mdi:white-balance-sunny",
             },
             entity_id: "sensor.solar_power",
             state: "500",
@@ -56,33 +53,25 @@
             entity_id: "sensor.grid_power_production",
             state: "0",
           },
-          "sensor.grid_power" : {
-            attributes: {
-              unit_of_measurement: "W",
-              icon: "mdi:flash-circle",
-            },
-            entity_id: "sensor.grid_power",
-            state: "999",
-          },
-          "sensor.home_power" : {
-            attributes: {
-              unit_of_measurement: "W",
-              icon: "mdi:home-assistant",
-            },
-            entity_id: "sensor.grid_power",
-            state: "999",
-          },
         },
       };
       card.setAttribute('hass', JSON.stringify(hass));
       card.setConfig(config);
     });
 
-    test('prefers configured icons above customized icons', (done) => {
+    test('has config values', (done) => {
       flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:solar-power', 'Solar icon should be configured icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash', 'Grid icon should be configured icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-circle', 'Home icon should be configured icon');
+        assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');
+        assert.equal(card.config.consuming_color, 'red', 'Card parameter consuming_color should be set');
+        assert.equal(card.config.producing_color, 'green', 'Card parameter producing_color should be set');
+        done();
+      });
+    });
+
+    test('uses configured color values', (done) => {
+      flush(() => {
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(255, 0, 0)', 'Consuming icon color should be red');
+        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.producing'), null).getPropertyValue('color'), 'rgb(0, 128, 0)', 'Producing icon color should be green');
         done();
       });
     });
