@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../bower_components/web-component-tester/browser.js"></script>
+  <script type="module" src="../../test/home-assistant-main-mock.js"></script>
+  <script type="module" src="../power-wheel-card.js"></script>
+</head>
+<body>
+<test-fixture id="simple">
+  <template>
+    <power-wheel-card></power-wheel-card>
+  </template>
+</test-fixture>
+<script>
+  suite('<power-wheel-card> with icons from customized sensors', () => {
+    let card, hass, config;
+
+    setup(() => {
+      card = fixture('simple');
+      config = {
+        type: "custom:power-wheel-card",
+        solar_power_entity: "sensor.solar_power",
+        grid_power_consumption_entity: "sensor.grid_power_consumption",
+        grid_power_production_entity: "sensor.grid_power_production",
+        grid_power_entity: "sensor.grid_power",
+        home_power_entity: "sensor.home_power",
+      };
+      hass = {
+        states: {
+          "sensor.solar_power" : {
+            attributes: {
+              unit_of_measurement: "W",
+              icon: "mdi:white-balance-sunny",
+            },
+            entity_id: "sensor.solar_power",
+            state: "500",
+          },
+          "sensor.grid_power_consumption" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.grid_power_consumption",
+            state: "1800",
+          },
+          "sensor.grid_power_production" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.grid_power_production",
+            state: "0",
+          },
+          "sensor.grid_power" : {
+            attributes: {
+              unit_of_measurement: "W",
+              icon: "mdi:flash-circle",
+            },
+            entity_id: "sensor.grid_power",
+            state: "999",
+          },
+          "sensor.home_power" : {
+            attributes: {
+              unit_of_measurement: "W",
+              icon: "mdi:home-assistant",
+            },
+            entity_id: "sensor.grid_power",
+            state: "999",
+          },
+        },
+      };
+      card.setAttribute('hass', JSON.stringify(hass));
+      card.setConfig(config);
+    });
+
+    test('has customized icons', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:white-balance-sunny', 'Solar icon should be customized icon');
+        assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash-circle', 'Grid icon should be customized icon');
+        assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-assistant', 'Home icon should be customized icon');
+        done();
+      });
+    });
+
+    test('doesn\'t let the extra sensors interfere values when consuming from the grid', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '1800', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '2300', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
+        done();
+      });
+    });
+
+  });
+</script>
+</body>
+</html>
