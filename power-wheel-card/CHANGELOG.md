@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.0.11-dev
+### Improvements
+* Added user agent to the debug output.
+
 ## 0.0.10
 ### New features
 * New `debug` parameter for logging debug information in the console of the browser.

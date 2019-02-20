@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.0.10";
+const __VERSION = "0.0.11-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("home-assistant-main"));
 const html = LitElement.prototype.html;
@@ -280,6 +280,7 @@ class PowerWheelCard extends LitElement {
   firstUpdated() {
     if (this.config.debug) {
       let line = `Version: ${__VERSION}\nLovelace resource: ${this._lovelaceResource()}\nHA version: ${this.hass.config.version}`;
+      line += `\nAgent: ${navigator.userAgent}`;
       line += `\nReport issues here: https://github.com/gurbyz/custom-cards-lovelace/issues`;
       line += `\nProcessed config: ${JSON.stringify(this.config, '', ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, '', ' ')}`;
       this._logConsole(line);
