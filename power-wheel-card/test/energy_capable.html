@@ -229,6 +229,30 @@
       });
     });
 
+    test('can click on unit to toggle from power view to energy view', (done) => {
+      setCardView('power');
+
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
+        card.shadowRoot.querySelector('#toggle-button').click();
+        flush(() => {
+          assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
+          done();
+        });
+      })
+    });
+
+    test('can click on unit to toggle from energy view to power view', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
+        card.shadowRoot.querySelector('#toggle-button').click();
+        flush(() => {
+          assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
+          done();
+        });
+      })
+    });
+
   });
 </script>
 </body>

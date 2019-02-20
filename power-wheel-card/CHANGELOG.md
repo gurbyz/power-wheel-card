@@ -3,6 +3,7 @@ Changelog
 ## 0.0.11-dev
 ### Improvements
 * Added user agent to the debug output.
+* Added 90 tests.
 
 ## 0.0.10
 ### New features
