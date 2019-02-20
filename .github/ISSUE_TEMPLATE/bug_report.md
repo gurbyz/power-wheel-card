@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a report to help me improve
 title: ''
 labels: ''
 assignees: ''
@@ -8,13 +8,13 @@ assignees: ''
 ---
 
 **Which card does give you issues?**
-E.g. power-wheel-card
+power-wheel-card
 
 **Which version of HA do you use?**
-E.g. 0.84.1
+Example: 0.87.1
 
 **Which version of the card do you use?**
-E.g. 0.0.5
+Example: 0.0.10
 
 **Describe the bug**
 A clear and concise description of what the bug is. Paste evt. error messages.
@@ -26,6 +26,12 @@ Copy the complete configuration of the card, even if you think it isn't relevant
     solar_power_entity: sensor.solar_power
     ...etc...
 ```
+
+**Developer console debug output**
+Copy the complete output of the card that is logged to your developer console when the card is in debug mode.
+To activate debug mode add `debug: true` to your card parameters. To open the developer console you can press F12 in most browsers.
+
+Example: power-wheel-cardVersion: 0.0.10Lovelace resource: power-wheel-card.js?v=0.0.10HA version: 0.87.1Report issues here: ...etc...
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
