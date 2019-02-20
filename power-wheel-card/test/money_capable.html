@@ -247,7 +247,7 @@
 
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
-        card.shadowRoot.querySelector('#toggle-button').click();
+        card.shadowRoot.querySelector('#unit').click();
         flush(() => {
           assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
           done();
@@ -260,7 +260,7 @@
 
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
-        card.shadowRoot.querySelector('#toggle-button').click();
+        card.shadowRoot.querySelector('#unit').click();
         flush(() => {
           assert.equal(card.shadowRoot.querySelector('#unit').innerText, '$', 'Card should be in money view');
           done();
@@ -271,7 +271,7 @@
     test('can click on unit to toggle from money view to power view', (done) => {
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#unit').innerText, '$', 'Card should be in money view');
-        card.shadowRoot.querySelector('#toggle-button').click();
+        card.shadowRoot.querySelector('#unit').click();
         flush(() => {
           assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
           done();
