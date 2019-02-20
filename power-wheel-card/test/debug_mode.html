@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../bower_components/web-component-tester/browser.js"></script>
+  <script type="module" src="../../test/home-assistant-main-mock.js"></script>
+  <script type="module" src="../power-wheel-card.js"></script>
+</head>
+<body>
+<test-fixture id="simple">
+  <template>
+    <power-wheel-card></power-wheel-card>
+  </template>
+</test-fixture>
+<script>
+  suite('<power-wheel-card> in debug mode', () => {
+    let card, hass, config;
+
+    setup(() => {
+      card = fixture('simple');
+      config = {
+        type: "custom:power-wheel-card",
+        solar_power_entity: "sensor.solar_power",
+        grid_power_consumption_entity: "sensor.grid_power_consumption",
+        grid_power_production_entity: "sensor.grid_power_production",
+        debug: true,
+      };
+      hass = {
+        config: {
+          version: "1.2.3",
+        },
+        states: {
+          "sensor.solar_power" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.solar_power",
+            state: "500.1",
+          },
+          "sensor.grid_power_consumption" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.grid_power_consumption",
+            state: "1799.9",
+          },
+          "sensor.grid_power_production" : {
+            attributes: {
+              unit_of_measurement: "W",
+            },
+            entity_id: "sensor.grid_power_production",
+            state: "0",
+          },
+        },
+      };
+      card.setAttribute('hass', JSON.stringify(hass));
+      card.setConfig(config);
+    });
+
+    test('has set default config values', (done) => {
+      flush(() => {
+        assert.isTrue(card.config.debug, 'Card parameter debug should be set');
+        done();
+      });
+    });
+
+    test('has set card property values after setConfig', (done) => {
+      flush(() => {
+        assert.deepEqual(card.messages, [ { type: 'warn', text: 'Debug mode is on.' } ], 'Card property messages should be set');
+        done();
+      });
+    });
+
+    test('has debug warning', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelectorAll('.message').length, 1, 'There should be a message');
+        done();
+      });
+    });
+
+  });
+</script>
+</body>
+</html>

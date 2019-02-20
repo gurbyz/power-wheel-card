@@ -194,9 +194,9 @@ class PowerWheelCard extends LitElement {
   }
 
   _logConsole(message) {
-    if (this.config.debug) {
+    // if (this.config.debug) {
       console.info(`%cpower-wheel-card%c\n${message}`, "color: green; font-weight: bold", "");
-    }
+    // }
   }
 
   /* Lit functions */
@@ -453,9 +453,9 @@ class PowerWheelCard extends LitElement {
           this.view = 'power';
         }
         break;
-      case 'money':
-        this.view = 'power';
-        break;
+      // case 'money':
+      //   this.view = 'power';
+      //   break;
       default:
         this.view = 'power';
     }

@@ -90,7 +90,6 @@
     });
 
     test('can automatically toggle from power view to energy view', (done) => {
-
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
         setTimeout(() => {
@@ -101,7 +100,6 @@
     });
 
     test('can switch off auto toggling with toggle button', (done) => {
-
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
         card.shadowRoot.querySelector('#toggle-button').click();
@@ -113,7 +111,6 @@
     });
 
     test('can switch off auto toggling with click on unit', (done) => {
-
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
         card.shadowRoot.querySelector('#unit').click();

@@ -235,6 +235,7 @@
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
         card.shadowRoot.querySelector('#unit').click();
+
         flush(() => {
           assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
           done();
@@ -246,8 +247,22 @@
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
         card.shadowRoot.querySelector('#unit').click();
+
         flush(() => {
           assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
+          done();
+        });
+      })
+    });
+
+    test('can switch on auto toggling with toggle button', (done) => {
+      flush(() => {
+        assert.isFalse(card.autoToggleView, 'Auto toggle should be switched off');
+        card.shadowRoot.querySelector('#toggle-button').click();
+
+        flush(() => {
+          // Auto toggle behavior itself is tested in auto_toggle.html
+          assert.isTrue(card.autoToggleView, 'Auto toggle should be switched on');
           done();
         });
       })
