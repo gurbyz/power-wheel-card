@@ -3,7 +3,7 @@ Changelog
 ## 0.0.11-dev
 ### Improvements
 * Added user agent to the debug output.
-* Added 90 tests.
+* Is automatically tested with 241 tests before each commit.
 
 ## 0.0.10
 ### New features
