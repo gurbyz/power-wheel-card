@@ -148,10 +148,11 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  _makeArrowObject(val, entity, icon, decimals) {
-    const valueStr = typeof val === 'undefined' ? 'unavailable' : val.toFixed(decimals);
+  _makeArrowObject(val, entity, iconNormal, iconReversed, decimals) {
+    const valueStr = typeof val === 'undefined' ? 'unavailable' : Math.abs(val).toFixed(decimals);
     const stateObj = entity ? this.hass.states[entity] : false;
-    const classValue = typeof val !== 'undefined' && val > 0 ? 'active' : 'inactive';
+    const classValue = typeof val !== 'undefined' && val === 0 ? 'inactive' : 'active';
+    const icon = typeof val !== 'undefined' && val < 0 ? iconReversed : iconNormal;
 
     return {
       stateObj,
@@ -324,9 +325,9 @@ class PowerWheelCard extends LitElement {
         'mdi:transmission-tower', this.config.money_decimals);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_energy_entity, this.config.home_icon,
         'mdi:home', this.config.money_decimals);
-      this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, false, 'mdi:arrow-bottom-left', this.config.money_decimals);
-      this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', this.config.money_decimals);
-      this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, false, 'mdi:arrow-right', this.config.money_decimals);
+      this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, false, 'mdi:arrow-bottom-left', 'mdi:arrow-top-right', this.config.money_decimals);
+      this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', 'mdi:arrow-top-left', this.config.money_decimals);
+      this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, false, 'mdi:arrow-right', 'mdi:arrow-left', this.config.money_decimals);
     } else if (this.view === 'energy' && this.energy_capable) {
       this.data.solar.val = this._calculateSolarValue(this.config.solar_energy_entity);
       this.data.grid2home.val = this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity);
@@ -340,9 +341,9 @@ class PowerWheelCard extends LitElement {
           'mdi:transmission-tower', this.config.energy_decimals);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_energy_entity, this.config.home_icon,
           'mdi:home', this.config.energy_decimals);
-      this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, this.config.grid_energy_production_entity, 'mdi:arrow-bottom-left', this.config.energy_decimals);
-      this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', this.config.energy_decimals);
-      this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_energy_consumption_entity, 'mdi:arrow-right', this.config.energy_decimals);
+      this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, this.config.grid_energy_production_entity, 'mdi:arrow-bottom-left', 'mdi:arrow-top-right', this.config.energy_decimals);
+      this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', 'mdi:arrow-top-left', this.config.energy_decimals);
+      this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_energy_consumption_entity, 'mdi:arrow-right', 'mdi:arrow-left', this.config.energy_decimals);
     } else {
       this.data.solar.val = this._calculateSolarValue(this.config.solar_power_entity);
       this.data.grid2home.val = this._calculateGrid2HomeValue(this.config.grid_power_consumption_entity);
@@ -356,9 +357,9 @@ class PowerWheelCard extends LitElement {
           'mdi:transmission-tower', this.config.power_decimals);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_power_entity, this.config.home_icon,
           'mdi:home', this.config.power_decimals);
-      this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, this.config.grid_power_production_entity, 'mdi:arrow-bottom-left', this.config.power_decimals);
-      this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', this.config.power_decimals);
-      this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_power_consumption_entity, 'mdi:arrow-right', this.config.power_decimals);
+      this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, this.config.grid_power_production_entity, 'mdi:arrow-bottom-left', 'mdi:arrow-top-right', this.config.power_decimals);
+      this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', 'mdi:arrow-top-left', this.config.power_decimals);
+      this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_power_consumption_entity, 'mdi:arrow-right', 'mdi:arrow-left', this.config.power_decimals);
     }
 
     if (this.autoToggleView) {

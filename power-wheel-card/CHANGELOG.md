@@ -2,16 +2,20 @@ Changelog
 ====
 ## 0.0.11-dev
 ### Improvements
-* When `color_icons` is set to `true` the Solar, Grid and Home values always are displayed as positive values,
+* Arrows will reverse when their value becomes negative.
+(Particular solar power sensors start consuming when there is no sun.)
+The values next to arrows are positive always now. 
+* On coloring the *solar*, *grid* and *home* icons, polarity of their values ('+' when producing, '-' when consuming) and sign of their values ('+' or '-'):
+  * When `color_icons` is set to `true` the Solar, Grid and Home values always are displayed as positive values,
 because the color of the icon represents the plus or minus sign already. 
-* The polarity of the values for Grid and Home is switched for better consistency throughout the card.
+  * The polarity of the values for Grid and Home is switched for better consistency throughout the card.
 The polarity of the colors stayed the same.
-This is visible only when `color_icons` is set to `false`, because negative values only are displayed then.
-* Card parameter `color_icons` is now default `true`.
+The changed polarity is visible only when `color_icons` is set to `false`, because negative values are displayed then only.
+  * Card parameter `color_icons` is now default `true`.
 If you don't want colored icons and see negative values, you have to set the parameter to `false` explicitly.
 * Added user agent to the debug output.
 * Automated testing before each commit.
-* Added tests to get a good functional and code coverage. 345 tests now.
+* Added tests to get a good functional and code coverage. 378 tests now.
 
 ## 0.0.10
 ### New features
