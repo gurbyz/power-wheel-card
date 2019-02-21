@@ -160,7 +160,6 @@ views:
         solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
         grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
         grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
-        color_icons: true
 ```
 
 There are many more card parameters available, but it's advised to start with this simple setup to get things running. 
@@ -188,7 +187,7 @@ There are many more card parameters available, but it's advised to start with th
 |power_decimals|integer|optional|`0`|Number of decimals for the power values.|
 |energy_decimals|integer|optional|`3`|Number of decimals for the energy values.|
 |money_decimals|integer|optional|`2`|Number of decimals for the money values.|
-|color_icons|boolean|optional|`false`|To color the consuming icons green and the producing icons yellow. This setting only is affecting the three big icons for *solar*, *home* and *grid*. The arrows have colors by default.|
+|color_icons|boolean|optional|`true`|To color the consuming icons green and the producing icons yellow. Icon values will have an absolute value. This setting only is affecting the three big icons for *solar*, *home* and *grid*. The arrows have colors by default.|
 |consuming_color|string|optional|The yellow color for `--label-badge-yellow` from your theme. If not available, then `"#f4b400"` will be used.|CSS color code for consuming power icons if `color_icons` is set to `true`. Examples: `"orange"`, `"#ffcc66"` or `"rgb(200,100,50)"`. Don't forget the quotation marks when using the `#` color notation.|
 |producing_color|string|optional|The green color for `--label-badge-green` from your theme. If not available, then `"#0da035"` will be used.|CSS color code for producing power icons if `color_icons` is set to `true`.|
 |initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|

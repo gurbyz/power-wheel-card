@@ -32,6 +32,7 @@
         energy_price: 0.20,
         money_unit: '$',
         initial_view: "money",
+        color_icons: false,
       };
       hass = {
         states: {
@@ -165,8 +166,8 @@
     test('displays values when having consumed from the grid only', (done) => {
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '3.60', 'Grid should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '4.60', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-3.60', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-4.60', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
@@ -191,8 +192,8 @@
 
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-0.10', 'Grid should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '0.90', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.10', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-0.90', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '0.10', 'Solar2Grid arrow should have a correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '0.90', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
@@ -219,8 +220,8 @@
 
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.10', 'Grid should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '1.10', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-0.10', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-1.10', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '0.10', 'Solar2Grid arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '0.90', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '0.20', 'Grid2Home arrow should have correct value');

@@ -124,19 +124,19 @@ class PowerWheelCard extends LitElement {
   
   /* Card functions */
 
-  _generateClass(producingIsPositive, value) {
-    if (producingIsPositive) {
-      return value > 0 ? 'producing' : ((value < 0) ? 'consuming' : 'inactive');
-    } else {
-      return value > 0 ? 'consuming' : ((value < 0) ? 'producing' : 'inactive');
-    }
+  _generateClass(value) {
+    return value > 0 ? 'producing' : ((value < 0) ? 'consuming' : 'inactive');
   }
 
-  _makePositionObject(val, entity, configIcon, defaultIcon, decimals, producingIsPositive) {
-    const valueStr = typeof val === 'undefined' ? 'unavailable' : val.toFixed(decimals);
+  _generateValueStr(value, decimals) {
+    return this.config.color_icons ? Math.abs(value).toFixed(decimals): value.toFixed(decimals);
+  }
+
+  _makePositionObject(val, entity, configIcon, defaultIcon, decimals) {
+    const valueStr = typeof val === 'undefined' ? 'unavailable' : this._generateValueStr(val, decimals);
     const stateObj = this.hass.states[entity];
     const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
-    const classValue = this._generateClass(producingIsPositive, val);
+    const classValue = this._generateClass(val);
 
     return {
       stateObj,
@@ -180,12 +180,12 @@ class PowerWheelCard extends LitElement {
 
   _calculateGridValue() {
     return typeof this.data.grid2home.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
-      ? this.data.grid2home.val - this.data.solar2grid.val : undefined;
+      ? this.data.solar2grid.val - this.data.grid2home.val : undefined;
   }
 
   _calculateHomeValue() {
     return typeof this.data.solar.val !== 'undefined' && typeof this.data.grid.val !== 'undefined'
-      ? this.data.solar.val + this.data.grid.val : undefined;
+      ? this.data.grid.val - this.data.solar.val : undefined;
   }
 
   _calculateSolar2HomeValue() {
@@ -319,11 +319,11 @@ class PowerWheelCard extends LitElement {
       this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
-        'mdi:weather-sunny', this.config.money_decimals, true);
+        'mdi:weather-sunny', this.config.money_decimals);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
-        'mdi:transmission-tower', this.config.money_decimals, false);
+        'mdi:transmission-tower', this.config.money_decimals);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_energy_entity, this.config.home_icon,
-        'mdi:home', this.config.money_decimals, false);
+        'mdi:home', this.config.money_decimals);
       this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, false, 'mdi:arrow-bottom-left', this.config.money_decimals);
       this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', this.config.money_decimals);
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, false, 'mdi:arrow-right', this.config.money_decimals);
@@ -335,11 +335,11 @@ class PowerWheelCard extends LitElement {
       this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
-          'mdi:weather-sunny', this.config.energy_decimals, true);
+          'mdi:weather-sunny', this.config.energy_decimals);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
-          'mdi:transmission-tower', this.config.energy_decimals, false);
+          'mdi:transmission-tower', this.config.energy_decimals);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_energy_entity, this.config.home_icon,
-          'mdi:home', this.config.energy_decimals, false);
+          'mdi:home', this.config.energy_decimals);
       this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, this.config.grid_energy_production_entity, 'mdi:arrow-bottom-left', this.config.energy_decimals);
       this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', this.config.energy_decimals);
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_energy_consumption_entity, 'mdi:arrow-right', this.config.energy_decimals);
@@ -351,11 +351,11 @@ class PowerWheelCard extends LitElement {
       this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_power_entity, this.config.solar_icon,
-          'mdi:weather-sunny', this.config.power_decimals, true);
+          'mdi:weather-sunny', this.config.power_decimals);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_power_entity, this.config.grid_icon,
-          'mdi:transmission-tower', this.config.power_decimals, false);
+          'mdi:transmission-tower', this.config.power_decimals);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_power_entity, this.config.home_icon,
-          'mdi:home', this.config.power_decimals, false);
+          'mdi:home', this.config.power_decimals);
       this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, this.config.grid_power_production_entity, 'mdi:arrow-bottom-left', this.config.power_decimals);
       this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', this.config.power_decimals);
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_power_consumption_entity, 'mdi:arrow-right', this.config.power_decimals);
@@ -414,7 +414,7 @@ class PowerWheelCard extends LitElement {
             @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
             title="${cellObj.hasSensor ? `More info${cellObj.stateObj.attributes.friendly_name ? ':\n' + cellObj.stateObj.attributes.friendly_name : ''}` : ''}">
         <ha-icon id="icon-${id}" class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
-        <div id="value-${id}" class="value">${cellType === 'arrow' && (cellObj.val === 0 || cellObj.val === hideValue) ? '' : cellObj.valueStr}</div>
+        <div id="value-${id}" class="value">${cellType === 'arrow' && (cellObj.val === 0 || cellObj.val === Math.abs(hideValue)) ? '' : cellObj.valueStr}</div>
       </div>
     `;
   }
@@ -506,7 +506,7 @@ class PowerWheelCard extends LitElement {
     }
     config.money_decimals = config.money_decimals ? config.money_decimals : 2;
     config.money_unit = config.money_unit ? config.money_unit : '€';
-    config.color_icons = config.color_icons ? (config.color_icons == true) : false;
+    config.color_icons = config.color_icons !== false;
     config.consuming_color = config.color_icons
       ? (config.consuming_color ? config.consuming_color : 'var(--label-badge-yellow, #f4b400)')
       : 'var(--state-icon-unavailable-color, #bdbdbd)';
