@@ -108,10 +108,10 @@
 
     test('has set card property values after setConfig', (done) => {
       flush(() => {
-        assert.isTrue(card.energy_capable, 'Card property energy_capable should be set');
-        assert.isFalse(card.money_capable, 'Card property money_capable should be default false');
         assert.deepEqual(card.sensors, [ "sensor.solar_power", "sensor.grid_power_consumption", "sensor.grid_power_production", "sensor.solar_energy", "sensor.grid_energy_consumption", "sensor.grid_energy_production" ], 'Card property sensors should be set');
         assert.equal(card.view, 'energy', 'Card property view should be set');
+        assert.isTrue(card.views.energy.capable, 'Card property views should have value set for energy capable');
+        assert.isFalse(card.views.money.capable, 'Card property views should have default value for money capable');
         done();
       });
     });

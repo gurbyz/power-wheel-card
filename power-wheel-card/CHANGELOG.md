@@ -1,6 +1,11 @@
 Changelog
 ====
 ## 0.0.11-dev
+### New features
+* Support for one (nett) grid power sensor.
+Some setups don't have separate sensors for grid power consumption and grid power production.
+Previously you had to make an extra template sensor for this.
+The polarity of `grid_power_entity` has to be positive for producing to the grid and negative for consuming from the grid. 
 ### Improvements
 * Arrows will reverse when their value becomes negative.
 (Particular solar power sensors start consuming when there is no sun.)

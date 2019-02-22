@@ -98,7 +98,9 @@
 
     test('has set card property values after setConfig', (done) => {
       flush(() => {
-        assert.deepEqual(card.titles, { power: "Power view", energy: "Energy view", money: "Money view" }, 'Card property titles should be set');
+        assert.equal(card.views.power.title, 'Power view', 'Card property views should have value set for power view title');
+        assert.equal(card.views.energy.title, 'Energy view', 'Card property views should have value set for energy view title');
+        assert.equal(card.views.money.title, 'Money view', 'Card property views should have value set for money view title');
         done();
       });
     });
