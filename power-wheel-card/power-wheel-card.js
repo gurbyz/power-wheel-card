@@ -172,7 +172,8 @@ class PowerWheelCard extends LitElement {
       return gridConsumptionStateObj ? parseFloat(gridConsumptionStateObj.state) : undefined;
     } else {
       const gridStateObj = this.hass.states[grid_entity];
-      const value = gridStateObj ? parseFloat(gridStateObj.state) : undefined;
+      const value = gridStateObj
+        ? parseFloat(gridStateObj.state) * this.config.grid_power_production_is_positive : undefined;
       return value < 0 ? Math.abs(value) : 0;
     }
   }
@@ -183,7 +184,8 @@ class PowerWheelCard extends LitElement {
       return gridProductionStateObj ? parseFloat(gridProductionStateObj.state) : undefined;
     } else {
       const gridStateObj = this.hass.states[grid_entity];
-      const value = gridStateObj ? parseFloat(gridStateObj.state) : undefined;
+      const value = gridStateObj
+        ? parseFloat(gridStateObj.state) * this.config.grid_power_production_is_positive : undefined;
       return value > 0 ? value : 0;
     }
   }
@@ -194,7 +196,8 @@ class PowerWheelCard extends LitElement {
         ? this.data.solar2grid.val - this.data.grid2home.val : undefined;
     } else {
       const gridStateObj = this.hass.states[grid_entity];
-      return gridStateObj ? parseFloat(gridStateObj.state) : undefined;
+      return gridStateObj
+        ? parseFloat(gridStateObj.state) * this.config.grid_power_production_is_positive : undefined;
     }
   }
 
@@ -520,6 +523,8 @@ class PowerWheelCard extends LitElement {
     if (config.grid_power_consumption_entity && !config.grid_power_production_entity) {
       throw new Error('You need to define a grid_power_production_entity');
     }
+    config.grid_power_production_is_positive = config.grid_power_production_is_positive !== false;
+    config.grid_power_production_is_positive = config.grid_power_production_is_positive ? 1 : -1;
     config.title = config.title ? config.title : 'Power wheel';
     config.title_power = config.title_power ? config.title_power : config.title;
     config.title_energy = config.title_energy ? config.title_energy : config.title;

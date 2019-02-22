@@ -3,9 +3,11 @@ Changelog
 ## 0.0.11-dev
 ### New features
 * Support for one (nett) grid power sensor.
-Some setups don't have separate sensors for grid power consumption and grid power production.
+Some setups don't have separate sensors for grid power consumption (from the grid) and grid power production (to the grid).
 Previously you had to make an extra template sensor for this.
-The polarity of `grid_power_entity` has to be positive for producing to the grid and negative for consuming from the grid. 
+  * Use card parameter `grid_power_entity`.
+The polarity of this parameter default has to be positive for producing (to the grid) and negative for consuming (from the grid).
+  * Use the new card parameter `grid_power_production_is_positive` to switch the polarity if your (one, nett) `grid_power_entity` hasn't the requested polarity. 
 ### Improvements
 * Arrows will reverse when their value becomes negative.
 (Particular solar power sensors start consuming when there is no sun.)
@@ -20,7 +22,7 @@ The changed polarity is visible only when `color_icons` is set to `false`, becau
 If you don't want colored icons and see negative values, you have to set the parameter to `false` explicitly.
 * Added user agent to the debug output.
 * Automated testing before each commit.
-* Added tests to get a good functional and code coverage. 378 tests now.
+* Added tests to get a good functional and code coverage. 529 tests now.
 
 ## 0.0.10
 ### New features

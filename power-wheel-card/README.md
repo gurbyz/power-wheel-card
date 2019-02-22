@@ -174,8 +174,10 @@ There are many more card parameters available, but it's advised to start with th
 |title_energy|string|optional|Value of `title`.|Title of the card in *energy view*.|
 |title_money|string|optional|Value of `title`.|Title of the card in *money view*.|
 |solar_power_entity|string|**required**||Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
-|grid_power_consumption_entity|string|**required**||Entity id of your sensor for power that you are consuming from the grid. E.g. `sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR`. See requirements above.|
-|grid_power_production_entity|string|**required**||Entity id of your sensor for power that you are producing to the grid. E.g. `sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR`. See requirements above.|
+|grid_power_consumption_entity (A)|string|preferred, together with B||Entity id of your sensor for power that you are consuming from the grid. E.g. `sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR`. See requirements above.|
+|grid_power_production_entity (B)|string|preferred, together with A||Entity id of your sensor for power that you are producing to the grid. E.g. `sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR`. See requirements above.|
+|grid_power_entity (C)|string|optional, but required if you don't have A and B||Entity id of your nett grid power sensor if you don't have separate sensors for grid power production (to the grid) and grid power consumption (from the grid).|
+|grid_power_production_is_positive|boolean|optional|`true`|If you use `grid_power_entity` (C) you can specify the polarity of this input sensor. Use `true` for producing to the grid has positive values. Use `false` for producing to the grid has negative values.| 
 |solar_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your solar energy sensor. E.g. `sensor.YOUR_SOLAR_ENERGY_SENSOR`. See requirements above.|
 |grid_energy_consumption_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's consumed from the grid. E.g. `sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_energy_production_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's produced to the grid. E.g. `sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR`. See requirements above.|
