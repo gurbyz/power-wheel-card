@@ -1,12 +1,12 @@
 ---
 name: Bug report
-about: Create a report to help me improve. Please read the [wiki](https://github.com/gurbyz/custom-cards-lovelace/wiki/Before-submitting-an-issue-report) first.
+about: Create a report to help me improve.
 title: ''
 labels: ''
 assignees: ''
 
 ---
-I have read the wiki about [what to try first](https://github.com/gurbyz/custom-cards-lovelace/wiki/Before-submitting-an-issue-report) before creating a bug report.
+I have read the wiki about what to try first before creating a bug report.
 
 **Which custom card does give you issues?**
 power-wheel-card
