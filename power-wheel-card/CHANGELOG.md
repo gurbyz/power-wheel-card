@@ -1,6 +1,6 @@
 Changelog
 ====
-## 0.0.11-dev
+## 0.0.11
 ### New features
 * Support for one (nett) grid power sensor.
 Some setups don't have separate sensors for grid power consumption (from the grid) and grid power production (to the grid).
