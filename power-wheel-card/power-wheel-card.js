@@ -173,7 +173,7 @@ class PowerWheelCard extends LitElement {
     } else if(this.view === 'power') {
       const gridStateObj = this.hass.states[grid_entity];
       const value = gridStateObj
-        ? parseFloat(gridStateObj.state) * this.config.grid_power_production_is_positive : undefined;
+        ? parseFloat(gridStateObj.state) * this.config.production_is_positive : undefined;
       return value < 0 ? Math.abs(value) : 0;
     } else {
       return 0;
@@ -187,7 +187,7 @@ class PowerWheelCard extends LitElement {
     } else if(this.view === 'power') {
       const gridStateObj = this.hass.states[grid_entity];
       const value = gridStateObj
-        ? parseFloat(gridStateObj.state) * this.config.grid_power_production_is_positive : undefined;
+        ? parseFloat(gridStateObj.state) * this.config.production_is_positive : undefined;
       return value > 0 ? value : 0;
     } else {
       return 0;
@@ -201,17 +201,17 @@ class PowerWheelCard extends LitElement {
     } else {
       const gridStateObj = this.hass.states[grid_entity];
       return gridStateObj
-        ? parseFloat(gridStateObj.state) * this.config.grid_power_production_is_positive : undefined;
+        ? parseFloat(gridStateObj.state) * this.config.production_is_positive : undefined;
     }
   }
 
-  _calculateHomeValue() {
+  _calculateHomeValue(home_entity) {
     if (this.views[this.view].twoGridSensors || this.view === 'power') {
       return typeof this.data.solar.val !== 'undefined' && typeof this.data.grid.val !== 'undefined'
         ? this.data.grid.val - this.data.solar.val : undefined;
     } else {
-      // todo: get home value from separate sensor?
-      return 0;
+      const homeStateObj = this.hass.states[home_entity];
+      return homeStateObj ? parseFloat(homeStateObj.state) * this.config.production_is_positive : undefined;
     }
   }
 
@@ -358,7 +358,7 @@ class PowerWheelCard extends LitElement {
       this.data.grid2home.val = this.config.energy_price * this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity, this.config.grid_energy_entity);
       this.data.solar2grid.val = this.config.energy_price * this._calculateSolar2GridValue(this.config.grid_energy_production_entity, this.config.grid_energy_entity);
       this.data.grid.val = this._calculateGridValue(this.config.grid_energy_entity);
-      this.data.home.val = this._calculateHomeValue();
+      this.data.home.val = this._calculateHomeValue(this.config.home_energy_entity);
       this.data.solar2home.val = this._calculateSolar2HomeValue();
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
         'mdi:weather-sunny', this.config.money_decimals);
@@ -374,7 +374,7 @@ class PowerWheelCard extends LitElement {
       this.data.grid2home.val = this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity, this.config.grid_energy_entity);
       this.data.solar2grid.val = this._calculateSolar2GridValue(this.config.grid_energy_production_entity, this.config.grid_energy_entity);
       this.data.grid.val = this._calculateGridValue(this.config.grid_energy_entity);
-      this.data.home.val = this._calculateHomeValue();
+      this.data.home.val = this._calculateHomeValue(this.config.home_energy_entity);
       this.data.solar2home.val = this._calculateSolar2HomeValue();
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.energy_decimals);
@@ -538,8 +538,8 @@ class PowerWheelCard extends LitElement {
     if (config.grid_power_consumption_entity && !config.grid_power_production_entity) {
       throw new Error('You need to define a grid_power_production_entity');
     }
-    config.grid_power_production_is_positive = config.grid_power_production_is_positive !== false;
-    config.grid_power_production_is_positive = config.grid_power_production_is_positive ? 1 : -1;
+    config.production_is_positive = config.production_is_positive !== false;
+    config.production_is_positive = config.production_is_positive ? 1 : -1;
     config.title = config.title ? config.title : 'Power wheel';
     config.title_power = config.title_power ? config.title_power : config.title;
     config.title_energy = config.title_energy ? config.title_energy : config.title;
@@ -583,7 +583,7 @@ class PowerWheelCard extends LitElement {
     this.views.power.capable = (this.views.power.oneGridSensor || this.views.power.twoGridSensors) && !!config.solar_power_entity;
     this.views.energy = {
       title: config.title_energy,
-      oneGridSensor: !!config.grid_energy_entity,
+      oneGridSensor: !!config.grid_energy_entity && !!config.home_energy_entity,
       twoGridSensors: !!config.grid_energy_consumption_entity && !!config.grid_energy_production_entity,
     };
     this.views.energy.capable = (this.views.energy.oneGridSensor || this.views.energy.twoGridSensors) && !!config.solar_energy_entity;

@@ -6,13 +6,26 @@ Changelog
 Some setups don't have separate sensors for grid power consumption (from the grid) and grid power production (to the grid).
 Previously you had to make an extra template sensor for this.
   * Use current card parameter `grid_power_entity` to supply your input for the card.
-The polarity of this parameter default has to be positive for producing (to the grid) and negative for consuming (from the grid).
-  * Use the new card parameter `grid_power_production_is_positive` to switch the polarity if your (one, nett) `grid_power_entity` hasn't the requested polarity. 
+Default the polarity of this parameter has to be positive for producing (to the grid) and negative for consuming (from the grid). 
+* Support for one (nett) grid energy sensor.
+Some setups don't have separate sensors for grid energy consumption (from the grid) and grid energy production (to the grid).
+Previously you were not able to use the *energy view*.
+  * Use current card parameter `grid_energy_entity` to supply your input for the card.
+  * Use current card parameter `home_energy_entity` to supply your input for the card. This extra parameter is needed because the consumed energy of your home can't be calculated if you only have one grid energy sensor.
+  * Default the polarity of these parameters has to be positive for producing (to the grid) and negative for consuming (from the grid).
+  * Nb. There still won't be active arrows in the *energy view* nor values near the arrows.
+This is because you supply too less information to calculate these values.
+Power-wheel-card can't do magic.
+* Support for switching the polarity of `grid_power_entity`, `grid_energy_entity` and `home_energy_entity`.
+Default the polarity of these parameters has to be positive for producing (to the grid) and negative for consuming (from the grid).
+  * You can switch the polarity of all these 3 entities with the new card parameter `production_is_positive`.
+  * Nb. The parameter is switching the polarity of exactly only the 3 mentioned input parameters. All other input parameters are not affected.
+  * Nb. The parameter is switching the polarity of **input** values to be able to use them in calculations. Negative output values (i.e. displayed values) always represent consuming (from the grid).  
 ### Improvements
 * Arrows will reverse when their value becomes negative.
 (E.g. solar panel inverters start consuming when there is no sun and some users have a sensor that detects this.)
-The values next to arrows are positive always now. 
-* On coloring the *solar*, *grid* and *home* icons, polarity of their values ('+' when producing, '-' when consuming) and sign of their values ('+' or '-'):
+The values next to arrows always are positive now. 
+* About coloring the *solar*, *grid* and *home* icons, polarity of their values ('+' when producing, '-' when consuming) and sign of their values ('+' or '-'):
   * When `color_icons` is set to `true` the Solar, Grid and Home values always are displayed as positive values,
 because the color of the icon represents the plus or minus sign already. 
   * The polarity of the values for Grid and Home is switched for better consistency throughout the card.
@@ -22,7 +35,7 @@ The changed polarity is visible only when `color_icons` is set to `false`, becau
 If you don't want colored icons and see negative values, you have to set the parameter to `false` explicitly.
 * Added user agent to the debug output.
 * Automated testing before each commit.
-* Added tests to get a good functional and code coverage. There are 529 tests now.
+* Added tests to get a good functional and code coverage. There are 627 tests now.
 
 ## 0.0.10
 ### New features

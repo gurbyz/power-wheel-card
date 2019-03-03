@@ -14,12 +14,12 @@
   </template>
 </test-fixture>
 <script>
-  suite('<power-wheel-card> with energy view capable config for one grid sensor', () => {
+  suite('<power-wheel-card> with energy view capable config for one grid sensor with switched polarity', () => {
     let card, hass, config;
 
     /** Tests are based on basic_config. **/
     /** Tests are extended in money_capable. **/
-    /** Tests are also used in energy_one_grid_sensor_switched_polarity.html **/
+    /** Tests are also used in energy_one_grid_sensor.html **/
 
     setup(() => {
       card = fixture('simple');
@@ -31,7 +31,7 @@
         solar_energy_entity: "sensor.solar_energy",
         grid_energy_entity: "sensor.grid_energy",
         home_energy_entity: "sensor.home_energy",
-        production_is_positive: true,
+        production_is_positive: false,
         initial_view: "energy",
         color_icons: false,
       };
@@ -70,14 +70,14 @@
               unit_of_measurement: "kWh",
             },
             entity_id: "sensor.grid_energy",
-            state: "-18",
+            state: "18",
           },
           "sensor.home_energy" : {
             attributes: {
               unit_of_measurement: "kWh",
             },
             entity_id: "sensor.home_energy",
-            state: "-23",
+            state: "23",
           },
         },
       };
@@ -86,14 +86,14 @@
     });
 
     const setCardProducedToGridOnly = () => {
-      hass.states['sensor.grid_energy'].state = "0.5";
-      hass.states['sensor.home_energy'].state = "-4.5";
+      hass.states['sensor.grid_energy'].state = "-0.5";
+      hass.states['sensor.home_energy'].state = "4.5";
       card.setAttribute('hass', JSON.stringify(hass));
     };
 
     const setCardConsumedAndProducedToGrid = () => {
-      hass.states['sensor.grid_energy'].state = "-0.5";
-      hass.states['sensor.home_energy'].state = "-5.5";
+      hass.states['sensor.grid_energy'].state = "0.5";
+      hass.states['sensor.home_energy'].state = "5.5";
       card.setAttribute('hass', JSON.stringify(hass));
     };
 

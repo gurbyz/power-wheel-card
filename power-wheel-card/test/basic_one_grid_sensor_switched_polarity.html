@@ -25,7 +25,7 @@
         type: "custom:power-wheel-card",
         solar_power_entity: "sensor.solar_power",
         grid_power_entity: "sensor.grid_power",
-        grid_power_production_is_positive: false,
+        production_is_positive: false,
         color_icons: false,
       };
       hass = {
@@ -70,7 +70,7 @@
 
     test('has set config values', (done) => {
       flush(() => {
-        assert.equal(card.config.grid_power_production_is_positive, -1, 'Card parameter grid_power_production_is_positive should be -1');
+        assert.equal(card.config.production_is_positive, -1, 'Card parameter production_is_positive should be -1');
         done();
       });
     });
