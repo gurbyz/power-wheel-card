@@ -2,7 +2,7 @@ power-wheel-card
 ====
 
 An intuïtive way to represent the power and energy that your home is consuming or producing.
-> This component is discussed [here](https://community.home-assistant.io/t/lovelace-power-wheel-card/82374) on the Home Assistant forum.
+> This component is discussed [here](https://community.home-assistant.io/t/lovelace-power-wheel-card/82374) on the Home Assistant forum. There's also a [wiki](https://github.com/gurbyz/custom-cards-lovelace/wiki/Before-submitting-an-issue-report) on GitHub.
 
 ## Features
 Features of the custom power-wheel-card:
@@ -28,6 +28,8 @@ Features of the custom power-wheel-card:
   E.g. if your solar power panels produce power, the arrow from solar to home turns active.
   And if your solar power panels produce enough power to deliver some back to the grid, the arrow from solar to grid turns active.
 * Arrows can have values next to them. Zero values are suppressed. And values on the arrows are visible only when relevant. E.g. on a sunny day when part of your produced solar panel energy was returned to the grid and the other part was consumed by your home.
+* Has support for setups that don't have separated grid sensors for consuming and producing.
+  In these setups arrow values and arrow coloring are not available in *energy view* and *money view* due to lack of input details.
 * Optionally uses icons of your own choice, which can be set by card parameters or taken from your `customize:` sensor settings.
 * Optionally colors the consuming icons yellow and the producing icons green. You can choose your own colors for consuming and producing.
 * Works for default theme and custom themes that use [standard CSS vars](https://github.com/home-assistant/home-assistant-polymer/blob/master/src/resources/ha-style.js).
@@ -40,21 +42,28 @@ Features of the custom power-wheel-card:
 ## Requirements for the *power view*
 1. You need to have a working sensor for your solar power.
    Write down the entity id of this sensor. This is *YOUR_SOLAR_POWER_SENSOR* in the instructions below.
-    - The sensor could have an icon (optional) that will override the default icon in the power-wheel-card if the card parameter `solar_icon` is not used.
+   - The sensor could have an icon (optional) that will override the default icon in the power-wheel-card if the card parameter `solar_icon` is not used.
+   - The sensor state value should be a positive number when producing power.
 
-1. You need to have a working sensor for your grid power consumption (i.e. power you consume from the grid).
-   Write down the entity id of this sensor. This is *YOUR_GRID_POWER_CONSUMPTION_SENSOR* in the instructions below.
-    - Preferably this sensor has the same update interval as the sensor for solar power. (If not, the calculated value for home power can give unreal results sometimes.)
-1. You need to have a working sensor for your grid power production (i.e. power you produce to the grid).
-   Write down the entity id of this sensor. This is *YOUR_GRID_POWER_PRODUCTION_SENSOR* in the instructions below.
-    - Preferably this sensor has the same update interval as the sensor for solar power. (If not, the calculated value for home power can give unreal results sometimes.)
+1. You either need to have (i) separate grid power sensors for consuming and producing OR need to have (ii) one (nett) grid power sensor:
+   1. You need to have a working sensor for your grid power consumption (i.e. power you consume from the grid).
+      Write down the entity id of this sensor. This is *YOUR_GRID_POWER_CONSUMPTION_SENSOR* in the instructions below.
+
+      You need to have a working sensor for your grid power production (i.e. power you produce to the grid).
+      Write down the entity id of this sensor. This is *YOUR_GRID_POWER_PRODUCTION_SENSOR* in the instructions below.
+      - Preferably these sensors have the same update interval as the sensor for solar power. (If not, the calculated value for home power can give unreal results sometimes.)
+      - The sensor state values should be a positive number.
+
+      *OR:*
+   1. You need to have a working sensor for your (nett) grid power.
+      Write down the entity id of this sensor. This is *YOUR_GRID_POWER_SENSOR* in the instructions below.
+      - Default the polarity of this parameter has to be positive for producing (to the grid) and negative for consuming (from the grid).
 1. For all these sensors:
-    - A `unit_of_measurement` has been set up, e.g. `'W'` or `'kW'`.
-    - The `unit_of_measurement` is the same as the other power sensors.
-    - The sensor state should always be parsable to an *int* or - even better - a *float* value.
-    - The sensor state value should be a positive number.
+   - A `unit_of_measurement` has been set up, e.g. `'W'` or `'kW'`.
+   - The `unit_of_measurement` is the same as the other power sensors.
+   - The sensor state should always be parsable to an *int* or - even better - a *float* value.
 
-You don't need a sensor for your (nett) grid power but you can use it if you have it available and want to use its **icon**. The **value** of this sensor will not be used.
+You don't always need a sensor for your (nett) grid power but you can use it if you have it available and want to use its **icon**.
 
 You don't need a sensor for your home power, but you can use it if you have it available and want to use its **icon**. The **value** of this sensor will not be used. 
 
@@ -107,22 +116,33 @@ But if you want the *energy view*:
    Then you are able to see the actual energy costs/savings today in the *money view*.
 1. You need to have a working sensor for your solar energy. 
    Write down the entity id of this sensor. This is *YOUR_SOLAR_ENERGY_SENSOR* in the instructions below.
-    - The sensor could have an icon (optional) that will override the default icon in the power-wheel-card if the card parameter `solar_icon` is not used.
-1. You need to have a working sensor for your grid energy consumption (i.e. energy you consumed from the grid).
-   Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_CONSUMPTION_SENSOR* in the instructions below.
-    - Preferably this sensor has the same update interval as the sensor for solar energy. (If not, the calculated value for home energy can give unreal results sometimes.)
-1. You need to have a working sensor for your grid energy production (i.e. energy you produced to the grid).
-   Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_PRODUCTION_SENSOR* in the instructions below.
-    - Preferably this sensor has the same update interval as the sensor for solar energy. (If not, the calculated value for home energy can give unreal results sometimes.)
+   - The sensor could have an icon (optional) that will override the default icon in the power-wheel-card if the card parameter `solar_icon` is not used.
+   - The sensor state value should be a positive number for having produced energy.
+1. You either need to have (i) separate grid energy sensors for consuming and producing OR need to have (ii) one (nett) grid energy sensor and a home energy sensor:
+   1. You need to have a working sensor for your grid energy consumption (i.e. energy you consumed from the grid).
+      Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_CONSUMPTION_SENSOR* in the instructions below.
+
+      You need to have a working sensor for your grid energy production (i.e. energy you produced to the grid).
+      Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_PRODUCTION_SENSOR* in the instructions below.
+      - Preferably these sensors have the same update interval as the sensor for solar energy. (If not, the calculated value for home energy can give unreal results sometimes.)
+      - The sensor state values should be a positive number.
+      
+      *OR: (not recommended)*
+   1. You need to have a working sensor for your (nett) grid energy.
+      Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_SENSOR* in the instructions below.
+
+      You need to have a working sensor for your home energy, because it can't be calculated.
+      Write down the entity id of this sensor. This is *YOUR_HOME_ENERGY_SENSOR* in the instructions below.
+      - Default the polarity of these parameters have to be positive for producing (to the grid) and negative for consuming (from the grid).
+      - Nb. You will lack arrow coloring and arrow values in the *energy view* and *money view* due to supplying too less information to calculate these.      
 1. For all these sensors:
-    - A `unit_of_measurement` has been set up, e.g. `'Wh'` or `'kWh'`.
-    - The `unit_of_measurement` is the same as the other energy sensors.
-    - The sensor state should always be parsable to an *int* or - even better - a *float* value.
-    - The sensor state value should be a positive number.
+   - A `unit_of_measurement` has been set up, e.g. `'Wh'` or `'kWh'`.
+   - The `unit_of_measurement` is the same as the other energy sensors.
+   - The sensor state should always be parsable to an *int* or - even better - a *float* value.
 
-You don't need a sensor for your (nett) grid energy but you can use it if you have it available and want to use its **icon**. The **value** of this sensor will not be used.
+You don't always need a sensor for your (nett) grid energy but you can use it if you have it available and want to use its **icon**.
 
-You don't need a sensor for your home energy, but you can use it if you have it available and want to use its **icon**. The **value** of this sensor will not be used.
+You don't always need a sensor for your home energy, but you can use it if you have it available and want to use its **icon**.
 
 ## Requirements for the *money view*
 The *money view* itself is not required. As a result you don't have to specify any *money view* related card parameters. 
@@ -160,7 +180,6 @@ views:
         solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
         grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
         grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
-        color_icons: true
 ```
 
 There are many more card parameters available, but it's advised to start with this simple setup to get things running. 
@@ -169,17 +188,17 @@ There are many more card parameters available, but it's advised to start with th
 
 | Parameter | Type | Mandatory? | Default | Description |
 |-----------|------|------------|---------|-------------|
-|type|string|**required**||Type of the card. Use `"custom:power-wheel-card"`.|
+|type|string|**required**| |Type of the card. Use `"custom:power-wheel-card"`.|
 |title|string|optional|`"Power wheel"`|Title of the card in all views, if not overridden with a title per view.|
 |title_power|string|optional|Value of `title`.|Title of the card in *power view*.|
 |title_energy|string|optional|Value of `title`.|Title of the card in *energy view*.|
 |title_money|string|optional|Value of `title`.|Title of the card in *money view*.|
-|solar_power_entity|string|**required**||Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
-|grid_power_consumption_entity|string|**required**||Entity id of your sensor for power that you are consuming from the grid. E.g. `sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR`. See requirements above.|
-|grid_power_production_entity|string|**required**||Entity id of your sensor for power that you are producing to the grid. E.g. `sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR`. See requirements above.|
+|solar_power_entity|string|**required**| |Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
+|grid_power_consumption_entity (A)|string|optional, always together with B| |Entity id of your sensor for power that you are consuming from the grid. E.g. `sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR`. See requirements above.|
+|grid_power_production_entity (B)|string|optional, always together with A| |Entity id of your sensor for power that you are producing to the grid. E.g. `sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR`. See requirements above.|
 |solar_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your solar energy sensor. E.g. `sensor.YOUR_SOLAR_ENERGY_SENSOR`. See requirements above.|
-|grid_energy_consumption_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's consumed from the grid. E.g. `sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR`. See requirements above.|
-|grid_energy_production_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's produced to the grid. E.g. `sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR`. See requirements above.|
+|grid_energy_consumption_entity (D)|string|optional, always together with E|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's consumed from the grid. E.g. `sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR`. See requirements above.|
+|grid_energy_production_entity (E)|string|optional, always together with D|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's produced to the grid. E.g. `sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR`. See requirements above.|
 |energy_price|float|optional|Default the *money view* will not be enabled.|The price of your energy per unit of energy. E.g. `0.20`.|
 |money_unit|string|optional|`"€"`|The unit of `energy_price`. This unit will be used for displaying all money values.|
 |solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
@@ -188,13 +207,22 @@ There are many more card parameters available, but it's advised to start with th
 |power_decimals|integer|optional|`0`|Number of decimals for the power values.|
 |energy_decimals|integer|optional|`3`|Number of decimals for the energy values.|
 |money_decimals|integer|optional|`2`|Number of decimals for the money values.|
-|color_icons|boolean|optional|`false`|To color the consuming icons green and the producing icons yellow. This setting only is affecting the three big icons for *solar*, *home* and *grid*. The arrows have colors by default.|
+|color_icons|boolean|optional|`true`|To color the consuming icons green and the producing icons yellow. Icon values will have an absolute value. This setting only is affecting the three big icons for *solar*, *home* and *grid*. The arrows have colors by default.|
 |consuming_color|string|optional|The yellow color for `--label-badge-yellow` from your theme. If not available, then `"#f4b400"` will be used.|CSS color code for consuming power icons if `color_icons` is set to `true`. Examples: `"orange"`, `"#ffcc66"` or `"rgb(200,100,50)"`. Don't forget the quotation marks when using the `#` color notation.|
 |producing_color|string|optional|The green color for `--label-badge-green` from your theme. If not available, then `"#0da035"` will be used.|CSS color code for producing power icons if `color_icons` is set to `true`.|
 |initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|
 |initial_auto_toggle_view|boolean|optional|`false`|The initial state of the auto-toggle for views.|
 |auto_toggle_view_period|integer|optional|`10`|Period in seconds between views when auto-toggle for views is turned on.|
 |debug|boolean|optional|`false`|Logs debug information in the console of your browser. Useful when you want to investigate or register an issue.|
+
+Some extra parameters for users who don't have separate grid sensors for producing and consuming:
+
+| Parameter | Type | Mandatory? | Default | Description |
+|-----------|------|------------|---------|-------------|
+|grid_power_entity (C)|string|optional, but required if you don't have A and B| |Entity id of your nett grid power sensor if you don't have separate sensors for grid power production (to the grid) and grid power consumption (from the grid). E.g. `sensor.YOUR_GRID_POWER_SENSOR`.|
+|grid_energy_entity (F)|string|optional, but required if you don't have D and E and want to use the *energy view*| |Entity id of your nett grid energy sensor if you don't have separate sensors for grid energy production (to the grid) and grid energy consumption (from the grid). E.g. `sensor.YOUR_GRID_ENERGY_SENSOR`.|
+|home_energy_entity (G)|string|optional, but required if you don't have D and E and want to use the *energy view*| |Entity id of your home energy sensor if you don't have separate sensors for grid energy production (to the grid) and grid energy consumption (from the grid). E.g. `sensor.YOUR_HOME_ENERGY_SENSOR`.|
+|production_is_positive|boolean|optional|`true`|If you use C, F or G you can specify the polarity of these input sensors. Use `true` for producing to the grid has positive values in your input sensors. Use `false` for producing to the grid has negative values.| 
 
 Some extra parameters for advanced users who use dynamic icons in their HA setup and want to use them in the power-wheel-card: 
 

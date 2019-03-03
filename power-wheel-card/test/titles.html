@@ -14,45 +14,40 @@
   </template>
 </test-fixture>
 <script>
-  suite('<power-wheel-card> with configured icons', () => {
+  suite('<power-wheel-card> with a title per view', () => {
     let card, hass, config;
-
-    /** Tests are based on icons_by_customize. **/
 
     setup(() => {
       card = fixture('simple');
       config = {
         type: "custom:power-wheel-card",
+        title: "Not used",
+        title_power: "Power view",
+        title_energy: "Energy view",
+        title_money: "Money view",
         solar_power_entity: "sensor.solar_power",
         grid_power_consumption_entity: "sensor.grid_power_consumption",
         grid_power_production_entity: "sensor.grid_power_production",
-        grid_power_entity: "sensor.grid_power",
-        home_power_entity: "sensor.home_power",
         solar_energy_entity: "sensor.solar_energy",
         grid_energy_consumption_entity: "sensor.grid_energy_consumption",
         grid_energy_production_entity: "sensor.grid_energy_production",
-        grid_energy_entity: "sensor.grid_energy",
-        home_energy_entity: "sensor.home_energy",
-        solar_icon: "mdi:solar-power",
-        grid_icon: "mdi:flash",
-        home_icon: "mdi:home-circle",
+        energy_price: 0.20,
       };
       hass = {
         states: {
           "sensor.solar_power" : {
             attributes: {
               unit_of_measurement: "W",
-              icon: "mdi:white-balance-sunny",
             },
             entity_id: "sensor.solar_power",
-            state: "500",
+            state: "500.1",
           },
           "sensor.grid_power_consumption" : {
             attributes: {
               unit_of_measurement: "W",
             },
             entity_id: "sensor.grid_power_consumption",
-            state: "1800",
+            state: "1799.9",
           },
           "sensor.grid_power_production" : {
             attributes: {
@@ -61,26 +56,9 @@
             entity_id: "sensor.grid_power_production",
             state: "0",
           },
-          "sensor.grid_power" : {
-            attributes: {
-              unit_of_measurement: "W",
-              icon: "mdi:flash-circle",
-            },
-            entity_id: "sensor.grid_power",
-            state: "999",
-          },
-          "sensor.home_power" : {
-            attributes: {
-              unit_of_measurement: "W",
-              icon: "mdi:home-assistant",
-            },
-            entity_id: "sensor.grid_power",
-            state: "999",
-          },
           "sensor.solar_energy" : {
             attributes: {
               unit_of_measurement: "kWh",
-              icon: "mdi:white-balance-sunny",
             },
             entity_id: "sensor.solar_energy",
             state: "5",
@@ -99,22 +77,6 @@
             entity_id: "sensor.grid_energy_production",
             state: "0",
           },
-          "sensor.grid_energy" : {
-            attributes: {
-              unit_of_measurement: "W",
-              icon: "mdi:flash-circle",
-            },
-            entity_id: "sensor.grid_energy",
-            state: "999",
-          },
-          "sensor.home_energy" : {
-            attributes: {
-              unit_of_measurement: "W",
-              icon: "mdi:home-assistant",
-            },
-            entity_id: "sensor.grid_energy",
-            state: "999",
-          },
         },
       };
       card.setAttribute('hass', JSON.stringify(hass));
@@ -125,22 +87,52 @@
       card.setAttribute('view', view);
     };
 
-    test('prefers configured icons above customized icons in power view', (done) => {
+    test('has config values', (done) => {
       flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:solar-power', 'Solar icon should be configured icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash', 'Grid icon should be configured icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-circle', 'Home icon should be configured icon');
+        assert.equal(card.config.title_power, 'Power view', 'Card parameter title_power should be set');
+        assert.equal(card.config.title_energy, 'Energy view', 'Card parameter title_energy should be set');
+        assert.equal(card.config.title_money, 'Money view', 'Card parameter title_money should be set');
         done();
       });
     });
 
-    test('prefers configured icons above customized icons in energy view', (done) => {
+    test('has set card property values after setConfig', (done) => {
+      flush(() => {
+        assert.equal(card.views.power.title, 'Power view', 'Card property views should have value set for power view title');
+        assert.equal(card.views.energy.title, 'Energy view', 'Card property views should have value set for energy view title');
+        assert.equal(card.views.money.title, 'Money view', 'Card property views should have value set for money view title');
+        done();
+      });
+    });
+
+    test('has no warnings or errors', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelectorAll('.message').length, 0, 'Number of messages should be zero');
+        done();
+      });
+    });
+
+    test('displays values in power view', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#title').innerText, "Power view");
+        done();
+      });
+    });
+
+    test('displays values in energy view', (done) => {
       setCardView('energy');
 
       flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:solar-power', 'Solar icon should be configured icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash', 'Grid icon should be configured icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-circle', 'Home icon should be configured icon');
+        assert.equal(card.shadowRoot.querySelector('#title').innerText, "Energy view");
+        done();
+      });
+    });
+
+    test('displays values in money view', (done) => {
+      setCardView('money');
+
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#title').innerText, "Money view");
         done();
       });
     });

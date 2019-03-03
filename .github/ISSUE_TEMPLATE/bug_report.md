@@ -1,23 +1,22 @@
 ---
 name: Bug report
-about: Create a report to help me improve
+about: Create a report to help me improve. Please read the [wiki](https://github.com/gurbyz/custom-cards-lovelace/wiki/Before-submitting-an-issue-report) first.
 title: ''
 labels: ''
 assignees: ''
 
 ---
+I have read the wiki about [what to try first](https://github.com/gurbyz/custom-cards-lovelace/wiki/Before-submitting-an-issue-report) before creating a bug report.
 
-**Which card does give you issues?**
+**Which custom card does give you issues?**
 power-wheel-card
 
 **Which version of HA do you use?**
-Example: 0.87.1
 
 **Which version of the card do you use?**
-Example: 0.0.10
 
 **Describe the bug**
-A clear and concise description of what the bug is. Paste evt. error messages.
+A clear and concise description of what the bug is. Paste any error messages.
 
 **Configuration of the card**
 Copy the complete configuration of the card, even if you think it isn't relevant.
@@ -27,9 +26,8 @@ Copy the complete configuration of the card, even if you think it isn't relevant
     ...etc...
 ```
 
-**Developer console debug output**
-Copy the complete output of the card that is logged to your developer console when the card is in debug mode.
-To activate debug mode add `debug: true` to your card parameters. To open the developer console you can press F12 in most browsers.
+**Dev console debug output**
+Add `debug: true` to your card parameters. Copy the complete output of the card that is logged to your dev console.
 
 Example: power-wheel-cardVersion: 0.0.10Lovelace resource: power-wheel-card.js?v=0.0.10HA version: 0.87.1Report issues here: ...etc...
 
