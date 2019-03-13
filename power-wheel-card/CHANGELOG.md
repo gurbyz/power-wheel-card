@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.0.12-dev
+### Improvements
+* Replaced ES6 *rest destructuring* language constructs to support iOS10.3 on iPad4.
+
 ## 0.0.11
 ### New features
 * Support for one (nett) grid power sensor.
