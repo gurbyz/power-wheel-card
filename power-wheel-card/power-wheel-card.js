@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.0.12-dev";
+const __VERSION = "0.0.12";
 
 const LitElement = Object.getPrototypeOf(customElements.get("home-assistant-main"));
 const html = LitElement.prototype.html;
@@ -515,6 +515,7 @@ class PowerWheelCard extends LitElement {
       "grid_energy_consumption_entity",
       "grid_energy_production_entity",
       "grid_energy_entity",
+      "home_energy_entity",
     ].reduce((sensors, cardParameter) => {
       if (config.hasOwnProperty(cardParameter)) {
         sensors.push(config[cardParameter]);
