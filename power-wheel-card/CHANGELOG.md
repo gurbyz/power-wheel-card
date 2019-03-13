@@ -3,6 +3,7 @@ Changelog
 ## 0.0.12-dev
 ### Improvements
 * Replaced ES6 *rest destructuring* language constructs to support iOS10.3 on iPad4.
+* Added version number to the debug warning in the card, because not all browsers have a dev console.
 
 ## 0.0.11
 ### New features

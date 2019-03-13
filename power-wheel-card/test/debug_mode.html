@@ -67,7 +67,9 @@
 
     test('has set card property values after setConfig', (done) => {
       flush(() => {
-        assert.deepEqual(card.messages, [ { type: 'warn', text: 'Debug mode is on.' } ], 'Card property messages should be set');
+        assert.equal(card.messages[0].type, 'warn', 'Card property messages[0].type should be set');
+        assert.isTrue(card.messages[0].text.includes('Debug mode is on.'), 'Card property messages[0].text should be set');
+        assert.equal(card.messages.length, 1, 'Card property messages should have correct length');
         done();
       });
     });

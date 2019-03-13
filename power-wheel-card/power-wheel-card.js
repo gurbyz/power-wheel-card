@@ -321,7 +321,7 @@ class PowerWheelCard extends LitElement {
       line += `\nProcessed config: ${JSON.stringify(this.config, '', ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, '', ' ')}`;
       line += `\nViews object: ${JSON.stringify(this.views, '', ' ')}`;
       this._logConsole(line);
-      this._addMessage('warn', 'Debug mode is on.');
+      this._addMessage('warn', `[${__VERSION}] Debug mode is on.`);
     }
     this._validateSensors();
     this.views.power.unit = this._defineUnit('power', this.config.solar_power_entity, this.config.grid_power_entity,
