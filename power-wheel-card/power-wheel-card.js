@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.0.11";
+const __VERSION = "0.0.12";
 
 const LitElement = Object.getPrototypeOf(customElements.get("home-assistant-main"));
 const html = LitElement.prototype.html;
@@ -267,7 +267,7 @@ class PowerWheelCard extends LitElement {
   }
 
   _addMessage(type, text) {
-    this.messages = [ ...this.messages, { type: type, text: text } ];
+    this.messages.push({ type: type, text: text });
     console[type](text);
   }
 
@@ -321,7 +321,7 @@ class PowerWheelCard extends LitElement {
       line += `\nProcessed config: ${JSON.stringify(this.config, '', ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, '', ' ')}`;
       line += `\nViews object: ${JSON.stringify(this.views, '', ' ')}`;
       this._logConsole(line);
-      this._addMessage('warn', 'Debug mode is on.');
+      this._addMessage('warn', `[${__VERSION}] Debug mode is on.`);
     }
     this._validateSensors();
     this.views.power.unit = this._defineUnit('power', this.config.solar_power_entity, this.config.grid_power_entity,
@@ -329,7 +329,7 @@ class PowerWheelCard extends LitElement {
     this.views.energy.unit = this._defineUnit('energy', this.config.solar_energy_entity, this.config.grid_energy_entity,
       this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity);
     this.views.money.unit = this.config.money_unit;
-    this.views = { ...this.views };
+    this.views = Object.assign({}, this.views);
   }
 
   _sensorChangeDetected(oldValue) {
@@ -342,7 +342,7 @@ class PowerWheelCard extends LitElement {
     // Don't update when there is a new value for a hass property that's not a registered sensor.
     // Update in all other cases, e.g. when there is a change of config or old values are undefined.
     let update = true;
-    [ ...changedProperties.keys() ].some((propName) => {
+    Array.from(changedProperties.keys()).some((propName) => {
       const oldValue = changedProperties.get(propName);
       if (propName === "hass" && oldValue) {
         update = update && this._sensorChangeDetected(oldValue);
@@ -515,6 +515,7 @@ class PowerWheelCard extends LitElement {
       "grid_energy_consumption_entity",
       "grid_energy_production_entity",
       "grid_energy_entity",
+      "home_energy_entity",
     ].reduce((sensors, cardParameter) => {
       if (config.hasOwnProperty(cardParameter)) {
         sensors.push(config[cardParameter]);
@@ -596,7 +597,7 @@ class PowerWheelCard extends LitElement {
     this.autoToggleView = config.initial_auto_toggle_view;
     this.sensors = this._getSensors(config);
     this.view = config.initial_view;
-    this.config = { ...config };
+    this.config = Object.assign({}, config);
   }
 
   /* HA functions */

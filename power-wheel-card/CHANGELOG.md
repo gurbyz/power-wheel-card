@@ -1,5 +1,12 @@
 Changelog
 ====
+## 0.0.12
+### Improvements
+* Replaced ES6 *rest destructuring* language constructs to support iOS10.3 on iPad4.
+* Added version number to the debug warning in the card, because not all browsers have a dev console.
+### Fixes
+* Added `home_energy_entity` to the registered sensors in debug info.
+
 ## 0.0.11
 ### New features
 * Support for one (nett) grid power sensor.
