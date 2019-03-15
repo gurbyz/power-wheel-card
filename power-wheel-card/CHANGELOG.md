@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.0.13-dev
+### Improvements
+* Code improvements.
+
 ## 0.0.12
 ### Improvements
 * Replaced ES6 *rest destructuring* language constructs to support iOS10.3 on iPad4.

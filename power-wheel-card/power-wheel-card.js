@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.0.12";
+const __VERSION = "0.0.13-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("home-assistant-main"));
 const html = LitElement.prototype.html;
@@ -121,7 +121,7 @@ class PowerWheelCard extends LitElement {
   
   /* Card functions */
 
-  _generateClass(value) {
+  static _generateClass(value) {
     return value > 0 ? 'producing' : ((value < 0) ? 'consuming' : 'inactive');
   }
 
@@ -133,7 +133,7 @@ class PowerWheelCard extends LitElement {
     const valueStr = typeof val === 'undefined' ? 'unavailable' : this._generateValueStr(val, decimals);
     const stateObj = this.hass.states[entity];
     const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
-    const classValue = this._generateClass(val);
+    const classValue = PowerWheelCard._generateClass(val);
 
     return {
       stateObj,
@@ -224,7 +224,7 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  _logConsole(message) {
+  static _logConsole(message) {
     // if (this.config.debug) {
       console.info(`%cpower-wheel-card%c\n${message}`, "color: green; font-weight: bold", "");
     // }
@@ -313,14 +313,14 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  firstUpdated() {
+  firstUpdated(changedProperties) {
     if (this.config.debug) {
       let line = `Version: ${__VERSION}\nLovelace resource: ${this._lovelaceResource()}\nHA version: ${this.hass.config.version}`;
       line += `\nAgent: ${navigator.userAgent}`;
       line += `\nReport issues here: https://github.com/gurbyz/custom-cards-lovelace/issues`;
-      line += `\nProcessed config: ${JSON.stringify(this.config, '', ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, '', ' ')}`;
-      line += `\nViews object: ${JSON.stringify(this.views, '', ' ')}`;
-      this._logConsole(line);
+      line += `\nProcessed config: ${JSON.stringify(this.config, null, ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, null, ' ')}`;
+      line += `\nViews object: ${JSON.stringify(this.views, null, ' ')}`;
+      PowerWheelCard._logConsole(line);
       this._addMessage('warn', `[${__VERSION}] Debug mode is on.`);
     }
     this._validateSensors();
