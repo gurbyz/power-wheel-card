@@ -1,9 +1,8 @@
 {
   "power-wheel-card": {
-    "updated_at": "2019-03-13",
-    "version": "0.0.12",
+    "changelog": "https://github.com/gurbyz/custom-cards-lovelace/blob/master/power-wheel-card/CHANGELOG.md",
     "remote_location": "https://raw.githubusercontent.com/gurbyz/custom-cards-lovelace/master/power-wheel-card/power-wheel-card.js",
-    "visit_repo": "https://github.com/gurbyz/custom-cards-lovelace/tree/master/power-wheel-card",
-    "changelog": "https://github.com/gurbyz/custom-cards-lovelace/blob/master/power-wheel-card/CHANGELOG.md"
+    "version": "0.0.13-dev",
+    "visit_repo": "https://github.com/gurbyz/custom-cards-lovelace/tree/master/power-wheel-card"
   }
 }
