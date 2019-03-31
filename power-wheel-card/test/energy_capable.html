@@ -91,7 +91,7 @@
 
     const setCardConsumedAndProducedToGrid = () => {
       hass.states['sensor.grid_energy_consumption'].state = "1";
-      hass.states['sensor.grid_energy_production'].state = "0.5";
+      hass.states['sensor.grid_energy_production'].state = "0.4";
       card.setAttribute('hass', JSON.stringify(hass));
     };
 
@@ -210,10 +210,10 @@
 
       flush(() => {
         assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-0.500', 'Grid should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-5.500', 'Home should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '0.500', 'Solar2Grid arrow should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '4.500', 'Solar2Home arrow should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-0.600', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-5.600', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '0.400', 'Solar2Grid arrow should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '4.600', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '1.000', 'Grid2Home arrow should have correct value');
         done();
       });
