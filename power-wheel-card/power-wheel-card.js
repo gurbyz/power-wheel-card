@@ -434,12 +434,12 @@ class PowerWheelCard extends LitElement {
             ${this._cell('solar', this.data.solar, 'position')}
           </div>
           <div class="row">
-            ${this._cell('solar2grid', this.data.solar2grid, 'arrow', this.data.solar.val)}
-            ${this._cell('solar2home', this.data.solar2home, 'arrow', this.data.solar.val)}
+            ${this._cell('solar2grid', this.data.solar2grid, 'arrow', this.data.solar.val, this.data.grid.val)}
+            ${this._cell('solar2home', this.data.solar2home, 'arrow', this.data.solar.val, this.data.home.val)}
           </div>
           <div class="row">
             ${this._cell('grid', this.data.grid, 'position')}
-            ${this._cell('grid2home', this.data.grid2home, 'arrow', this.data.grid.val)}
+            ${this._cell('grid2home', this.data.grid2home, 'arrow', this.data.grid.val, this.data.home.val)}
             ${this._cell('home', this.data.home, 'position')}
           </div>
         </div>
@@ -449,14 +449,14 @@ class PowerWheelCard extends LitElement {
   
   /* Template functions */
 
-  _cell(id, cellObj, cellType, hideValue) {
+  _cell(id, cellObj, cellType, hideValue1, hideValue2) {
     return html`
       <div id="cell-${id}"
             class="cell ${cellType} ${cellObj.hasSensor ? 'sensor' : ''}" 
             @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
             title="${cellObj.hasSensor ? `More info${cellObj.stateObj.attributes.friendly_name ? ':\n' + cellObj.stateObj.attributes.friendly_name : ''}` : ''}">
         <ha-icon id="icon-${id}" class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
-        <div id="value-${id}" class="value">${cellType === 'arrow' && (cellObj.val === 0 || cellObj.val === Math.abs(hideValue)) ? '' : cellObj.valueStr}</div>
+        <div id="value-${id}" class="value">${cellType === 'arrow' && (cellObj.val === 0 || Math.abs(cellObj.val) === Math.abs(hideValue1) || Math.abs(cellObj.val) === Math.abs(hideValue2)) ? '' : cellObj.valueStr}</div>
       </div>
     `;
   }

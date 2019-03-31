@@ -2,6 +2,7 @@ Changelog
 ====
 ## 0.0.13-dev
 ### Improvements
+* Hide values near arrows in more cases.
 * Code improvements.
 
 ## 0.0.12
