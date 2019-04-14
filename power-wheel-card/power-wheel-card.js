@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.0.12";
+const __VERSION = "0.0.13";
 
 const LitElement = Object.getPrototypeOf(customElements.get("home-assistant-main"));
 const html = LitElement.prototype.html;
@@ -121,7 +121,7 @@ class PowerWheelCard extends LitElement {
   
   /* Card functions */
 
-  _generateClass(value) {
+  static _generateClass(value) {
     return value > 0 ? 'producing' : ((value < 0) ? 'consuming' : 'inactive');
   }
 
@@ -133,7 +133,7 @@ class PowerWheelCard extends LitElement {
     const valueStr = typeof val === 'undefined' ? 'unavailable' : this._generateValueStr(val, decimals);
     const stateObj = this.hass.states[entity];
     const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
-    const classValue = this._generateClass(val);
+    const classValue = PowerWheelCard._generateClass(val);
 
     return {
       stateObj,
@@ -224,7 +224,7 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  _logConsole(message) {
+  static _logConsole(message) {
     // if (this.config.debug) {
       console.info(`%cpower-wheel-card%c\n${message}`, "color: green; font-weight: bold", "");
     // }
@@ -313,14 +313,14 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  firstUpdated() {
+  firstUpdated(changedProperties) {
     if (this.config.debug) {
       let line = `Version: ${__VERSION}\nLovelace resource: ${this._lovelaceResource()}\nHA version: ${this.hass.config.version}`;
       line += `\nAgent: ${navigator.userAgent}`;
       line += `\nReport issues here: https://github.com/gurbyz/custom-cards-lovelace/issues`;
-      line += `\nProcessed config: ${JSON.stringify(this.config, '', ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, '', ' ')}`;
-      line += `\nViews object: ${JSON.stringify(this.views, '', ' ')}`;
-      this._logConsole(line);
+      line += `\nProcessed config: ${JSON.stringify(this.config, null, ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, null, ' ')}`;
+      line += `\nViews object: ${JSON.stringify(this.views, null, ' ')}`;
+      PowerWheelCard._logConsole(line);
       this._addMessage('warn', `[${__VERSION}] Debug mode is on.`);
     }
     this._validateSensors();
@@ -330,6 +330,9 @@ class PowerWheelCard extends LitElement {
       this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity);
     this.views.money.unit = this.config.money_unit;
     this.views = Object.assign({}, this.views);
+    // if (this.config.energy_price) {
+    //   this._addMessage('warn', 'Deprecated card parameter \'energy_price\' is used.');
+    // }
   }
 
   _sensorChangeDetected(oldValue) {
@@ -354,12 +357,22 @@ class PowerWheelCard extends LitElement {
 
   render() {
     if (this.view === 'money' && this.views.money.capable) {
-      this.data.solar.val = this.config.energy_price * this._calculateSolarValue(this.config.solar_energy_entity);
-      this.data.grid2home.val = this.config.energy_price * this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity, this.config.grid_energy_entity);
-      this.data.solar2grid.val = this.config.energy_price * this._calculateSolar2GridValue(this.config.grid_energy_production_entity, this.config.grid_energy_entity);
+      // Calculate energy values first
+      this.data.solar.val = this._calculateSolarValue(this.config.solar_energy_entity);
+      this.data.grid2home.val = this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity, this.config.grid_energy_entity);
+      this.data.solar2grid.val = this._calculateSolar2GridValue(this.config.grid_energy_production_entity, this.config.grid_energy_entity);
       this.data.grid.val = this._calculateGridValue(this.config.grid_energy_entity);
       this.data.home.val = this._calculateHomeValue(this.config.home_energy_entity);
       this.data.solar2home.val = this._calculateSolar2HomeValue();
+
+      // Convert energy values into money values
+      this.data.solar2grid.val *= this.config.energy_production_rate;
+      this.data.grid2home.val *= this.config.energy_consumption_rate;
+      this.data.solar2home.val *= this.config.energy_consumption_rate;
+      this.data.solar.val = this.data.solar2grid.val + this.data.solar2home.val;
+      this.data.grid.val = this.data.solar2grid.val - this.data.grid2home.val;
+      this.data.home.val = - this.data.grid2home.val - this.data.solar2home.val;
+
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
         'mdi:weather-sunny', this.config.money_decimals);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
@@ -376,6 +389,7 @@ class PowerWheelCard extends LitElement {
       this.data.grid.val = this._calculateGridValue(this.config.grid_energy_entity);
       this.data.home.val = this._calculateHomeValue(this.config.home_energy_entity);
       this.data.solar2home.val = this._calculateSolar2HomeValue();
+
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.energy_decimals);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
@@ -392,6 +406,7 @@ class PowerWheelCard extends LitElement {
       this.data.grid.val = this._calculateGridValue(this.config.grid_power_entity);
       this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
+
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_power_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.power_decimals);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_power_entity, this.config.grid_icon,
@@ -434,12 +449,12 @@ class PowerWheelCard extends LitElement {
             ${this._cell('solar', this.data.solar, 'position')}
           </div>
           <div class="row">
-            ${this._cell('solar2grid', this.data.solar2grid, 'arrow', this.data.solar.val)}
-            ${this._cell('solar2home', this.data.solar2home, 'arrow', this.data.solar.val)}
+            ${this._cell('solar2grid', this.data.solar2grid, 'arrow', this.data.solar.val, this.data.grid.val)}
+            ${this._cell('solar2home', this.data.solar2home, 'arrow', this.data.solar.val, this.data.home.val)}
           </div>
           <div class="row">
             ${this._cell('grid', this.data.grid, 'position')}
-            ${this._cell('grid2home', this.data.grid2home, 'arrow', this.data.grid.val)}
+            ${this._cell('grid2home', this.data.grid2home, 'arrow', this.data.grid.val, this.data.home.val)}
             ${this._cell('home', this.data.home, 'position')}
           </div>
         </div>
@@ -449,14 +464,14 @@ class PowerWheelCard extends LitElement {
   
   /* Template functions */
 
-  _cell(id, cellObj, cellType, hideValue) {
+  _cell(id, cellObj, cellType, hideValue1, hideValue2) {
     return html`
       <div id="cell-${id}"
             class="cell ${cellType} ${cellObj.hasSensor ? 'sensor' : ''}" 
             @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
             title="${cellObj.hasSensor ? `More info${cellObj.stateObj.attributes.friendly_name ? ':\n' + cellObj.stateObj.attributes.friendly_name : ''}` : ''}">
         <ha-icon id="icon-${id}" class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
-        <div id="value-${id}" class="value">${cellType === 'arrow' && (cellObj.val === 0 || cellObj.val === Math.abs(hideValue)) ? '' : cellObj.valueStr}</div>
+        <div id="value-${id}" class="value">${cellType === 'arrow' && (cellObj.val === 0 || Math.abs(cellObj.val) === Math.abs(hideValue1) || Math.abs(cellObj.val) === Math.abs(hideValue2)) ? '' : cellObj.valueStr}</div>
       </div>
     `;
   }
@@ -575,6 +590,12 @@ class PowerWheelCard extends LitElement {
     }
     config.auto_toggle_view_period = config.auto_toggle_view_period ? config.auto_toggle_view_period : 10;
     config.debug = config.debug ? config.debug : false;
+    if (config.energy_price && config.energy_consumption_rate === undefined) {
+      config.energy_consumption_rate = config.energy_price;
+    }
+    if (config.energy_production_rate === undefined && config.energy_consumption_rate) {
+      config.energy_production_rate = config.energy_consumption_rate;
+    }
 
     this.views.power = {
       title: config.title_power,
@@ -592,7 +613,7 @@ class PowerWheelCard extends LitElement {
       title: config.title_money,
       oneGridSensor: this.views.energy.oneGridSensor,
       twoGridSensors: this.views.energy.twoGridSensors,
-      capable: this.views.energy.capable && !!config.energy_price,
+      capable: this.views.energy.capable && !!config.energy_consumption_rate,
     };
     this.autoToggleView = config.initial_auto_toggle_view;
     this.sensors = this._getSensors(config);

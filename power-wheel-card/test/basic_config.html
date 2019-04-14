@@ -196,8 +196,8 @@
         assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '50', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-450', 'Home should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '50', 'Solar2Grid arrow should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '450', 'Solar2Home arrow should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
         done();
       });
@@ -259,7 +259,7 @@
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-5', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '0', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
-        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '5', 'Solar2Home arrow should have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow should have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
         done();
       });

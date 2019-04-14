@@ -23,7 +23,7 @@ Features of the custom power-wheel-card:
   Input for the calculation is the energy that you consumed from the grid and the energy that you produced to the grid.
 * Calculates the energy that your home is consuming: home energy.
   Input for the calculation is the energy that your solar panels produced and the energy that you consumed from and produced to the grid.
-* Calculates the costs/savings for all the energy values.
+* Calculates the costs/savings for all the energy values. Takes into account different rates for consuming and producing energy from and to the grid.
 * Displays the transition between these power, energy and money values as arrows.
   E.g. if your solar power panels produce power, the arrow from solar to home turns active.
   And if your solar power panels produce enough power to deliver some back to the grid, the arrow from solar to grid turns active.
@@ -150,9 +150,11 @@ The toggle functions to switch to the *money view* will be disabled.
 
 But if you want the *money view*:
 1. Comply to all the requirements of the *energy view* first.
-2. Supply the card parameter `energy_price`.
+1. Supply the card parameter `energy_consumption_rate`.
+1. (Optional) If you have a different rate for producing energy back to the grid, you can also supply the card parameter `energy_production_rate`.
 
-> The power-wheel-card has **one** price for the energy. If your energy price is depending on the (time of) day, please supply the average price for high and low tariff or choose to not use the *money view*. 
+> The power-wheel-card only has rates for the energy depending on whether you consume or produce it.
+If your energy rate is depending on the (time of) day, please supply the average rates for high and low tariff or choose to not use the *money view*. 
 
 
 ## Instructions
@@ -199,8 +201,10 @@ There are many more card parameters available, but it's advised to start with th
 |solar_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your solar energy sensor. E.g. `sensor.YOUR_SOLAR_ENERGY_SENSOR`. See requirements above.|
 |grid_energy_consumption_entity (D)|string|optional, always together with E|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's consumed from the grid. E.g. `sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_energy_production_entity (E)|string|optional, always together with D|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's produced to the grid. E.g. `sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR`. See requirements above.|
-|energy_price|float|optional|Default the *money view* will not be enabled.|The price of your energy per unit of energy. E.g. `0.20`.|
-|money_unit|string|optional|`"€"`|The unit of `energy_price`. This unit will be used for displaying all money values.|
+|energy_consumption_rate|float|optional|Default the *money view* will not be enabled.|The rate of your energy consumed from the grid per unit of energy. E.g. `0.20`.|
+|energy_production_rate|float|optional|The value of `energy_consumption_rate`.|The rate of your energy produced to the grid per unit of energy. E.g. `0.15`.|
+|energy_price *(deprecated)*|float|optional| |Deprecated. Please use `energy_consumption_rate` and evt. the optional `energy_production_rate` as of version 0.0.13.|
+|money_unit|string|optional|`"€"`|The unit of `energy_consumption_rate` and `energy_production_rate`. This unit will be used for displaying all money values.|
 |solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
 |grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:transmission-tower"` will be used.|Icon for grid power and energy.|
 |home_icon|string|optional|The icon of your own customized home sensor(s) if its entity parameter is set. If not available, then `"mdi:home"` will be used.|Icon for home power and energy.|
@@ -265,7 +269,8 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   solar_energy_entity: sensor.YOUR_SOLAR_ENERGY_SENSOR
   grid_energy_consumption_entity: sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR
   grid_energy_production_entity: sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR
-  energy_price: 0.20
+  energy_consumption_rate: 0.20
+  energy_production_rate: 0.15
   money_unit: "$"
   solar_icon: "mdi:white-balance-sunny"
   grid_icon: "mdi:flash"

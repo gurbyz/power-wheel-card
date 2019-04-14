@@ -1,5 +1,15 @@
 Changelog
 ====
+## 0.0.13
+### New features
+* Split energy rates for consuming from the grid and producing to the grid.
+  * Use new card parameters `energy_consumption_rate` and optional `energy_production_rate`.
+  * **DEPRECATED.** Current card parameter `energy_price` is deprecated and its value will be used as value for `energy_consumption_rate` for a while.
+  Please replace `energy_price` by `energy_consumption_rate` in your setup.
+### Improvements
+* Hide values near arrows in more cases.
+* Code improvements.
+
 ## 0.0.12
 ### Improvements
 * Replaced ES6 *rest destructuring* language constructs to support iOS10.3 on iPad4.
