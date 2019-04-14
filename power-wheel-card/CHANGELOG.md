@@ -1,6 +1,6 @@
 Changelog
 ====
-## 0.0.13-dev
+## 0.0.13
 ### New features
 * Split energy rates for consuming from the grid and producing to the grid.
   * Use new card parameters `energy_consumption_rate` and optional `energy_production_rate`.
