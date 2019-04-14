@@ -330,6 +330,9 @@ class PowerWheelCard extends LitElement {
       this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity);
     this.views.money.unit = this.config.money_unit;
     this.views = Object.assign({}, this.views);
+    // if (this.config.energy_price) {
+    //   this._addMessage('warn', 'Deprecated card parameter \'energy_price\' is used.');
+    // }
   }
 
   _sensorChangeDetected(oldValue) {
@@ -354,12 +357,22 @@ class PowerWheelCard extends LitElement {
 
   render() {
     if (this.view === 'money' && this.views.money.capable) {
-      this.data.solar.val = this.config.energy_price * this._calculateSolarValue(this.config.solar_energy_entity);
-      this.data.grid2home.val = this.config.energy_price * this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity, this.config.grid_energy_entity);
-      this.data.solar2grid.val = this.config.energy_price * this._calculateSolar2GridValue(this.config.grid_energy_production_entity, this.config.grid_energy_entity);
+      // Calculate energy values first
+      this.data.solar.val = this._calculateSolarValue(this.config.solar_energy_entity);
+      this.data.grid2home.val = this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity, this.config.grid_energy_entity);
+      this.data.solar2grid.val = this._calculateSolar2GridValue(this.config.grid_energy_production_entity, this.config.grid_energy_entity);
       this.data.grid.val = this._calculateGridValue(this.config.grid_energy_entity);
       this.data.home.val = this._calculateHomeValue(this.config.home_energy_entity);
       this.data.solar2home.val = this._calculateSolar2HomeValue();
+
+      // Convert energy values into money values
+      this.data.solar2grid.val *= this.config.energy_production_rate;
+      this.data.grid2home.val *= this.config.energy_consumption_rate;
+      this.data.solar2home.val *= this.config.energy_consumption_rate;
+      this.data.solar.val = this.data.solar2grid.val + this.data.solar2home.val;
+      this.data.grid.val = this.data.solar2grid.val - this.data.grid2home.val;
+      this.data.home.val = - this.data.grid2home.val - this.data.solar2home.val;
+
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
         'mdi:weather-sunny', this.config.money_decimals);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
@@ -376,6 +389,7 @@ class PowerWheelCard extends LitElement {
       this.data.grid.val = this._calculateGridValue(this.config.grid_energy_entity);
       this.data.home.val = this._calculateHomeValue(this.config.home_energy_entity);
       this.data.solar2home.val = this._calculateSolar2HomeValue();
+
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.energy_decimals);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_energy_entity, this.config.grid_icon,
@@ -392,6 +406,7 @@ class PowerWheelCard extends LitElement {
       this.data.grid.val = this._calculateGridValue(this.config.grid_power_entity);
       this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
+
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_power_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.power_decimals);
       this.data.grid = this._makePositionObject(this.data.grid.val, this.config.grid_power_entity, this.config.grid_icon,
@@ -575,6 +590,12 @@ class PowerWheelCard extends LitElement {
     }
     config.auto_toggle_view_period = config.auto_toggle_view_period ? config.auto_toggle_view_period : 10;
     config.debug = config.debug ? config.debug : false;
+    if (config.energy_price && config.energy_consumption_rate === undefined) {
+      config.energy_consumption_rate = config.energy_price;
+    }
+    if (config.energy_production_rate === undefined && config.energy_consumption_rate) {
+      config.energy_production_rate = config.energy_consumption_rate;
+    }
 
     this.views.power = {
       title: config.title_power,
@@ -592,7 +613,7 @@ class PowerWheelCard extends LitElement {
       title: config.title_money,
       oneGridSensor: this.views.energy.oneGridSensor,
       twoGridSensors: this.views.energy.twoGridSensors,
-      capable: this.views.energy.capable && !!config.energy_price,
+      capable: this.views.energy.capable && !!config.energy_consumption_rate,
     };
     this.autoToggleView = config.initial_auto_toggle_view;
     this.sensors = this._getSensors(config);
