@@ -32,7 +32,7 @@ Features of the custom power-wheel-card:
   In these setups arrow values and arrow coloring are not available in *energy view* and *money view* due to lack of input details.
 * Optionally uses icons of your own choice, which can be set by card parameters or taken from your `customize:` sensor settings.
 * Optionally colors the consuming icons yellow and the producing icons green. You can choose your own colors for consuming and producing.
-* Works for default theme and custom themes that use [standard CSS vars](https://github.com/home-assistant/home-assistant-polymer/blob/master/src/resources/ha-style.js).
+* Works for default theme and custom themes that use [standard CSS vars](https://github.com/home-assistant/home-assistant-polymer/blob/master/src/resources/ha-style.ts).
 * Has support for [custom_updater](https://github.com/custom-components/custom_updater) custom component to check for new release via the custom tracker-card.
 
 ![example1](./example_power_view.gif "The power-wheel-card displaying the power view")

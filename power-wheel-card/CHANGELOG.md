@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.0.14-dev
+### Fixes
+* Fixed a link in readme.
+
 ## 0.0.13
 ### New features
 * Split energy rates for consuming from the grid and producing to the grid.
