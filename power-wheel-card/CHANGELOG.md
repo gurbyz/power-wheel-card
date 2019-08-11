@@ -1,6 +1,8 @@
 Changelog
 ====
-## 0.0.14-dev
+## 0.0.14
+### Improvements
+* Update for HA Cast. LitElement is taken from `hui-view`.
 ### Fixes
 * Fixed a link in readme.
 
