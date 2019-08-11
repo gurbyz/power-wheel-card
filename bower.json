@@ -1,0 +1,27 @@
+{
+  "name": "power-wheel-card",
+  "homepage": "https://github.com/gurbyz/power-wheel-card",
+  "authors": [
+    "Gerben ten Hove"
+  ],
+  "description": "An intuitive way to represent the power and energy that your home is consuming or producing.",
+  "main": "",
+  "keywords": [
+    "energy",
+    "solar panels",
+    "home assistant",
+    "lovelace",
+    "custom card"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ],
+  "devDependencies": {
+    "web-component-tester": "^6.5.0",
+    "webcomponentsjs": "^2.2.7"
+  }
+}

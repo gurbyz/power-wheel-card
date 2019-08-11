@@ -1,0 +1,14 @@
+{
+  "verbose": false,
+  "plugins": {
+    "local": {
+      "browsers": ["chrome"]
+    },
+    "istanbub": {
+      "reporters": ["text-summary", "lcov"],
+      "include": [
+        "/power-wheel-card.js"
+      ]
+    }
+  }
+}
