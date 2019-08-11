@@ -1,7 +1,7 @@
 power-wheel-card
 ====
 
-An intuïtive way to represent the power and energy that your home is consuming or producing.
+An intuitive way to represent the power and energy that your home is consuming or producing.
 > This component is discussed [here](https://community.home-assistant.io/t/lovelace-power-wheel-card/82374) on the Home Assistant forum. There's also a [wiki](https://github.com/gurbyz/power-wheel-card/wiki/Troubleshooting-guide) on GitHub.
 
 ## Features
