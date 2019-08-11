@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../../bower_components/web-component-tester/browser.js"></script>
-  <script type="module" src="../../test/hui-view-mock.js"></script>
+  <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../bower_components/web-component-tester/browser.js"></script>
+  <script type="module" src="hui-view-mock.js"></script>
   <script type="module" src="../power-wheel-card.js"></script>
 </head>
 <body>
@@ -14,10 +14,8 @@
   </template>
 </test-fixture>
 <script>
-  suite('<power-wheel-card> with configured icon colors', () => {
+  suite('<power-wheel-card> in debug mode', () => {
     let card, hass, config;
-
-    /** Tests are based on color_icons. **/
 
     setup(() => {
       card = fixture('simple');
@@ -26,24 +24,26 @@
         solar_power_entity: "sensor.solar_power",
         grid_power_consumption_entity: "sensor.grid_power_consumption",
         grid_power_production_entity: "sensor.grid_power_production",
-        consuming_color: "red",
-        producing_color: "green",
+        debug: true,
       };
       hass = {
+        config: {
+          version: "1.2.3",
+        },
         states: {
           "sensor.solar_power" : {
             attributes: {
               unit_of_measurement: "W",
             },
             entity_id: "sensor.solar_power",
-            state: "500",
+            state: "500.1",
           },
           "sensor.grid_power_consumption" : {
             attributes: {
               unit_of_measurement: "W",
             },
             entity_id: "sensor.grid_power_consumption",
-            state: "1800",
+            state: "1799.9",
           },
           "sensor.grid_power_production" : {
             attributes: {
@@ -58,19 +58,25 @@
       card.setConfig(config);
     });
 
-    test('has config values', (done) => {
+    test('has set default config values', (done) => {
       flush(() => {
-        assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');
-        assert.equal(card.config.consuming_color, 'red', 'Card parameter consuming_color should be set');
-        assert.equal(card.config.producing_color, 'green', 'Card parameter producing_color should be set');
+        assert.isTrue(card.config.debug, 'Card parameter debug should be set');
         done();
       });
     });
 
-    test('uses configured color values', (done) => {
+    test('has set card property values after setConfig', (done) => {
       flush(() => {
-        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(255, 0, 0)', 'Consuming icon color should be red');
-        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.producing'), null).getPropertyValue('color'), 'rgb(0, 128, 0)', 'Producing icon color should be green');
+        assert.equal(card.messages[0].type, 'warn', 'Card property messages[0].type should be set');
+        assert.isTrue(card.messages[0].text.includes('Debug mode is on.'), 'Card property messages[0].text should be set');
+        assert.equal(card.messages.length, 1, 'Card property messages should have correct length');
+        done();
+      });
+    });
+
+    test('has debug warning', (done) => {
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelectorAll('.message').length, 1, 'There should be a message');
         done();
       });
     });

@@ -7,7 +7,7 @@
     "istanbub": {
       "reporters": ["text-summary", "lcov"],
       "include": [
-        "/power-wheel-card/*.js"
+        "/power-wheel-card.js"
       ]
     }
   }

@@ -1,11 +1,11 @@
 /**
  *
  * power-wheel-card by Gerben ten Hove
- * https://github.com/gurbyz/custom-cards-lovelace/tree/master/power-wheel-card
+ * https://github.com/gurbyz/custom-cards-lovelace
  *
  */
 
-const __VERSION = "0.0.14";
+const __VERSION = "0.0.15-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;

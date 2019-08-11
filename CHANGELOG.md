@@ -1,5 +1,10 @@
 Changelog
 ====
+## 0.0.15-dev
+### Improvements
+* Removal of support for Customer Updater.
+* Preparations to support HACS. Repo structure change.
+
 ## 0.0.14
 ### Improvements
 * Update for HA Cast. LitElement is taken from `hui-view`.
