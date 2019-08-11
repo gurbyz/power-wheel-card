@@ -2,7 +2,7 @@
   "power-wheel-card": {
     "changelog": "https://github.com/gurbyz/custom-cards-lovelace/blob/master/power-wheel-card/CHANGELOG.md",
     "remote_location": "https://raw.githubusercontent.com/gurbyz/custom-cards-lovelace/master/power-wheel-card/power-wheel-card.js",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "visit_repo": "https://github.com/gurbyz/custom-cards-lovelace/tree/master/power-wheel-card"
   }
 }

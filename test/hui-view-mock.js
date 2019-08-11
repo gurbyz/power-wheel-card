@@ -3,6 +3,6 @@ import { LitElement, html as litHtml, css as litCss } from "lit-element";
 LitElement.prototype.html = litHtml;
 LitElement.prototype.css = litCss;
 
-class HomeAssistantMain extends LitElement {}
+class HuiView extends LitElement {}
 
-customElements.define("home-assistant-main", HomeAssistantMain);
+customElements.define("hui-view", HuiView);

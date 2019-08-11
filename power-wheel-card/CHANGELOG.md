@@ -1,5 +1,11 @@
 Changelog
 ====
+## 0.0.14
+### Improvements
+* Update for HA Cast. LitElement is taken from `hui-view`.
+### Fixes
+* Fixed a link in readme.
+
 ## 0.0.13
 ### New features
 * Split energy rates for consuming from the grid and producing to the grid.
