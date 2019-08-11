@@ -1,12 +1,14 @@
 {
-  "name": "custom-cards-lovelace",
-  "homepage": "https://github.com/gurbyz/custom-cards-lovelace",
+  "name": "power-wheel-card",
+  "homepage": "https://github.com/gurbyz/power-wheel-card",
   "authors": [
     "Gerben ten Hove"
   ],
-  "description": "Custom cards for the Lovelace UI of Home Assistant",
+  "description": "An intuitive way to represent the power and energy that your home is consuming or producing.",
   "main": "",
   "keywords": [
+    "energy",
+    "solar panels",
     "home assistant",
     "lovelace",
     "custom card"

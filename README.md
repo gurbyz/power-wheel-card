@@ -1,8 +1,8 @@
 power-wheel-card
 ====
 
-An intuïtive way to represent the power and energy that your home is consuming or producing.
-> This component is discussed [here](https://community.home-assistant.io/t/lovelace-power-wheel-card/82374) on the Home Assistant forum. There's also a [wiki](https://github.com/gurbyz/custom-cards-lovelace/wiki/Before-submitting-an-issue-report) on GitHub.
+An intuitive way to represent the power and energy that your home is consuming or producing.
+> This component is a custom card for the Lovelace UI of Home Assistant. The component is discussed [here](https://community.home-assistant.io/t/lovelace-power-wheel-card/82374) on the Home Assistant forum. There's also a [wiki](https://github.com/gurbyz/power-wheel-card/wiki/Troubleshooting-guide) on GitHub.
 
 ## Features
 Features of the custom power-wheel-card:
@@ -33,7 +33,7 @@ Features of the custom power-wheel-card:
 * Optionally uses icons of your own choice, which can be set by card parameters or taken from your `customize:` sensor settings.
 * Optionally colors the consuming icons yellow and the producing icons green. You can choose your own colors for consuming and producing.
 * Works for default theme and custom themes that use [standard CSS vars](https://github.com/home-assistant/home-assistant-polymer/blob/master/src/resources/ha-style.ts).
-* Has support for [custom_updater](https://github.com/custom-components/custom_updater) custom component to check for new release via the custom tracker-card.
+* Has support for [HACS](https://custom-components.github.io/hacs/) to check for a new release.
 
 ![example1](./example_power_view.gif "The power-wheel-card displaying the power view")
 ![example2](./example_energy_view.gif "The power-wheel-card displaying the energy view")
@@ -160,7 +160,7 @@ If your energy rate is depending on the (time of) day, please supply the average
 ## Instructions
 1. Check the requirements above. If you don't comply to the requirements, the card won't be much of use for you or just won't work.
 
-1. Download the file [power-wheel-card.js](https://raw.githubusercontent.com/gurbyz/custom-cards-lovelace/master/power-wheel-card.js).
+1. Download the file [power-wheel-card.js](https://raw.githubusercontent.com/gurbyz/power-wheel-card/master/power-wheel-card.js).
 1. Save the file in the `www` folder inside your Home Assistant config folder.
 1. Include the card code in your `ui-lovelace.yaml` file:
 
@@ -287,7 +287,7 @@ A more advanced example for in the `ui-lovelace.yaml` file:
 ```
 
 ## License
-This custom card is licensed under the [Apache License 2.0](https://github.com/gurbyz/custom-cards-lovelace/blob/master/LICENSE).
+This custom card is licensed under the [Apache License 2.0](https://github.com/gurbyz/power-wheel-card/blob/master/LICENSE).
 
 ## Credits
 * [gurbyz](https://github.com/gurbyz)

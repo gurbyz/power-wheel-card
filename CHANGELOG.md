@@ -3,7 +3,7 @@ Changelog
 ## 0.0.15-dev
 ### Improvements
 * Removal of support for Customer Updater.
-* Preparations to support HACS. Repo structure change.
+* Preparations to support HACS. Repo restructuring and preparation of the repo name change.
 
 ## 0.0.14
 ### Improvements

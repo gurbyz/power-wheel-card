@@ -1,7 +1,7 @@
 /**
  *
  * power-wheel-card by Gerben ten Hove
- * https://github.com/gurbyz/custom-cards-lovelace
+ * https://github.com/gurbyz/power-wheel-card
  *
  */
 
@@ -317,7 +317,7 @@ class PowerWheelCard extends LitElement {
     if (this.config.debug) {
       let line = `Version: ${__VERSION}\nLovelace resource: ${this._lovelaceResource()}\nHA version: ${this.hass.config.version}`;
       line += `\nAgent: ${navigator.userAgent}`;
-      line += `\nReport issues here: https://github.com/gurbyz/custom-cards-lovelace/issues`;
+      line += `\nReport issues here: https://github.com/gurbyz/power-wheel-card/issues`;
       line += `\nProcessed config: ${JSON.stringify(this.config, null, ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, null, ' ')}`;
       line += `\nViews object: ${JSON.stringify(this.views, null, ' ')}`;
       PowerWheelCard._logConsole(line);
