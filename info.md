@@ -2,7 +2,11 @@ power-wheel-card
 ====
 
 An intuitive way to represent the power and energy that your home is consuming or producing.
-> This component is discussed [here](https://community.home-assistant.io/t/lovelace-power-wheel-card/82374) on the Home Assistant forum. There's also a [wiki](https://github.com/gurbyz/power-wheel-card/wiki/Troubleshooting-guide) on GitHub.
+
+* FORUM: This component is discussed <a href="https://community.home-assistant.io/t/lovelace-power-wheel-card/82374">here</a> on the Home Assistant forum.
+
+* MANUAL: Sourcecode, manual, requirements and examples are in the readme of the <a href="https://github.com/gurbyz/power-wheel-card">repo on GitHub</a>.
+* TROUBLESHOOTING: There's also a troubleshooting <a href="https://github.com/gurbyz/power-wheel-card/wiki/Troubleshooting-guide">wiki</a> on GitHub. Read this before filing an issue.
 
 ## Features
 Features of the custom power-wheel-card:
@@ -32,9 +36,5 @@ Features of the custom power-wheel-card:
   In these setups arrow values and arrow coloring are not available in *energy view* and *money view* due to lack of input details.
 * Optionally uses icons of your own choice, which can be set by card parameters or taken from your `customize:` sensor settings.
 * Optionally colors the consuming icons yellow and the producing icons green. You can choose your own colors for consuming and producing.
-* Works for default theme and custom themes that use [standard CSS vars](https://github.com/home-assistant/home-assistant-polymer/blob/master/src/resources/ha-style.ts).
-* Has support for [HACS](https://custom-components.github.io/hacs/) to check for a new release.
-
-![example1](./example_power_view.gif "The power-wheel-card displaying the power view")
-![example2](./example_energy_view.gif "The power-wheel-card displaying the energy view")
-![example3](./example_money_view.gif "The power-wheel-card displaying the money view")
+* Works for default theme and custom themes that use standard CSS vars.
+* Has support for HACS to check for a new release and upgrade to newer versions.
