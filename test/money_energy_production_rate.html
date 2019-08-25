@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../../bower_components/web-component-tester/browser.js"></script>
-  <script type="module" src="../../test/hui-view-mock.js"></script>
+  <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../bower_components/web-component-tester/browser.js"></script>
+  <script type="module" src="hui-view-mock.js"></script>
   <script type="module" src="../power-wheel-card.js"></script>
 </head>
 <body>
@@ -14,11 +14,10 @@
   </template>
 </test-fixture>
 <script>
-  suite('<power-wheel-card> with money view capable config', () => {
+  suite('<power-wheel-card> with split energy rates', () => {
     let card, hass, config;
 
-    /** Tests are based on energy_capable. **/
-    /** Some tests are extended in money_energy_production_rate. **/
+    /** Tests are based on money_capable. **/
 
     setup(() => {
       card = fixture('simple');
@@ -30,7 +29,8 @@
         solar_energy_entity: "sensor.solar_energy",
         grid_energy_consumption_entity: "sensor.grid_energy_consumption",
         grid_energy_production_entity: "sensor.grid_energy_production",
-        energy_consumption_rate: 0.20,
+        energy_consumption_rate: 0.50,
+        energy_production_rate: 0.20,
         money_unit: '$',
         initial_view: "money",
         color_icons: false,
@@ -97,10 +97,6 @@
       card.setAttribute('hass', JSON.stringify(hass));
     };
 
-    const setCardView = (view) => {
-      card.setAttribute('view', view);
-    };
-
     test('has config values', (done) => {
       flush(() => {
         assert.equal(card.config.money_unit, '$', 'Card parameter money_unit should be set');
@@ -135,41 +131,11 @@
       });
     });
 
-    test('has ui elements in power view', (done) => {
-      setCardView('power');
-
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W", 'Card should be in power view');
-        assert.equal(card.shadowRoot.querySelectorAll('#toggle-button').length, 1, 'Toggle button should be there');
-        assert.isTrue(card.shadowRoot.querySelector('#unit').classList.contains('toggle'), 'Unit should be toggleable');
-        done();
-      });
-    });
-
-    test('has ui elements in energy view', (done) => {
-      setCardView('energy');
-
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#unit').innerText, "kWh", 'Card should be in energy view');
-        assert.equal(card.shadowRoot.querySelectorAll('#toggle-button').length, 1, 'Toggle button should be there');
-        assert.isTrue(card.shadowRoot.querySelector('#unit').classList.contains('toggle'), 'Unit should be toggleable');
-        done();
-      });
-    });
-
-    test('has ui elements in money view', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelectorAll('#toggle-button').length, 1, 'Toggle button should be there');
-        assert.isTrue(card.shadowRoot.querySelector('#unit').classList.contains('toggle'), 'Unit should be toggleable');
-        done();
-      });
-    });
-
     test('displays values when having consumed from the grid only', (done) => {
       flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-3.60', 'Grid should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-4.60', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '2.50', 'Solar should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-9.00', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-11.50', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
@@ -196,9 +162,9 @@
       setCardProducedToGridOnly();
 
       flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '2.35', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.10', 'Grid should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-0.90', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-2.25', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow should have a correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
@@ -227,12 +193,12 @@
       setCardConsumedAndProducedToGrid();
 
       flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-0.12', 'Grid should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-1.12', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '2.38', 'Solar should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-0.42', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-2.80', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '0.08', 'Solar2Grid arrow should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '0.92', 'Solar2Home arrow should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '0.20', 'Grid2Home arrow should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '2.30', 'Solar2Home arrow should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '0.50', 'Grid2Home arrow should have correct value');
         done();
       });
     });
@@ -252,43 +218,6 @@
         assert.isTrue(card.shadowRoot.querySelector('#icon-grid2home').classList.contains('active'), 'Grid2Home arrow icon should be active');
         done();
       });
-    });
-
-    test('can click on unit to toggle from power view to energy view', (done) => {
-      setCardView('power');
-
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
-        card.shadowRoot.querySelector('#unit').click();
-        flush(() => {
-          assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
-          done();
-        });
-      })
-    });
-
-    test('can click on unit to toggle from energy view to money view', (done) => {
-      setCardView('energy');
-
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
-        card.shadowRoot.querySelector('#unit').click();
-        flush(() => {
-          assert.equal(card.shadowRoot.querySelector('#unit').innerText, '$', 'Card should be in money view');
-          done();
-        });
-      })
-    });
-
-    test('can click on unit to toggle from money view to power view', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#unit').innerText, '$', 'Card should be in money view');
-        card.shadowRoot.querySelector('#unit').click();
-        flush(() => {
-          assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
-          done();
-        });
-      })
     });
 
   });

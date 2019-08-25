@@ -1,5 +1,10 @@
 Changelog
 ====
+## 0.0.15
+### Improvements
+* Removal of support for Customer Updater.
+* Preparations to support HACS. Repo file tree restructuring and repo name change from `custom-cards-lovelace` to `power-wheel-card`.
+
 ## 0.0.14
 ### Improvements
 * Update for HA Cast. LitElement is taken from `hui-view`.
