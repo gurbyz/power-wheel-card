@@ -1,5 +1,11 @@
 Changelog
 ====
+## 0.0.16-dev
+### New features
+* **BETA.** Basic support for a battery in the *power view*.
+  * New card parameter `battery_power_entity`.
+  * New card parameter `battery_icon`.
+
 ## 0.0.15
 ### Improvements
 * Removal of support for Customer Updater.
