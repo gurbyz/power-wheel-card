@@ -129,8 +129,9 @@ class PowerWheelCard extends LitElement {
     return this.config.color_icons ? Math.abs(value).toFixed(decimals): value.toFixed(decimals);
   }
 
-  _makePositionObject(val, entity, configIcon, defaultIcon, decimals) {
+  _makePositionObject(val, entity, configIcon, defaultIcon, decimals, valSoC) {
     const valueStr = typeof val === 'undefined' ? 'unavailable' : this._generateValueStr(val, decimals);
+    const valueStrSoC = typeof valSoC === 'undefined' ? 'unavailable' : `(${valSoC}%)`;
     const stateObj = this.hass.states[entity];
     const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
     const classValue = PowerWheelCard._generateClass(val);
@@ -142,6 +143,8 @@ class PowerWheelCard extends LitElement {
       icon,
       classValue,
       hasSensor: !!stateObj && this.view !== 'money',
+      valSoC,
+      valueStrSoC,
     }
   }
 
@@ -186,6 +189,7 @@ class PowerWheelCard extends LitElement {
     }
   }
 
+  // Function is used for power value and soc value
   _calculateBatteryValue(battery_entity) {
     const batteryStateObj = this.hass.states[battery_entity];
     return batteryStateObj ? parseFloat(batteryStateObj.state) : undefined;
@@ -296,6 +300,7 @@ class PowerWheelCard extends LitElement {
       solar: {},
       solar2battery: {},
       battery: {},
+      batterySoC: {},
       grid2battery: {},
       solar2grid: {},
       solar2home: {},
@@ -465,6 +470,7 @@ class PowerWheelCard extends LitElement {
       this.data.solar.val = this._calculateSolarValue(this.config.solar_power_entity);
       this.data.solar2grid.val = this._calculateSolar2GridValue(this.config.grid_power_production_entity, this.config.grid_power_entity);
       this.data.battery.val = this._calculateBatteryValue(this.config.battery_power_entity);
+      this.data.batterySoC.val = this._calculateBatteryValue(this.config.battery_soc_entity);
       this.data.battery2home.val = this._calculateBattery2HomeValue();
       this.data.solar2battery.val = this._calculateSolar2BatteryValue();
       this.data.grid2battery.val = this._calculateGrid2BatteryValue();
@@ -479,8 +485,8 @@ class PowerWheelCard extends LitElement {
           'mdi:transmission-tower', this.config.power_decimals);
       this.data.home = this._makePositionObject(this.data.home.val, this.config.home_power_entity, this.config.home_icon,
           'mdi:home', this.config.power_decimals);
-      this.data.battery = this._makePositionObject(this.data.battery.val, false, this.config.battery_icon,
-          'mdi:car-battery', this.config.power_decimals);
+      this.data.battery = this._makePositionObject(this.data.battery.val, this.config.battery_soc_entity, this.config.battery_icon,
+          'mdi:car-battery', this.config.power_decimals, this.data.batterySoC.val);
       this.data.solar2grid = this._makeArrowObject(this.data.solar2grid.val, this.config.grid_power_production_entity, 'mdi:arrow-bottom-left', 'mdi:arrow-top-right', this.config.power_decimals);
       this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', 'mdi:arrow-top-left', this.config.power_decimals);
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_power_consumption_entity, 'mdi:arrow-right', 'mdi:arrow-left', this.config.power_decimals);
@@ -559,7 +565,10 @@ class PowerWheelCard extends LitElement {
             @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
             title="${cellObj.hasSensor ? `More info${cellObj.stateObj.attributes.friendly_name ? ':\n' + cellObj.stateObj.attributes.friendly_name : ''}` : ''}">
         <ha-icon id="icon-${id}" class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
-        <div id="value-${id}" class="value">${cellType === 'arrow' && (cellObj.val === 0 || Math.abs(cellObj.val) === Math.abs(hideValue1) || Math.abs(cellObj.val) === Math.abs(hideValue2)) ? '' : cellObj.valueStr}</div>
+        <div id="value-${id}" class="value">
+          ${cellType === 'arrow' && (cellObj.val === 0 || Math.abs(cellObj.val) === Math.abs(hideValue1) || Math.abs(cellObj.val) === Math.abs(hideValue2)) ? '' : cellObj.valueStr}
+          ${cellObj.valSoC ? cellObj.valueStrSoC : ''}
+        </div>
       </div>
     `;
   }
@@ -620,6 +629,7 @@ class PowerWheelCard extends LitElement {
       "grid_energy_production_entity",
       "grid_energy_entity",
       "home_energy_entity",
+      "battery_soc_entity",
     ].reduce((sensors, cardParameter) => {
       if (config.hasOwnProperty(cardParameter)) {
         sensors.push(config[cardParameter]);
