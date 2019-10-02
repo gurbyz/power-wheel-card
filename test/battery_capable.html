@@ -92,6 +92,19 @@
       card.setAttribute('hass', JSON.stringify(hass));
     };
 
+    const setCardBatterySoC = () => {
+      config.battery_soc_entity = "sensor.battery_soc";
+      hass.states['sensor.battery_soc'] = {
+        attributes: {
+          unit_of_measurement: "%",
+        },
+        entity_id: "sensor.battery_soc",
+          state: "89",
+      };
+      card.setAttribute('hass', JSON.stringify(hass));
+      card.setConfig(config);
+    };
+
     test('has set card property values after setConfig', (done) => {
       flush(() => {
         assert.isTrue(card.views.power.batteryCapable, 'Card property views should have value set for power view battery capability');
@@ -314,6 +327,15 @@
         // assert.isTrue(card.shadowRoot.querySelector('#icon-solar2battery').classList.contains('inactive'), 'Solar2Battery arrow icon should be inactive');
         assert.isTrue(card.shadowRoot.querySelector('#icon-grid2battery').classList.contains('active'), 'Grid2Battery arrow icon should be active');
         // assert.isTrue(card.shadowRoot.querySelector('#icon-battery2home').classList.contains('inactive'), 'Battery2Home arrow icon should be inactive');
+        done();
+      });
+    });
+
+    test('displays values for battery state of charge', (done) => {
+      setCardBatterySoC();
+
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#value-battery').innerText, '-300 (89%)', 'Battery should have correct value');
         done();
       });
     });
