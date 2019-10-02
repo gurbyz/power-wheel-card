@@ -523,24 +523,24 @@ class PowerWheelCard extends LitElement {
             ${this.views.energy.capable ? html`<div id="unit" class="toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.views[this.view].unit}</div>` : html`<div id="unit">${this.views[this.view].unit}</div>`}
           </div>
           <div class="row">
-            ${this.views[this.view].battery && !this._batteryOnRightSide() ? html`
+            ${this.views[this.view].batteryCapable && !this._batteryOnRightSide() ? html`
               ${this._cell('battery', this.data.battery, 'position')}
             ` : html`<div class="cell"></div>`}
             <div class="cell"></div>
             ${this._cell('solar', this.data.solar, 'position')}
-            ${this.views[this.view].battery && this._batteryOnRightSide() ? html`
+            ${this.views[this.view].batteryCapable && this._batteryOnRightSide() ? html`
               ${this._cell('solar2battery', this.data.solar2battery, 'arrow', this.data.solar.val, this.data.battery.val)}
               ${this._cell('battery', this.data.battery, 'position')}
             ` : html`<div class="cell"></div><div class="cell"></div>`}
           </div>
           <div class="row">
-            ${this.views[this.view].battery && !this._batteryOnRightSide() ? html`
+            ${this.views[this.view].batteryCapable && !this._batteryOnRightSide() ? html`
               ${this._cell('grid2battery', this.data.grid2battery, 'arrow', this.data.grid.val, this.data.battery.val)}
             ` : html`<div class="cell"></div>`}
             ${this._cell('solar2grid', this.data.solar2grid, 'arrow', this.data.solar.val, this.data.grid.val)}
             <div class="cell"></div>
             ${this._cell('solar2home', this.data.solar2home, 'arrow', this.data.solar.val, this.data.home.val)}
-            ${this.views[this.view].battery && this._batteryOnRightSide() ? html`
+            ${this.views[this.view].batteryCapable && this._batteryOnRightSide() ? html`
               ${this._cell('battery2home', this.data.battery2home, 'arrow', this.data.home.val, this.data.battery.val)}
             ` : html`<div class="cell"></div>`}
           </div>
@@ -700,7 +700,7 @@ class PowerWheelCard extends LitElement {
       title: config.title_power,
       oneGridSensor: !!config.grid_power_entity,
       twoGridSensors: !!config.grid_power_consumption_entity && !!config.grid_power_production_entity,
-      battery: !!config.battery_power_entity,
+      batteryCapable: !!config.battery_power_entity,
     };
     this.views.power.capable = (this.views.power.oneGridSensor || this.views.power.twoGridSensors) && !!config.solar_power_entity;
     this.views.energy = {

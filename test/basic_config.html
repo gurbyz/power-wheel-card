@@ -106,6 +106,7 @@
         assert.deepEqual(card.sensors, [ "sensor.solar_power", "sensor.grid_power_consumption", "sensor.grid_power_production" ], 'Card property sensors should have default value');
         assert.equal(card.view, 'power', 'Card property view should have default value');
         assert.equal(card.views.power.title, 'Power wheel', 'Card property views should have default value for power view title');
+        assert.isFalse(card.views.power.batteryCapable, 'Card property views should have default value for power view battery capability');
         assert.equal(card.views.energy.title, 'Power wheel', 'Card property views should have default value for energy view title');
         assert.equal(card.views.money.title, 'Power wheel', 'Card property views should have default value for money view title');
         assert.isFalse(card.views.energy.capable, 'Card property views should have default value for energy capable');
@@ -155,9 +156,13 @@
         assert.equal(card.shadowRoot.querySelector('#cell-solar').getAttribute('title'), 'More info:\nSolar Power', 'Solar title should be set');
         assert.equal(card.shadowRoot.querySelector('#cell-grid').getAttribute('title'), '', 'Grid title should be set');
         assert.equal(card.shadowRoot.querySelector('#cell-home').getAttribute('title'), '', 'Home title should be set');
+        assert.equal(card.shadowRoot.querySelector('#cell-battery'), undefined, 'Battery cell should be disabled');
         assert.equal(card.shadowRoot.querySelector('#cell-solar2grid').getAttribute('title'), 'More info', 'Solar2Grid title should be set');
         assert.equal(card.shadowRoot.querySelector('#cell-solar2home').getAttribute('title'), '', 'Solar2Home title should be set');
         assert.equal(card.shadowRoot.querySelector('#cell-grid2home').getAttribute('title'), 'More info', 'Grid2Home title should be set');
+        assert.equal(card.shadowRoot.querySelector('#cell-solar2battery'), undefined, 'Solar2Battery arrow should be disabled');
+        assert.equal(card.shadowRoot.querySelector('#cell-grid2battery'), undefined, 'Grid2Battery arrow should be disabled');
+        assert.equal(card.shadowRoot.querySelector('#cell-battery2home'), undefined, 'Battery2Home arrow should be disabled');
         done();
       });
     });

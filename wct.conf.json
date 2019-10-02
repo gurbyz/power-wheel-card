@@ -5,6 +5,7 @@
       "browsers": ["chrome"]
     },
     "istanbub": {
+      "dir": "./coverage",
       "reporters": ["text-summary", "lcov"],
       "include": [
         "/power-wheel-card.js"
