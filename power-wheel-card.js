@@ -164,33 +164,53 @@ class PowerWheelCard extends LitElement {
     }
   }
 
+  // Get numeric state value or undefined
+  _getEntityState(entity) {
+    const stateObj = this.hass.states[entity];
+    return stateObj ? parseFloat(stateObj.state) : undefined;
+  }
+
+  _setPolarity(value) {
+    return typeof value === 'undefined'
+      ? undefined : value * this.config.production_is_positive;
+  }
+
+  // Get all entity states (view dependent) and save in this.input
+  // Since battery functions this.input.grid_solo_production is not always the same as this.data.solar2grid anymore.
+  _saveEntityStates(solar_entity, grid_production_entity, grid_consumption_entity, battery_entity, grid_entity, home_entity) {
+    this.input.solar_production = this._getEntityState(solar_entity);
+    this.input.grid_solo_production = this._getEntityState(grid_production_entity);
+    this.input.grid_solo_consumption = this._getEntityState(grid_consumption_entity);
+    this.input.battery_charging = this._getEntityState(battery_entity);
+    // if (!this.views[this.view].twoGridSensors) {
+      this.input.grid_nett_production = this._setPolarity(this._getEntityState(grid_entity));
+    // }
+    this.input.home_production = this._setPolarity(this._getEntityState(home_entity));
+  }
+
   _batteryOnRightSide() {
     // Assumption: Battery is never charged by the grid when there is sun.
     // Assumption: Battery is charged by the sun or by the grid, but never by both.
     return this.data.battery2home.val > 0 || this.data.solar.val > 0;
   }
 
-  _calculateSolarValue(solar_entity) {
-    const solarStateObj = this.hass.states[solar_entity];
-    return solarStateObj ? parseFloat(solarStateObj.state) : undefined;
+  _calculateSolarValue() {
+    return this.input.solar_production;
   }
 
-  _calculateSolar2GridValue(grid_production_entity, grid_entity) {
+  _calculateSolar2GridValue() {
     let solar2grid;
     if (this.views[this.view].twoGridSensors) {
-      const gridProductionStateObj = this.hass.states[grid_production_entity];
-      solar2grid = gridProductionStateObj ? parseFloat(gridProductionStateObj.state) : undefined;
+      solar2grid = this.input.grid_solo_production;
       // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
-      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
       //   solar2grid = 0;
       // }
       return solar2grid;
     } else if(this.view === 'power') {
-      const gridStateObj = this.hass.states[grid_entity];
-      const value = gridStateObj
-        ? parseFloat(gridStateObj.state) * this.config.production_is_positive : undefined;
-      solar2grid = value > 0 ? value : 0;
-      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      solar2grid = this.input.grid_nett_production > 0 ? this.input.grid_nett_production : 0;
+      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
+      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
       //   solar2grid = 0;
       // }
       return solar2grid;
@@ -199,48 +219,46 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  // Function is used for power value and soc value
-  _calculateBatteryValue(battery_entity) {
-    const batteryStateObj = this.hass.states[battery_entity];
-    return batteryStateObj ? parseFloat(batteryStateObj.state) : undefined;
+  _calculateBatteryValue() {
+    return this.input.battery_charging;
   }
 
   _calculateBattery2HomeValue() {
-    return typeof this.data.battery.val !== 'undefined'
-      ? (this.data.battery.val < 0 ? -this.data.battery.val : 0) : undefined;
+    return typeof this.input.battery_charging !== 'undefined'
+      ? (this.input.battery_charging < 0 ? -this.input.battery_charging : 0) : undefined;
   }
 
   _calculateSolar2BatteryValue() {
-    return typeof this.data.battery.val !== 'undefined'
-      ? (this._batteryOnRightSide() && this.data.battery.val > 0 ? this.data.battery.val : 0) : undefined;
+    return typeof this.input.battery_charging !== 'undefined'
+      ? (this._batteryOnRightSide() && this.input.battery_charging > 0 ? this.input.battery_charging : 0) : undefined;
   }
 
   _calculateGrid2BatteryValue() {
-    return typeof this.data.battery.val !== 'undefined'
-      ? (!this._batteryOnRightSide() && this.data.battery.val > 0 ? this.data.battery.val : 0) : undefined;
+    return typeof this.input.battery_charging !== 'undefined'
+      ? (!this._batteryOnRightSide() && this.input.battery_charging > 0 ? this.input.battery_charging : 0) : undefined;
   }
 
-  _calculateGrid2HomeValue(grid_consumption_entity, grid_entity) {
+  _calculateGrid2HomeValue() {
     let grid2home;
     if (this.views[this.view].twoGridSensors) {
-      const gridConsumptionStateObj = this.hass.states[grid_consumption_entity];
-      grid2home = gridConsumptionStateObj ? parseFloat(gridConsumptionStateObj.state) : undefined;
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
-        grid2home -= this.data.grid2battery.val;
-      }
-      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      grid2home = this.input.grid_solo_consumption;
+      // Correction for battery
+      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0) {
+      //   grid2home -= this.data.grid2battery.val;
+      // }
+      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
+      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
       //   grid2home -= this.data.battery2home.val;
       // }
       return grid2home;
     } else if(this.view === 'power') {
-      const gridStateObj = this.hass.states[grid_entity];
-      grid2home = gridStateObj
-        ? parseFloat(gridStateObj.state) * this.config.production_is_positive : undefined;
-      grid2home = grid2home < 0 ? Math.abs(grid2home) : 0;
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
-        grid2home -= this.data.grid2battery.val;
-      }
-      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      grid2home = this.input.grid_nett_production < 0 ? Math.abs(this.input.grid_nett_production) : 0;
+      // Correction for battery
+      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0) {
+      //   grid2home -= this.data.grid2battery.val;
+      // }
+      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
+      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
       //   grid2home -= this.data.battery2home.val;
       // }
       return grid2home;
@@ -249,50 +267,52 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  _calculateGridValue(grid_entity) {
+  _calculateGridValue() {
     let grid;
     if (this.views[this.view].twoGridSensors) {
       grid = typeof this.data.grid2home.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
         ? this.data.solar2grid.val - this.data.grid2home.val : undefined;
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
-        grid -= this.data.grid2battery.val;
-      }
-      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      // Correction for battery
+      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0) {
+      //   grid -= this.data.grid2battery.val;
+      // }
+      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
+      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
       //   grid -= this.data.battery2home.val;
       //   // todo: daar waar bij solar2grid de value op 0 werd gezet, moet die oorspronkelijke value daar er hier nog vanaf
       // }
       return grid;
     } else {
-      const gridStateObj = this.hass.states[grid_entity];
-      grid = gridStateObj
-        ? parseFloat(gridStateObj.state) * this.config.production_is_positive : undefined;
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
-        grid -= this.data.grid2battery.val;
-      }
-      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      grid = this.input.grid_nett_production;
+      // Correction for battery
+      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0) {
+      //   grid -= this.data.grid2battery.val;
+      // }
+      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
+      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
       //   grid -= this.data.battery2home.val;
       // }
       return grid;
     }
   }
 
-  _calculateHomeValue(home_entity) {
+  _calculateHomeValue() {
     if (this.views[this.view].twoGridSensors || this.view === 'power') {
       let home = typeof this.data.solar.val !== 'undefined' && typeof this.data.grid.val !== 'undefined'
         ? this.data.grid.val - this.data.solar.val : undefined;
-      if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined') {
-        home -= this.data.battery2home.val;
-      }
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined') {
-        home += this.data.grid2battery.val;
-      }
-      if (this.view === 'power' && typeof this.data.solar2battery.val !== 'undefined') {
-        home += this.data.solar2battery.val;
-      }
+      // Correction for battery
+      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined') {
+      //   home -= this.data.battery2home.val;
+      // }
+      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined') {
+      //   home += this.data.grid2battery.val;
+      // }
+      // if (this.view === 'power' && typeof this.data.solar2battery.val !== 'undefined') {
+      //   home += this.data.solar2battery.val;
+      // }
       return home;
     } else {
-      const homeStateObj = this.hass.states[home_entity];
-      return homeStateObj ? parseFloat(homeStateObj.state) * this.config.production_is_positive : undefined;
+      return this.input.home_production;
     }
   }
 
@@ -300,9 +320,10 @@ class PowerWheelCard extends LitElement {
     if (this.views[this.view].twoGridSensors || this.view === 'power') {
       let solar2home = typeof this.data.solar.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
         ? this.data.solar.val - this.data.solar2grid.val : undefined;
-      if (this.view === 'power' && typeof this.data.solar2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
-        solar2home -= this.data.solar2battery.val;
-      }
+      // Correction for battery
+      // if (this.view === 'power' && typeof this.data.solar2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0) {
+      //   solar2home -= this.data.solar2battery.val;
+      // }
       return solar2home;
     } else {
       return 0;
@@ -332,6 +353,7 @@ class PowerWheelCard extends LitElement {
       grid2home: {},
       home: {},
     };
+    this.input = {};
     this.messages = [];
     this.sensors = [];
     this.views = {
@@ -448,11 +470,12 @@ class PowerWheelCard extends LitElement {
   render() {
     if (this.view === 'money' && this.views.money.capable) {
       // Calculate energy values first
-      this.data.solar.val = this._calculateSolarValue(this.config.solar_energy_entity);
-      this.data.grid2home.val = this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity, this.config.grid_energy_entity);
-      this.data.solar2grid.val = this._calculateSolar2GridValue(this.config.grid_energy_production_entity, this.config.grid_energy_entity);
-      this.data.grid.val = this._calculateGridValue(this.config.grid_energy_entity);
-      this.data.home.val = this._calculateHomeValue(this.config.home_energy_entity);
+      this._saveEntityStates(this.config.solar_energy_entity, this.config.grid_energy_production_entity, this.config.grid_energy_consumption_entity, false, this.config.grid_energy_entity, this.config.home_energy_entity);
+      this.data.solar.val = this._calculateSolarValue();
+      this.data.grid2home.val = this._calculateGrid2HomeValue();
+      this.data.solar2grid.val = this._calculateSolar2GridValue();
+      this.data.grid.val = this._calculateGridValue();
+      this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
 
       // Convert energy values into money values
@@ -473,11 +496,12 @@ class PowerWheelCard extends LitElement {
       this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', 'mdi:arrow-top-left', this.config.money_decimals);
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, false, 'mdi:arrow-right', 'mdi:arrow-left', this.config.money_decimals);
     } else if (this.view === 'energy' && this.views.energy.capable) {
-      this.data.solar.val = this._calculateSolarValue(this.config.solar_energy_entity);
-      this.data.grid2home.val = this._calculateGrid2HomeValue(this.config.grid_energy_consumption_entity, this.config.grid_energy_entity);
-      this.data.solar2grid.val = this._calculateSolar2GridValue(this.config.grid_energy_production_entity, this.config.grid_energy_entity);
-      this.data.grid.val = this._calculateGridValue(this.config.grid_energy_entity);
-      this.data.home.val = this._calculateHomeValue(this.config.home_energy_entity);
+      this._saveEntityStates(this.config.solar_energy_entity, this.config.grid_energy_production_entity, this.config.grid_energy_consumption_entity, false, this.config.grid_energy_entity, this.config.home_energy_entity);
+      this.data.solar.val = this._calculateSolarValue();
+      this.data.grid2home.val = this._calculateGrid2HomeValue();
+      this.data.solar2grid.val = this._calculateSolar2GridValue();
+      this.data.grid.val = this._calculateGridValue();
+      this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
 
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
@@ -490,17 +514,18 @@ class PowerWheelCard extends LitElement {
       this.data.solar2home = this._makeArrowObject(this.data.solar2home.val, false, 'mdi:arrow-bottom-right', 'mdi:arrow-top-left', this.config.energy_decimals);
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_energy_consumption_entity, 'mdi:arrow-right', 'mdi:arrow-left', this.config.energy_decimals);
     } else {
-      this.data.solar.val = this._calculateSolarValue(this.config.solar_power_entity);
-      this.data.solar2grid.val = this._calculateSolar2GridValue(this.config.grid_power_production_entity, this.config.grid_power_entity);
-      this.data.battery.val = this._calculateBatteryValue(this.config.battery_power_entity);
-      this.data.batterySoC.val = this._calculateBatteryValue(this.config.battery_soc_entity);
+      this._saveEntityStates(this.config.solar_power_entity, this.config.grid_power_production_entity, this.config.grid_power_consumption_entity, this.config.battery_power_entity, this.config.grid_power_entity, false);
+      this.data.solar.val = this._calculateSolarValue();
+      this.data.solar2grid.val = this._calculateSolar2GridValue();
+      this.data.battery.val = this._calculateBatteryValue();
       this.data.battery2home.val = this._calculateBattery2HomeValue();
       this.data.solar2battery.val = this._calculateSolar2BatteryValue();
       this.data.grid2battery.val = this._calculateGrid2BatteryValue();
-      this.data.grid2home.val = this._calculateGrid2HomeValue(this.config.grid_power_consumption_entity, this.config.grid_power_entity);
-      this.data.grid.val = this._calculateGridValue(this.config.grid_power_entity);
+      this.data.grid2home.val = this._calculateGrid2HomeValue();
+      this.data.grid.val = this._calculateGridValue();
       this.data.home.val = this._calculateHomeValue();
       this.data.solar2home.val = this._calculateSolar2HomeValue();
+      this.data.batterySoC.val = this._getEntityState(this.config.battery_soc_entity);
 
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_power_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.power_decimals);
