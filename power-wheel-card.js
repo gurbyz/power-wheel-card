@@ -176,14 +176,24 @@ class PowerWheelCard extends LitElement {
   }
 
   _calculateSolar2GridValue(grid_production_entity, grid_entity) {
+    let solar2grid;
     if (this.views[this.view].twoGridSensors) {
       const gridProductionStateObj = this.hass.states[grid_production_entity];
-      return gridProductionStateObj ? parseFloat(gridProductionStateObj.state) : undefined;
+      solar2grid = gridProductionStateObj ? parseFloat(gridProductionStateObj.state) : undefined;
+      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
+      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      //   solar2grid = 0;
+      // }
+      return solar2grid;
     } else if(this.view === 'power') {
       const gridStateObj = this.hass.states[grid_entity];
       const value = gridStateObj
         ? parseFloat(gridStateObj.state) * this.config.production_is_positive : undefined;
-      return value > 0 ? value : 0;
+      solar2grid = value > 0 ? value : 0;
+      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      //   solar2grid = 0;
+      // }
+      return solar2grid;
     } else {
       return 0;
     }
@@ -215,18 +225,24 @@ class PowerWheelCard extends LitElement {
     if (this.views[this.view].twoGridSensors) {
       const gridConsumptionStateObj = this.hass.states[grid_consumption_entity];
       grid2home = gridConsumptionStateObj ? parseFloat(gridConsumptionStateObj.state) : undefined;
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined') {
+      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
         grid2home -= this.data.grid2battery.val;
       }
+      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      //   grid2home -= this.data.battery2home.val;
+      // }
       return grid2home;
     } else if(this.view === 'power') {
       const gridStateObj = this.hass.states[grid_entity];
       grid2home = gridStateObj
         ? parseFloat(gridStateObj.state) * this.config.production_is_positive : undefined;
       grid2home = grid2home < 0 ? Math.abs(grid2home) : 0;
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined') {
+      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
         grid2home -= this.data.grid2battery.val;
       }
+      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      //   grid2home -= this.data.battery2home.val;
+      // }
       return grid2home;
     } else {
       return 0;
@@ -238,17 +254,24 @@ class PowerWheelCard extends LitElement {
     if (this.views[this.view].twoGridSensors) {
       grid = typeof this.data.grid2home.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
         ? this.data.solar2grid.val - this.data.grid2home.val : undefined;
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined') {
+      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
         grid -= this.data.grid2battery.val;
       }
+      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      //   grid -= this.data.battery2home.val;
+      //   // todo: daar waar bij solar2grid de value op 0 werd gezet, moet die oorspronkelijke value daar er hier nog vanaf
+      // }
       return grid;
     } else {
       const gridStateObj = this.hass.states[grid_entity];
       grid = gridStateObj
         ? parseFloat(gridStateObj.state) * this.config.production_is_positive : undefined;
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined') {
+      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
         grid -= this.data.grid2battery.val;
       }
+      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val <= 0) {
+      //   grid -= this.data.battery2home.val;
+      // }
       return grid;
     }
   }
@@ -277,7 +300,7 @@ class PowerWheelCard extends LitElement {
     if (this.views[this.view].twoGridSensors || this.view === 'power') {
       let solar2home = typeof this.data.solar.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
         ? this.data.solar.val - this.data.solar2grid.val : undefined;
-      if (this.view === 'power' && typeof this.data.solar2battery.val !== 'undefined') {
+      if (this.view === 'power' && typeof this.data.solar2battery.val !== 'undefined' && typeof this.data.solar.val !== 'undefined' && this.data.solar.val > 0) {
         solar2home -= this.data.solar2battery.val;
       }
       return solar2home;
