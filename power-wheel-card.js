@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.0.16-dev";
+const __VERSION = "0.1.0-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;
@@ -182,9 +182,7 @@ class PowerWheelCard extends LitElement {
     this.input.grid_solo_production = this._getEntityState(grid_production_entity);
     this.input.grid_solo_consumption = this._getEntityState(grid_consumption_entity);
     this.input.battery_charging = this._getEntityState(battery_entity);
-    // if (!this.views[this.view].twoGridSensors) {
-      this.input.grid_nett_production = this._setPolarity(this._getEntityState(grid_entity));
-    // }
+    this.input.grid_nett_production = this._setPolarity(this._getEntityState(grid_entity));
     this.input.home_production = this._setPolarity(this._getEntityState(home_entity));
   }
 
@@ -317,6 +315,19 @@ class PowerWheelCard extends LitElement {
     } else {
       return this.input.home_production;
     }
+  }
+
+  _performCalculations() {
+    this.data.solar.val = this._calculateSolarValue();
+    this.data.solar2grid.val = this._calculateSolar2GridValue();
+    this.data.battery.val = this._calculateBatteryValue();
+    this.data.battery2home.val = this._calculateBattery2HomeValue();
+    this.data.solar2battery.val = this._calculateSolar2BatteryValue();
+    this.data.grid2battery.val = this._calculateGrid2BatteryValue();
+    this.data.grid2home.val = this._calculateGrid2HomeValue();
+    this.data.grid.val = this._calculateGridValue();
+    this.data.solar2home.val = this._calculateSolar2HomeValue();
+    this.data.home.val = this._calculateHomeValue();
   }
 
   static _logConsole(message) {
@@ -460,12 +471,7 @@ class PowerWheelCard extends LitElement {
     if (this.view === 'money' && this.views.money.capable) {
       // Calculate energy values first
       this._saveEntityStates(this.config.solar_energy_entity, this.config.grid_energy_production_entity, this.config.grid_energy_consumption_entity, false, this.config.grid_energy_entity, this.config.home_energy_entity);
-      this.data.solar.val = this._calculateSolarValue();
-      this.data.grid2home.val = this._calculateGrid2HomeValue();
-      this.data.solar2grid.val = this._calculateSolar2GridValue();
-      this.data.grid.val = this._calculateGridValue();
-      this.data.home.val = this._calculateHomeValue();
-      this.data.solar2home.val = this._calculateSolar2HomeValue();
+      this._performCalculations();
 
       // Convert energy values into money values
       this.data.solar2grid.val *= this.config.energy_production_rate;
@@ -486,12 +492,7 @@ class PowerWheelCard extends LitElement {
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, false, 'mdi:arrow-right', 'mdi:arrow-left', this.config.money_decimals);
     } else if (this.view === 'energy' && this.views.energy.capable) {
       this._saveEntityStates(this.config.solar_energy_entity, this.config.grid_energy_production_entity, this.config.grid_energy_consumption_entity, false, this.config.grid_energy_entity, this.config.home_energy_entity);
-      this.data.solar.val = this._calculateSolarValue();
-      this.data.grid2home.val = this._calculateGrid2HomeValue();
-      this.data.solar2grid.val = this._calculateSolar2GridValue();
-      this.data.grid.val = this._calculateGridValue();
-      this.data.home.val = this._calculateHomeValue();
-      this.data.solar2home.val = this._calculateSolar2HomeValue();
+      this._performCalculations();
 
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_energy_entity, this.config.solar_icon,
           'mdi:weather-sunny', this.config.energy_decimals);
@@ -504,16 +505,7 @@ class PowerWheelCard extends LitElement {
       this.data.grid2home = this._makeArrowObject(this.data.grid2home.val, this.config.grid_energy_consumption_entity, 'mdi:arrow-right', 'mdi:arrow-left', this.config.energy_decimals);
     } else {
       this._saveEntityStates(this.config.solar_power_entity, this.config.grid_power_production_entity, this.config.grid_power_consumption_entity, this.config.battery_power_entity, this.config.grid_power_entity, false);
-      this.data.solar.val = this._calculateSolarValue();
-      this.data.solar2grid.val = this._calculateSolar2GridValue();
-      this.data.battery.val = this._calculateBatteryValue();
-      this.data.battery2home.val = this._calculateBattery2HomeValue();
-      this.data.solar2battery.val = this._calculateSolar2BatteryValue();
-      this.data.grid2battery.val = this._calculateGrid2BatteryValue();
-      this.data.grid2home.val = this._calculateGrid2HomeValue();
-      this.data.grid.val = this._calculateGridValue();
-      this.data.solar2home.val = this._calculateSolar2HomeValue();
-      this.data.home.val = this._calculateHomeValue();
+      this._performCalculations();
       this.data.batterySoC.val = this._getEntityState(this.config.battery_soc_entity);
 
       this.data.solar = this._makePositionObject(this.data.solar.val, this.config.solar_power_entity, this.config.solar_icon,

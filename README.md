@@ -211,7 +211,7 @@ There are many more card parameters available, but it's advised to start with th
 |solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
 |grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:transmission-tower"` will be used.|Icon for grid power and energy.|
 |home_icon|string|optional|The icon of your own customized home sensor(s) if its entity parameter is set. If not available, then `"mdi:home"` will be used.|Icon for home power and energy.|
-|battery_icon|string|optional|The icon of your own customized battery sensor(s) if its entity parameter is set. If not available, then `"mdi:car-battery"` will be used.|Icon for battery power and energy.|
+|battery_icon|string|optional|The icon of your own customized battery sensor(s) if its entity parameter is set. If not available, then `"mdi:car-battery"` will be used.|Icon for battery power.|
 |power_decimals|integer|optional|`0`|Number of decimals for the power values.|
 |energy_decimals|integer|optional|`3`|Number of decimals for the energy values.|
 |money_decimals|integer|optional|`2`|Number of decimals for the money values.|
@@ -270,6 +270,8 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
   grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
   grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
+  battery_power_entity: sensor.YOUR_BATTERY_POWER_SENSOR
+  battery_soc_entity: sensor.YOUR_BATTERY_SOC_SENSOR
   solar_energy_entity: sensor.YOUR_SOLAR_ENERGY_SENSOR
   grid_energy_consumption_entity: sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR
   grid_energy_production_entity: sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR
@@ -279,6 +281,7 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   solar_icon: "mdi:white-balance-sunny"
   grid_icon: "mdi:flash"
   home_icon: "mdi:home-assistant"
+  battery_icon: "mdi:battery"
   power_decimals: 2
   energy_decimals: 2
   money_decimals: 0

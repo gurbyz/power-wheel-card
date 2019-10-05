@@ -1,11 +1,11 @@
 Changelog
 ====
-## 0.0.16-dev
+## 0.1.0-dev
 ### New features
 * **BETA.** Basic support for a battery in the *power view*.
-  * New card parameter `battery_power_entity`.
-  * New card parameter `battery_soc_entity`.
-  * New card parameter `battery_icon`.
+  * New card parameter `battery_power_entity`. Charging should have positive values.
+  * New card parameter `battery_soc_entity` to display the state of charge.
+  * New card parameter `battery_icon` to override the default icon.
 
 ## 0.0.15
 ### Improvements
