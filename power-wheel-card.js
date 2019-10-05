@@ -188,12 +188,10 @@ class PowerWheelCard extends LitElement {
     this.input.home_production = this._setPolarity(this._getEntityState(home_entity));
   }
 
-  // todo: where is this assumption coded?
-  // Assumption: Battery is never charged by the grid when there is sun.
-
   _isBatteryChargedBySolar() {
-    // True when charged by solar, false when charged by the grid
+    // True when charged by solar, false when charged (or discharged) by the grid
     // Assumption: Battery is charged by the sun or by the grid, but never by both.
+    // Assumption: Battery is never charged by the grid when there is sun.
     return this.data.solar.val > 0;
   }
 
@@ -205,16 +203,14 @@ class PowerWheelCard extends LitElement {
     let solar2grid;
     if (this.views[this.view].twoGridSensors) {
       solar2grid = this.input.grid_solo_production;
-      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
-      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
-      //   solar2grid = 0;
+      // if (this.view === 'power' && this._correctionNeededForDischargingBatteryWhileProducingToGrid()) {
+      //   solar2grid -= this.input.grid_solo_production;
       // }
       return solar2grid;
     } else if(this.view === 'power') {
       solar2grid = this.input.grid_nett_production > 0 ? this.input.grid_nett_production : 0;
-      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
-      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
-      //   solar2grid = 0;
+      // if (this._correctionNeededForDischargingBatteryWhileProducingToGrid()) {
+      //   solar2grid -= this.input.grid_solo_production;
       // }
       return solar2grid;
     } else {
@@ -226,9 +222,18 @@ class PowerWheelCard extends LitElement {
     return this.input.battery_charging;
   }
 
+  _correctionNeededForDischargingBatteryWhileProducingToGrid() {
+    return !this._isBatteryChargedBySolar()
+      && typeof this.data.battery.val !== 'undefined' && this.data.battery.val <= 0;
+  }
+
   _calculateBattery2HomeValue() {
-    return typeof this.data.battery.val !== 'undefined'
+    let battery2home = typeof this.data.battery.val !== 'undefined'
       ? (this.data.battery.val < 0 ? -this.data.battery.val : 0) : undefined;
+    if (this._correctionNeededForDischargingBatteryWhileProducingToGrid()) {
+      battery2home -= this.input.grid_solo_production;
+    }
+    return battery2home;
   }
 
   _calculateSolar2BatteryValue() {
@@ -237,65 +242,39 @@ class PowerWheelCard extends LitElement {
   }
 
   _calculateGrid2BatteryValue() {
-    return typeof this.data.battery.val !== 'undefined'
-      ? (!this._isBatteryChargedBySolar() && this.data.battery.val > 0 ? this.data.battery.val : 0) : undefined;
+    if (typeof this.data.battery.val === 'undefined') {
+      return;
+    }
+    if (this._isBatteryChargedBySolar()) {
+      return 0;
+    } else {
+      if (this.data.battery.val > 0) {
+        // Battery charged by grid (and there is no sun)
+        return this.data.battery.val;
+      } else {
+        // Battery discharging to grid (and there is no sun), but maxed to what is produced to the grid
+        // Correction for scenario "discharging the battery while producing to the grid"
+        return -this.input.grid_solo_production;
+      }
+    }
   }
 
   _calculateGrid2HomeValue() {
-    let grid2home;
     if (this.views[this.view].twoGridSensors) {
-      grid2home = this.input.grid_solo_consumption;
-      // Correction for battery
-      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0) {
-      //   grid2home -= this.data.grid2battery.val;
-      // }
-      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
-      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
-      //   grid2home -= this.data.battery2home.val;
-      // }
-      return grid2home;
+      return this.input.grid_solo_consumption;
     } else if(this.view === 'power') {
-      grid2home = this.input.grid_nett_production < 0 ? Math.abs(this.input.grid_nett_production) : 0;
-      // Correction for battery
-      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0) {
-      //   grid2home -= this.data.grid2battery.val;
-      // }
-      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
-      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
-      //   grid2home -= this.data.battery2home.val;
-      // }
-      return grid2home;
+      return this.input.grid_nett_production < 0 ? Math.abs(this.input.grid_nett_production) : 0;
     } else {
       return 0;
     }
   }
 
   _calculateGridValue() {
-    let grid;
     if (this.views[this.view].twoGridSensors) {
-      grid = typeof this.data.grid2home.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
+      return typeof this.data.grid2home.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
         ? this.data.solar2grid.val - this.data.grid2home.val : undefined;
-      // Correction for battery
-      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0) {
-      //   grid -= this.data.grid2battery.val;
-      // }
-      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
-      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
-      //   grid -= this.data.battery2home.val;
-      //   // todo: daar waar bij solar2grid de value op 0 werd gezet, moet die oorspronkelijke value daar er hier nog vanaf
-      // }
-      return grid;
     } else {
-      grid = this.input.grid_nett_production;
-      // Correction for battery
-      // if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0) {
-      //   grid -= this.data.grid2battery.val;
-      // }
-      // Correction for battery: if battery discharging, no sun and producing to the grid, this isn't because of solar panels.
-      // if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined' && typeof this.input.solar_production !== 'undefined' && this.input.solar_production <= 0) {
-      //   grid -= this.data.battery2home.val;
-      // }
-      return grid;
+      return this.input.grid_nett_production;
     }
   }
 
@@ -305,6 +284,11 @@ class PowerWheelCard extends LitElement {
         ? this.data.solar.val - this.data.solar2grid.val : undefined;
       if (this.view === 'power' && this._isBatteryChargedBySolar() && typeof this.data.solar2battery.val !== 'undefined') { //  && typeof this.input.solar_production !== 'undefined' && this.input.solar_production > 0
         solar2home -= this.data.solar2battery.val;
+      }
+      if (this.view === 'power' && this._correctionNeededForDischargingBatteryWhileProducingToGrid()) {
+        solar2home += this.input.grid_solo_production;
+        // todo: very ugly to do this here
+        this.data.solar2grid.val -= this.input.grid_solo_production;
       }
       return solar2home;
     } else {
@@ -321,6 +305,9 @@ class PowerWheelCard extends LitElement {
       }
       if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined') {
         home -= this.data.grid2battery.val;
+      }
+      if (this._correctionNeededForDischargingBatteryWhileProducingToGrid()) {
+        home -= this.input.grid_solo_production;
       }
       return -home;
     } else {
@@ -624,7 +611,7 @@ class PowerWheelCard extends LitElement {
   }
 
   _batteryOnLeftSide() {
-    return !this._batteryOnRightSide();
+    return this.data.grid2battery.val !== 0;
   }
 
   _handleClick(stateObj) {
