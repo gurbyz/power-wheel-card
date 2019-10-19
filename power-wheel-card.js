@@ -207,6 +207,19 @@ class PowerWheelCard extends LitElement {
     return this.input.solar_production;
   }
 
+  _calculateBatteryValue() {
+    return this.input.battery_charging;
+  }
+
+  _calculateGridValue() {
+    return this.input.grid_solo_production - this.input.grid_solo_consumption;
+  }
+
+  _calculateHomeValue() {
+    return this.input.grid_solo_production - this.input.grid_solo_consumption
+      + (this.input.battery_charging || 0) - this.input.solar_production;
+  }
+
   _calculateSolar2GridValue() {
     if (this.views[this.view].twoGridSensors || this.view === 'power') {
       let solar2grid = this.input.grid_solo_production;
@@ -217,10 +230,6 @@ class PowerWheelCard extends LitElement {
     } else {
       return 0;
     }
-  }
-
-  _calculateBatteryValue() {
-    return this.input.battery_charging;
   }
 
   _calculateBattery2HomeValue() {
@@ -263,19 +272,6 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  _calculateGridValue() {
-    if (this.views[this.view].twoGridSensors || this.view === 'power') {
-      let grid = typeof this.data.grid2home.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
-        ? this.data.solar2grid.val - this.data.grid2home.val : undefined;
-      if (this._correctionNeededForDischargingBatteryWhileProducingToGrid()) {
-        grid += this.input.grid_solo_production;
-      }
-      return grid;
-    } else {
-      return this.input.grid_solo_production - this.input.grid_solo_consumption;
-    }
-  }
-
   _calculateSolar2HomeValue() {
     if (this.views[this.view].twoGridSensors || this.view === 'power') {
       let solar2home = typeof this.data.solar.val !== 'undefined' && typeof this.data.solar2grid.val !== 'undefined'
@@ -289,36 +285,17 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  _calculateHomeValue() {
-    if (this.views[this.view].twoGridSensors || this.view === 'power') {
-      let home = typeof this.data.grid2home.val !== 'undefined' && this.data.solar2home.val !== 'undefined'
-        ? this.data.grid2home.val + this.data.solar2home.val : undefined;
-      if (this.view === 'power' && typeof this.data.battery2home.val !== 'undefined') {
-        home += this.data.battery2home.val;
-      }
-      if (this.view === 'power' && typeof this.data.grid2battery.val !== 'undefined') {
-        home -= this.data.grid2battery.val;
-      }
-      if (this._correctionNeededForDischargingBatteryWhileProducingToGrid()) {
-        home -= this.input.grid_solo_production;
-      }
-      return -home;
-    } else {
-      return this.input.home_production;
-    }
-  }
-
   _performCalculations() {
     this.data.solar.val = this._calculateSolarValue();
-    this.data.solar2grid.val = this._calculateSolar2GridValue();
     this.data.battery.val = this._calculateBatteryValue();
+    this.data.grid.val = this._calculateGridValue();
+    this.data.home.val = this._calculateHomeValue();
+    this.data.solar2grid.val = this._calculateSolar2GridValue();
     this.data.battery2home.val = this._calculateBattery2HomeValue();
     this.data.solar2battery.val = this._calculateSolar2BatteryValue();
     this.data.grid2battery.val = this._calculateGrid2BatteryValue();
     this.data.grid2home.val = this._calculateGrid2HomeValue();
-    this.data.grid.val = this._calculateGridValue();
     this.data.solar2home.val = this._calculateSolar2HomeValue();
-    this.data.home.val = this._calculateHomeValue();
   }
 
   static _logConsole(message) {

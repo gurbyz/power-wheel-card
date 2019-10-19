@@ -8,9 +8,6 @@ assignees: ''
 ---
 I have read the wiki about what to try first before creating a bug report.
 
-**Which custom card does give you issues?**
-power-wheel-card
-
 **Which version of HA do you use?**
 
 **Which version of the card do you use?**
