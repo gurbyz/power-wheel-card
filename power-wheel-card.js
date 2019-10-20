@@ -247,13 +247,13 @@ class PowerWheelCard extends LitElement {
   }
 
   _calculateSolar2BatteryValue() {
-    // Assumption: What's left of solar (after home did consume) is consumed by battery
+    // Assumption: What's left of solar (after home did consume) is used for charging the battery
     return Math.max(0, Math.min(this.data.solar.val - this.data.solar2home.val, (this.data.battery.val || 0)));
   }
 
   _calculateSolar2GridValue() {
     if (this.views[this.view].twoGridSensors || this.view === 'power') {
-      // Assumption: What's left of solar (after home and battery did consume) is consumed by the grid
+      // Assumption: What's left of solar (after home and battery did consume) is produced to the grid
       return this.data.solar.val - this.data.solar2battery.val - this.data.solar2home.val;
     } else {
       return 0;
@@ -529,8 +529,8 @@ class PowerWheelCard extends LitElement {
   _cell(id, cellObj, cellType, hideValue1, hideValue2, visibilityClass) {
     return html`
       <div id="cell-${id}"
-            class="cell ${cellType} ${cellObj.hasSensor ? 'sensor' : ''} ${visibilityClass || ''}" 
-            @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
+            class="cell ${cellType} ${cellObj.hasSensor && !visibilityClass ? 'sensor' : ''} ${visibilityClass || ''}" 
+            @click="${cellObj.hasSensor && !visibilityClass ? () => this._handleClick(cellObj.stateObj) : () => {}}"
             title="${cellObj.hasSensor ? `More info${cellObj.stateObj.attributes.friendly_name ? ':\n' + cellObj.stateObj.attributes.friendly_name : ''}` : ''}">
         <ha-icon id="icon-${id}" class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
         <div id="value-${id}" class="value">
