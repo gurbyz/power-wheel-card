@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.1.0a-dev";
+const __VERSION = "0.1.0b-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;
@@ -191,13 +191,6 @@ class PowerWheelCard extends LitElement {
     }
   }
 
-  _isBatteryChargedBySolar() {
-    // True when charged by solar, false when charged (or discharged) by the grid
-    // Assumption: Battery is charged by the sun or by the grid, but never by both.
-    // Assumption: Battery is never charged by the grid when there is sun.
-    return this.data.solar.val > 0;
-  }
-
   _calculateSolarValue() {
     return this.input.solar_production;
   }
@@ -216,17 +209,12 @@ class PowerWheelCard extends LitElement {
   }
 
   _calculateGrid2BatteryValue() {
-    if (this._isBatteryChargedBySolar()) {
-      return 0;
+    if (this.data.battery.val > 0) {
+      // Battery charged by grid, but maxed to what is consumed by the grid
+      return Math.min(this.data.battery.val, this.input.grid_solo_consumption);
     } else {
-      if (this.data.battery.val > 0) {
-        // Battery charged by grid (and there is no sun)
-        return this.data.battery.val;
-      } else {
-        // Battery discharging to grid (and there is no sun), but maxed to what is produced to the grid
-        // Correction for scenario "discharging the battery while producing to the grid"
-        return -this.input.grid_solo_production;
-      }
+      // Battery discharging to grid, but maxed to what is produced to the grid
+      return -Math.min(-this.data.battery.val, this.input.grid_solo_production);
     }
   }
 

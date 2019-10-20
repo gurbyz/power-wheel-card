@@ -98,6 +98,13 @@
       card.setAttribute('hass', JSON.stringify(hass));
     };
 
+    const setCardBatteryDischargedWhenProducingToGridAndSomeSun = () => {
+      hass.states['sensor.solar_power'].state = "5";
+      hass.states['sensor.battery_power'].state = "-637";
+      hass.states['sensor.grid_power'].state = "179";
+      card.setAttribute('hass', JSON.stringify(hass));
+    };
+
     const setCardBatterySoC = () => {
       config.battery_soc_entity = "sensor.battery_soc";
       hass.states['sensor.battery_soc'] = {
@@ -261,11 +268,11 @@
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-220', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-battery').innerText, '280', 'Battery should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow should have correct value');
-        assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        assert.equal(card.shadowRoot.querySelector('#value-solar2battery').innerText, '', 'Solar2Battery arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2battery'), undefined, 'Grid2Battery arrow shouldn\'t be there');
+        assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2battery').innerText, '', 'Solar2Battery arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-battery2home').innerText, '', 'Battery2Home arrow shouldn\'t have a value');
         done();
       });
@@ -279,17 +286,17 @@
         assert.isTrue(card.shadowRoot.querySelector('#icon-grid').classList.contains('inactive'), 'Grid icon should be inactive');
         assert.isTrue(card.shadowRoot.querySelector('#icon-home').classList.contains('consuming'), 'Home icon should be consuming');
         assert.isTrue(card.shadowRoot.querySelector('#icon-battery').classList.contains('producing'), 'Battery icon should be producing');
-        assert.equal(card.shadowRoot.querySelector('#icon-solar2grid').getAttribute('icon'), 'mdi:arrow-bottom-left', 'Solar2Grid icon should be normal icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-solar2home').getAttribute('icon'), 'mdi:arrow-bottom-right', 'Solar2Home icon should be normal icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-grid2home').getAttribute('icon'), 'mdi:arrow-right', 'Grid2Home icon should be normal icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-solar2battery').getAttribute('icon'), 'mdi:arrow-right', 'Solar2Battery icon should be normal icon');
         // assert.equal(card.shadowRoot.querySelector('#icon-grid2battery').getAttribute('icon'), 'mdi:arrow-up', 'Grid2Battery icon should be normal icon');
-        assert.equal(card.shadowRoot.querySelector('#icon-battery2home').getAttribute('icon'), 'mdi:arrow-down', 'Battery2Home icon should be normal icon');
-        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2grid').classList.contains('inactive'), 'Solar2Grid arrow icon should be inactive');
-        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2home').classList.contains('active'), 'Solar2Home arrow icon should be active');
-        assert.isTrue(card.shadowRoot.querySelector('#icon-grid2home').classList.contains('inactive'), 'Grid2Home arrow icon should be inactive');
-        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2battery').classList.contains('active'), 'Solar2Battery arrow icon should be active');
         // assert.isTrue(card.shadowRoot.querySelector('#icon-grid2battery').classList.contains('inactive'), 'Grid2Battery arrow icon should be inactive');
+        assert.equal(card.shadowRoot.querySelector('#icon-grid2home').getAttribute('icon'), 'mdi:arrow-right', 'Grid2Home icon should be normal icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-grid2home').classList.contains('inactive'), 'Grid2Home arrow icon should be inactive');
+        assert.equal(card.shadowRoot.querySelector('#icon-solar2home').getAttribute('icon'), 'mdi:arrow-bottom-right', 'Solar2Home icon should be normal icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2home').classList.contains('active'), 'Solar2Home arrow icon should be active');
+        assert.equal(card.shadowRoot.querySelector('#icon-solar2battery').getAttribute('icon'), 'mdi:arrow-right', 'Solar2Battery icon should be normal icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2battery').classList.contains('active'), 'Solar2Battery arrow icon should be active');
+        assert.equal(card.shadowRoot.querySelector('#icon-solar2grid').getAttribute('icon'), 'mdi:arrow-bottom-left', 'Solar2Grid icon should be normal icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2grid').classList.contains('inactive'), 'Solar2Grid arrow icon should be inactive');
+        assert.equal(card.shadowRoot.querySelector('#icon-battery2home').getAttribute('icon'), 'mdi:arrow-down', 'Battery2Home icon should be normal icon');
         assert.isTrue(card.shadowRoot.querySelector('#icon-battery2home').classList.contains('inactive'), 'Battery2Home arrow icon should be inactive');
         done();
       });
@@ -417,6 +424,48 @@
         assert.equal(card.shadowRoot.querySelector('#icon-solar2home').getAttribute('icon'), 'mdi:arrow-bottom-right', 'Solar2Home icon should be normal icon');
         assert.isTrue(card.shadowRoot.querySelector('#icon-solar2home').classList.contains('inactive'), 'Solar2Home arrow icon should be inactive');
         assert.isTrue(card.shadowRoot.querySelector('#icon-home').classList.contains('consuming'), 'Home icon should be consuming');
+        done();
+      });
+    });
+
+    test('displays values when discharging the battery while producing to the grid and some sun', (done) => {
+      setCardBatteryDischargedWhenProducingToGridAndSomeSun();
+
+      flush(() => {
+        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5', 'Solar should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '179', 'Grid should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-463', 'Home should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-battery').innerText, '-637', 'Battery should have correct value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-battery2home').innerText, '458', 'Battery2Home arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2battery').innerText, '', 'Solar2Battery arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid2battery').innerText, '', 'Grid2Battery arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
+        assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
+        done();
+      });
+    });
+
+    test('has ui elements when discharging the battery while producing to the grid and some sun', (done) => {
+      setCardBatteryDischargedWhenProducingToGridAndSomeSun();
+
+      flush(() => {
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar').classList.contains('producing'), 'Solar icon should be producing');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-grid').classList.contains('producing'), 'Grid icon should be producing');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-home').classList.contains('consuming'), 'Home icon should be consuming');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-battery').classList.contains('consuming'), 'Battery icon should be consuming');
+        assert.equal(card.shadowRoot.querySelector('#icon-solar2grid').getAttribute('icon'), 'mdi:arrow-bottom-left', 'Solar2Grid icon should be normal icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2grid').classList.contains('inactive'), 'Solar2Grid arrow icon should be inactive');
+        assert.equal(card.shadowRoot.querySelector('#icon-battery2home').getAttribute('icon'), 'mdi:arrow-down', 'Battery2Home icon should be normal icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-battery2home').classList.contains('active'), 'Battery2Home arrow icon should be active');
+        assert.equal(card.shadowRoot.querySelector('#icon-solar2battery').getAttribute('icon'), 'mdi:arrow-right', 'Solar2Battery icon should be normal icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2battery').classList.contains('inactive'), 'Solar2Battery arrow icon should be inactive');
+        assert.equal(card.shadowRoot.querySelector('#icon-grid2battery').getAttribute('icon'), 'mdi:arrow-down', 'Grid2Battery icon should be reversed icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-grid2battery').classList.contains('active'), 'Grid2Battery arrow icon should be active');
+        assert.equal(card.shadowRoot.querySelector('#icon-grid2home').getAttribute('icon'), 'mdi:arrow-right', 'Grid2Home icon should be normal icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-grid2home').classList.contains('inactive'), 'Grid2Home arrow icon should be inactive');
+        assert.equal(card.shadowRoot.querySelector('#icon-solar2home').getAttribute('icon'), 'mdi:arrow-bottom-right', 'Solar2Home icon should be normal icon');
+        assert.isTrue(card.shadowRoot.querySelector('#icon-solar2home').classList.contains('active'), 'Solar2Home arrow icon should be active');
         done();
       });
     });
