@@ -85,7 +85,7 @@ class PowerWheelCard extends LitElement {
         cursor: pointer;
       }
       ha-icon {
-        transition: color 0.5s ease-in-out, filter 0.3s ease-in-out;
+        transition: all 0.4s ease-in-out;
         color: var(--paper-item-icon-color, #44739e);
         width: 48px;
         height: 48px;
@@ -95,6 +95,12 @@ class PowerWheelCard extends LitElement {
       }
       ha-icon.inactive {
         color: var(--state-icon-unavailable-color, #bdbdbd);
+      }
+      .cell {
+        transition: opacity 0.4s ease-in-out;
+      }
+      .cell.hidden {
+        opacity: 0;
       }
       ha-icon#toggle-button {
         padding-top: 4px;
@@ -493,26 +499,18 @@ class PowerWheelCard extends LitElement {
             ${this.views.energy.capable ? html`<div id="unit" class="toggle" @click="${() => this._toggleView()}" title="Toggle view">${this.views[this.view].unit}</div>` : html`<div id="unit">${this.views[this.view].unit}</div>`}
           </div>
           <div class="row">
-            ${this.views[this.view].batteryCapable && this._batteryOnLeftSide() ? html`
-              ${this._cell('battery', this.data.battery, 'position')}
-            ` : html`<div class="cell"></div>`}
+            ${this._cell('battery', this.data.battery, 'position', undefined, undefined, this._batteryVisibilityClass('left'))}
             <div class="cell"></div>
             ${this._cell('solar', this.data.solar, 'position')}
-            ${this.views[this.view].batteryCapable && this._batteryOnRightSide() ? html`
-              ${this._cell('solar2battery', this.data.solar2battery, 'arrow', this.data.solar.val, this.data.battery.val)}
-              ${this._cell('battery', this.data.battery, 'position')}
-            ` : html`<div class="cell"></div><div class="cell"></div>`}
+            ${this._cell('solar2battery', this.data.solar2battery, 'arrow', this.data.solar.val, this.data.battery.val, this._batteryVisibilityClass('right'))}
+            ${this._cell('battery', this.data.battery, 'position', undefined, undefined, this._batteryVisibilityClass('right'))}
           </div>
           <div class="row">
-            ${this.views[this.view].batteryCapable && this._batteryOnLeftSide() ? html`
-              ${this._cell('grid2battery', this.data.grid2battery, 'arrow', this.data.grid.val, this.data.battery.val)}
-            ` : html`<div class="cell"></div>`}
+            ${this._cell('grid2battery', this.data.grid2battery, 'arrow', this.data.grid.val, this.data.battery.val, this._batteryVisibilityClass('left'))}
             ${this._cell('solar2grid', this.data.solar2grid, 'arrow', this.data.solar.val, this.data.grid.val)}
             <div class="cell"></div>
             ${this._cell('solar2home', this.data.solar2home, 'arrow', this.data.solar.val, this.data.home.val)}
-            ${this.views[this.view].batteryCapable && this._batteryOnRightSide() ? html`
-              ${this._cell('battery2home', this.data.battery2home, 'arrow', this.data.home.val, this.data.battery.val)}
-            ` : html`<div class="cell"></div>`}
+            ${this._cell('battery2home', this.data.battery2home, 'arrow', this.data.home.val, this.data.battery.val, this._batteryVisibilityClass('right'))}
           </div>
           <div class="row">
             ${this._cell('grid', this.data.grid, 'position')}
@@ -528,10 +526,10 @@ class PowerWheelCard extends LitElement {
   
   /* Template functions */
 
-  _cell(id, cellObj, cellType, hideValue1, hideValue2) {
+  _cell(id, cellObj, cellType, hideValue1, hideValue2, visibilityClass) {
     return html`
       <div id="cell-${id}"
-            class="cell ${cellType} ${cellObj.hasSensor ? 'sensor' : ''}" 
+            class="cell ${cellType} ${cellObj.hasSensor ? 'sensor' : ''} ${visibilityClass || ''}" 
             @click="${cellObj.hasSensor ? () => this._handleClick(cellObj.stateObj) : () => {}}"
             title="${cellObj.hasSensor ? `More info${cellObj.stateObj.attributes.friendly_name ? ':\n' + cellObj.stateObj.attributes.friendly_name : ''}` : ''}">
         <ha-icon id="icon-${id}" class="${cellObj.classValue}" icon="${cellObj.icon}"></ha-icon>
@@ -543,12 +541,15 @@ class PowerWheelCard extends LitElement {
     `;
   }
 
-  _batteryOnRightSide() {
-    return this.data.battery2home.val > 0 || this.data.solar2battery.val > 0;
-  }
-
-  _batteryOnLeftSide() {
-    return this.data.grid2battery.val !== 0;
+  _batteryVisibilityClass(side) {
+    if (!this.views[this.view].batteryCapable) {
+      return 'hidden';
+    }
+    if (side === 'left') {
+      return this.data.grid2battery.val !== 0 ? '' : 'hidden';
+    } else {
+      return this.data.battery2home.val > 0 || this.data.solar2battery.val > 0 ? '' : 'hidden';
+    }
   }
 
   _handleClick(stateObj) {
