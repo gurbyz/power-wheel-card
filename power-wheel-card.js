@@ -55,7 +55,8 @@ class PowerWheelCard extends LitElement {
       }
       ha-card .cell {
         text-align: center;
-        width: 150px;
+        width: 75px;
+        transition: opacity 0.4s ease-in-out;
       }
       ha-card .cell.position {
         font-weight: bold;
@@ -66,9 +67,12 @@ class PowerWheelCard extends LitElement {
       ha-card .cell.sensor {
         cursor: pointer;
       }
+      ha-card .cell.hidden {
+        opacity: 0;
+      }
       .value {
-          min-height: 16px;
-        }
+        min-height: 16px;
+      }
       .unit-container {
         position: absolute;
         display: flex;
@@ -95,12 +99,6 @@ class PowerWheelCard extends LitElement {
       }
       ha-icon.inactive {
         color: var(--state-icon-unavailable-color, #bdbdbd);
-      }
-      .cell {
-        transition: opacity 0.4s ease-in-out;
-      }
-      .cell.hidden {
-        opacity: 0;
       }
       ha-icon#toggle-button {
         padding-top: 4px;
