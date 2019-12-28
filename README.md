@@ -84,12 +84,12 @@ sensor:
         friendly_name: 'Grid power consumption'
         unit_of_measurement: 'W'
         value_template: >-
-          {{ (1000 * (states("sensor.power_consumption") | float) | int }}
+          {{ (1000 * (states("sensor.power_consumption") | float)) | int }}
       grid_power_production:
         friendly_name: 'Grid power production'
         unit_of_measurement: 'W'
         value_template: >-
-          {{ (1000 * (states("sensor.power_production") | float) | int }}
+          {{ (1000 * (states("sensor.power_production") | float)) | int }}
 ```
 
 In this example the sensors names for *YOUR_SOLAR_POWER_SENSOR*, *YOUR_GRID_POWER_CONSUMPTION_SENSOR* and *YOUR_GRID_POWER_PRODUCTION_SENSOR* are `solar_power`, `grid_power_consumption` resp. `grid_power_production`.
