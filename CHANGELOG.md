@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.0.16
+### Fixes
+* Prepare for future card config changes.
+
 ## 0.0.15
 ### Improvements
 * Removal of support for Customer Updater.
