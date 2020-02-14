@@ -386,10 +386,10 @@ class PowerWheelCard extends LitElement {
     this.views.energy.unit = this._defineUnit('energy', this.config.solar_energy_entity, this.config.grid_energy_entity,
       this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity);
     this.views.money.unit = this.config.money_unit;
-    this.views = Object.assign({}, this.views);
-    // if (this.config.energy_price) {
-    //   this._addMessage('warn', 'Deprecated card parameter \'energy_price\' is used.');
-    // }
+    this.views = { ...this.views };
+    if (this.config.energy_price) {
+      this._addMessage('warn', 'Deprecated card parameter \'energy_price\' is used.');
+    }
   }
 
   _sensorChangeDetected(oldValue) {
@@ -616,7 +616,7 @@ class PowerWheelCard extends LitElement {
   }
 
   setConfig(config) {
-    config = Object.assign({}, config);
+    config = { ...config };
     if (!config.solar_power_entity) {
       throw new Error('You need to define a solar_power_entity');
     }
@@ -696,8 +696,7 @@ class PowerWheelCard extends LitElement {
     this.autoToggleView = config.initial_auto_toggle_view;
     this.sensors = this._getSensors(config);
     this.view = config.initial_view;
-    // todo: remove this second assign
-    this.config = Object.assign({}, config);
+    this.config = config;
   }
 
   /* HA functions */

@@ -6,6 +6,10 @@ Changelog
   * New card parameter `battery_power_entity`. Charging should have positive values.
   * New card parameter `battery_soc_entity` to display the state of charge.
   * New card parameter `battery_icon` to override the default icon.
+### Improvements
+* Total rebuild of the core functions.
+* **DEPRECATED.** Visual warning if still using card parameter `energy_price` which is deprecated since version 0.0.13.
+  Please replace `energy_price` by `energy_consumption_rate` in your setup.
 
 ## 0.0.16
 ### Fixes
