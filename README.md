@@ -10,8 +10,10 @@ Features of the custom power-wheel-card:
 
 * Has different views for showing power values, showing energy values and showing costs/savings: the *power view*, the *energy view* resp. the *money view*.
   The initial view can be set. Click the unit to switch between views.
-* BETA: Has support for a fourth value in 'the wheel': battery. In *power view* only.
+* BETA: Has support for a fourth value in 'the wheel': battery. In *power view* only. 
+    > **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time. The layout isn't even worked on yet. It's just the same layout as before and the battery icon(s) have been placed (split up) in available space for now.
 * Has options for a different card title per view.
+
 * Can auto-toggle between views.
   Click the recycle icon to turn on or off the auto-toggle.
   You can choose the initial state of the auto-toggle.
@@ -199,8 +201,8 @@ There are many more card parameters available, but it's advised to start with th
 |solar_power_entity|string|**required**| |Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
 |grid_power_consumption_entity (A)|string|optional, always together with B| |Entity id of your sensor for power that you are consuming from the grid. E.g. `sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_power_production_entity (B)|string|optional, always together with A| |Entity id of your sensor for power that you are producing to the grid. E.g. `sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR`. See requirements above.|
-|battery_power_entity|string|optional| |Entity id of your sensor for power you use to charge the battery. Charging should have positive values. Discharging should have negative values.|
-|battery_soc_entity|string|optional| |Entity id of your sensor for *state of charge* of your battery. Unit should be %.|
+|BETA: battery_power_entity|string|optional| |Entity id of your sensor for power you use to charge the battery. Charging should have positive values. Discharging should have negative values.|
+|BETA: battery_soc_entity|string|optional| |Entity id of your sensor for *state of charge* of your battery. Unit should be %.|
 |solar_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your solar energy sensor. E.g. `sensor.YOUR_SOLAR_ENERGY_SENSOR`. See requirements above.|
 |grid_energy_consumption_entity (D)|string|optional, always together with E|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's consumed from the grid. E.g. `sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_energy_production_entity (E)|string|optional, always together with D|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's produced to the grid. E.g. `sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR`. See requirements above.|
@@ -211,7 +213,7 @@ There are many more card parameters available, but it's advised to start with th
 |solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
 |grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:transmission-tower"` will be used.|Icon for grid power and energy.|
 |home_icon|string|optional|The icon of your own customized home sensor(s) if its entity parameter is set. If not available, then `"mdi:home"` will be used.|Icon for home power and energy.|
-|battery_icon|string|optional|The icon of your own customized battery sensor(s) if its entity parameter is set. If not available, then `"mdi:car-battery"` will be used.|Icon for battery power.|
+|BETA: battery_icon|string|optional|The icon of your own customized battery sensor(s) if its entity parameter is set. If not available, then `"mdi:car-battery"` will be used.|Icon for battery power.|
 |power_decimals|integer|optional|`0`|Number of decimals for the power values.|
 |energy_decimals|integer|optional|`3`|Number of decimals for the energy values.|
 |money_decimals|integer|optional|`2`|Number of decimals for the money values.|
@@ -270,8 +272,8 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
   grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
   grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
-  battery_power_entity: sensor.YOUR_BATTERY_POWER_SENSOR
-  battery_soc_entity: sensor.YOUR_BATTERY_SOC_SENSOR
+  battery_power_entity: sensor.YOUR_BATTERY_POWER_SENSOR  # Battery feature is in BETA, expect issues.
+  battery_soc_entity: sensor.YOUR_BATTERY_SOC_SENSOR  # Battery feature is in BETA, expect issues.
   solar_energy_entity: sensor.YOUR_SOLAR_ENERGY_SENSOR
   grid_energy_consumption_entity: sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR
   grid_energy_production_entity: sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR
@@ -281,7 +283,7 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   solar_icon: "mdi:white-balance-sunny"
   grid_icon: "mdi:flash"
   home_icon: "mdi:home-assistant"
-  battery_icon: "mdi:battery"
+  battery_icon: "mdi:battery"  # Battery feature is in BETA, expect issues.
   power_decimals: 2
   energy_decimals: 2
   money_decimals: 0

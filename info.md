@@ -14,6 +14,9 @@ Features of the custom power-wheel-card:
 
 * Has different views for showing power values, showing energy values and showing costs/savings: the *power view*, the *energy view* resp. the *money view*.
   The initial view can be set. Click the unit to switch between views.
+* BETA: Has support for a fourth value in 'the wheel': battery. In *power view* only. 
+    > **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time. The layout isn't even worked on yet. It's just the same layout as before and the battery icon(s) have been placed (split up) in available space for now.
+
 * Has options for a different card title per view.
 * Can auto-toggle between views.
   Click the recycle icon to turn on or off the auto-toggle.
