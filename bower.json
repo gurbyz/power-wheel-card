@@ -21,7 +21,6 @@
     "test"
   ],
   "devDependencies": {
-    "web-component-tester": "^6.5.0",
     "webcomponentsjs": "^2.2.7"
   }
 }

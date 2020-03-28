@@ -11,7 +11,7 @@ const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
-class PowerWheelCard extends LitElement {
+export class PowerWheelCard extends LitElement {
   static get properties() {
     return {
       hass: { type: Object },
