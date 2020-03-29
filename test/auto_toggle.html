@@ -1,24 +1,12 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../bower_components/web-component-tester/browser.js"></script>
-  <script type="module" src="hui-view-mock.js"></script>
-  <script type="module" src="../power-wheel-card.js"></script>
-</head>
-<body>
-<test-fixture id="simple">
-  <template>
-    <power-wheel-card></power-wheel-card>
-  </template>
-</test-fixture>
-<script>
-  suite('<power-wheel-card> with automatic toggling between views', () => {
+import '../bower_components/webcomponentsjs/webcomponents-loader';
+import { assert, fixture, html, elementUpdated } from '@open-wc/testing';
+import './hui-view-mock.js';
+import '../power-wheel-card.js';
+
+describe('<power-wheel-card> with automatic toggling between views', () => {
     let card, hass, config;
 
-    setup(() => {
-      card = fixture('simple');
+    beforeEach(async () => {
       config = {
         type: "custom:power-wheel-card",
         solar_power_entity: "sensor.solar_power",
@@ -77,21 +65,21 @@
           },
         },
       };
-      card.setAttribute('hass', JSON.stringify(hass));
-      card.setConfig(config);
-    });
+      card = await fixture(
+      html`
+        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
+      `
+    );
+    await card.setConfig(config);
+  });
 
-    test('has set config values', (done) => {
-      flush(() => {
-        assert.isTrue(card.config.initial_auto_toggle_view, 'Card parameter initial_auto_toggle_view should be set');
+    it('has set config values', () => {
+assert.isTrue(card.config.initial_auto_toggle_view, 'Card parameter initial_auto_toggle_view should be set');
         assert.equal(card.config.auto_toggle_view_period, 1, 'Card parameter auto_toggle_view_period should be set');
-        done();
-      });
-    });
+});
 
-    test('can automatically toggle from power view to energy view', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
+    it('can automatically toggle from power view to energy view', () => {
+assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
         setTimeout(() => {
           assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
           done();
@@ -99,9 +87,8 @@
       })
     });
 
-    test('can switch off auto toggling with toggle button', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
+    it('can switch off auto toggling with toggle button', () => {
+assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
         card.shadowRoot.querySelector('#toggle-button').click();
         setTimeout(() => {
           assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be still in power view');
@@ -110,12 +97,10 @@
       })
     });
 
-    test('can switch off auto toggling with click on unit', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
+    it('can switch off auto toggling with click on unit', () => {
+assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
         card.shadowRoot.querySelector('#unit').click();
-        flush(() => {
-          assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should go to energy view first');
+  assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should go to energy view first');
           setTimeout(() => {
             assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be still in energy view');
             done();
@@ -125,6 +110,3 @@
     });
 
   });
-</script>
-</body>
-</html>

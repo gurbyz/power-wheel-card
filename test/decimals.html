@@ -1,24 +1,12 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../bower_components/web-component-tester/browser.js"></script>
-  <script type="module" src="hui-view-mock.js"></script>
-  <script type="module" src="../power-wheel-card.js"></script>
-</head>
-<body>
-<test-fixture id="simple">
-  <template>
-    <power-wheel-card></power-wheel-card>
-  </template>
-</test-fixture>
-<script>
-  suite('<power-wheel-card> with configured decimals', () => {
+import '../bower_components/webcomponentsjs/webcomponents-loader';
+import { assert, fixture, html, elementUpdated } from '@open-wc/testing';
+import './hui-view-mock.js';
+import '../power-wheel-card.js';
+
+describe('<power-wheel-card> with configured decimals', () => {
     let card, hass, config;
 
-    setup(() => {
-      card = fixture('simple');
+    beforeEach(async () => {
       config = {
         type: "custom:power-wheel-card",
         solar_power_entity: "sensor.solar_power",
@@ -79,64 +67,54 @@
           },
         },
       };
-      card.setAttribute('hass', JSON.stringify(hass));
-      card.setConfig(config);
-    });
+      card = await fixture(
+      html`
+        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
+      `
+    );
+    await card.setConfig(config);
+  });
 
-    const setCardView = (view) => {
+    const setCardView = async (view) => {
       card.setAttribute('view', view);
+      await elementUpdated(card);
+      await card.setConfig(config);
     };
-
-    test('has set config values', (done) => {
-      flush(() => {
-        assert.equal(card.config.power_decimals, 2, 'Card parameter power_decimals should have value set');
+it('has set config values', () => {
+assert.equal(card.config.power_decimals, 2, 'Card parameter power_decimals should have value set');
         assert.equal(card.config.energy_decimals, 1, 'Card parameter energy_decimals should have value set');
         assert.equal(card.config.money_decimals, 3, 'Card parameter money_decimals should have value set');
-        done();
-      });
-    });
+});
 
-    test('displays values in power view', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500.00', 'Solar should have correct value');
+    it('displays values in power view', () => {
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500.00', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-1800.00', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-2300.00', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('displays values in energy view', (done) => {
-      setCardView('energy');
+    it('displays values in energy view', async () => {
+      await setCardView('energy');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.0', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.0', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-18.0', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-23.0', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('displays values in money view', (done) => {
-      setCardView('money');
+    it('displays values in money view', async () => {
+      await setCardView('money');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-18.000', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-23.000', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
   });
-</script>
-</body>
-</html>

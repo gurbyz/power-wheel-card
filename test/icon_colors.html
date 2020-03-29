@@ -1,26 +1,14 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../bower_components/web-component-tester/browser.js"></script>
-  <script type="module" src="hui-view-mock.js"></script>
-  <script type="module" src="../power-wheel-card.js"></script>
-</head>
-<body>
-<test-fixture id="simple">
-  <template>
-    <power-wheel-card></power-wheel-card>
-  </template>
-</test-fixture>
-<script>
-  suite('<power-wheel-card> with configured icon colors', () => {
+import '../bower_components/webcomponentsjs/webcomponents-loader';
+import { assert, fixture, html, elementUpdated } from '@open-wc/testing';
+import './hui-view-mock.js';
+import '../power-wheel-card.js';
+
+describe('<power-wheel-card> with configured icon colors', () => {
     let card, hass, config;
 
     /** Tests are based on color_icons. **/
 
-    setup(() => {
-      card = fixture('simple');
+    beforeEach(async () => {
       config = {
         type: "custom:power-wheel-card",
         solar_power_entity: "sensor.solar_power",
@@ -54,28 +42,23 @@
           },
         },
       };
-      card.setAttribute('hass', JSON.stringify(hass));
-      card.setConfig(config);
-    });
+      card = await fixture(
+      html`
+        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
+      `
+    );
+    await card.setConfig(config);
+  });
 
-    test('has config values', (done) => {
-      flush(() => {
-        assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');
+    it('has config values', () => {
+assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');
         assert.equal(card.config.consuming_color, 'red', 'Card parameter consuming_color should be set');
         assert.equal(card.config.producing_color, 'green', 'Card parameter producing_color should be set');
-        done();
-      });
-    });
+});
 
-    test('uses configured color values', (done) => {
-      flush(() => {
-        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(255, 0, 0)', 'Consuming icon color should be red');
+    it('uses configured color values', () => {
+assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(255, 0, 0)', 'Consuming icon color should be red');
         assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.producing'), null).getPropertyValue('color'), 'rgb(0, 128, 0)', 'Producing icon color should be green');
-        done();
-      });
-    });
+});
 
   });
-</script>
-</body>
-</html>

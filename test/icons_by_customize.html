@@ -1,26 +1,14 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../bower_components/web-component-tester/browser.js"></script>
-  <script type="module" src="hui-view-mock.js"></script>
-  <script type="module" src="../power-wheel-card.js"></script>
-</head>
-<body>
-<test-fixture id="simple">
-  <template>
-    <power-wheel-card></power-wheel-card>
-  </template>
-</test-fixture>
-<script>
-  suite('<power-wheel-card> with icons from customized sensors', () => {
+import '../bower_components/webcomponentsjs/webcomponents-loader';
+import { assert, fixture, html, elementUpdated } from '@open-wc/testing';
+import './hui-view-mock.js';
+import '../power-wheel-card.js';
+
+describe('<power-wheel-card> with icons from customized sensors', () => {
     let card, hass, config;
 
     /** Tests are extended in icons_by_config. **/
 
-    setup(() => {
-      card = fixture('simple');
+    beforeEach(async () => {
       config = {
         type: "custom:power-wheel-card",
         solar_power_entity: "sensor.solar_power",
@@ -115,61 +103,51 @@
           },
         },
       };
-      card.setAttribute('hass', JSON.stringify(hass));
-      card.setConfig(config);
-    });
+      card = await fixture(
+      html`
+        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
+      `
+    );
+    await card.setConfig(config);
+  });
 
-    const setCardView = (view) => {
+    const setCardView = async (view) => {
       card.setAttribute('view', view);
+      await elementUpdated(card);
+      await card.setConfig(config);
     };
-
-    test('has customized icons in power view', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:white-balance-sunny', 'Solar icon should be customized icon');
+it('has customized icons in power view', () => {
+assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:white-balance-sunny', 'Solar icon should be customized icon');
         assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash-circle', 'Grid icon should be customized icon');
         assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-assistant', 'Home icon should be customized icon');
-        done();
-      });
-    });
+});
 
-    test('in power view doesn\'t let the extra sensors interfere values when consuming from the grid', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
+    it('in power view doesn\'t let the extra sensors interfere values when consuming from the grid', () => {
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-1800', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-2300', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('has customized icons in energy view', (done) => {
-      setCardView('energy');
+    it('has customized icons in energy view', async () => {
+      await setCardView('energy');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:white-balance-sunny', 'Solar icon should be customized icon');
+assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:white-balance-sunny', 'Solar icon should be customized icon');
         assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash-circle', 'Grid icon should be customized icon');
         assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-assistant', 'Home icon should be customized icon');
-        done();
-      });
-    });
+});
 
-    test('in energy view doesn\'t let the extra sensors interfere values when consuming from the grid', (done) => {
-      setCardView('energy');
+    it('in energy view doesn\'t let the extra sensors interfere values when consuming from the grid', async () => {
+      await setCardView('energy');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-18.000', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-23.000', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
   });
-</script>
-</body>
-</html>

@@ -1,24 +1,12 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../bower_components/web-component-tester/browser.js"></script>
-  <script type="module" src="hui-view-mock.js"></script>
-  <script type="module" src="../power-wheel-card.js"></script>
-</head>
-<body>
-<test-fixture id="simple">
-  <template>
-    <power-wheel-card></power-wheel-card>
-  </template>
-</test-fixture>
-<script>
-  suite('<power-wheel-card> with a title per view', () => {
+import '../bower_components/webcomponentsjs/webcomponents-loader';
+import { assert, fixture, html, elementUpdated } from '@open-wc/testing';
+import './hui-view-mock.js';
+import '../power-wheel-card.js';
+
+describe('<power-wheel-card> with a title per view', () => {
     let card, hass, config;
 
-    setup(() => {
-      card = fixture('simple');
+    beforeEach(async () => {
       config = {
         type: "custom:power-wheel-card",
         title: "Not used",
@@ -79,65 +67,49 @@
           },
         },
       };
-      card.setAttribute('hass', JSON.stringify(hass));
-      card.setConfig(config);
-    });
+      card = await fixture(
+      html`
+        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
+      `
+    );
+    await card.setConfig(config);
+  });
 
-    const setCardView = (view) => {
+    const setCardView = async (view) => {
       card.setAttribute('view', view);
+      await elementUpdated(card);
+      await card.setConfig(config);
     };
-
-    test('has config values', (done) => {
-      flush(() => {
-        assert.equal(card.config.title_power, 'Power view', 'Card parameter title_power should be set');
+it('has config values', () => {
+assert.equal(card.config.title_power, 'Power view', 'Card parameter title_power should be set');
         assert.equal(card.config.title_energy, 'Energy view', 'Card parameter title_energy should be set');
         assert.equal(card.config.title_money, 'Money view', 'Card parameter title_money should be set');
-        done();
-      });
-    });
+});
 
-    test('has set card property values after setConfig', (done) => {
-      flush(() => {
-        assert.equal(card.views.power.title, 'Power view', 'Card property views should have value set for power view title');
+    it('has set card property values after setConfig', () => {
+assert.equal(card.views.power.title, 'Power view', 'Card property views should have value set for power view title');
         assert.equal(card.views.energy.title, 'Energy view', 'Card property views should have value set for energy view title');
         assert.equal(card.views.money.title, 'Money view', 'Card property views should have value set for money view title');
-        done();
-      });
-    });
+});
 
-    test('has no warnings or errors', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelectorAll('.message').length, 0, 'Number of messages should be zero');
-        done();
-      });
-    });
+    it('has no warnings or errors', () => {
+assert.equal(card.shadowRoot.querySelectorAll('.message').length, 0, 'Number of messages should be zero');
+});
 
-    test('displays values in power view', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#title').innerText, "Power view");
-        done();
-      });
-    });
+    it('displays values in power view', () => {
+assert.equal(card.shadowRoot.querySelector('#title').innerText, "Power view");
+});
 
-    test('displays values in energy view', (done) => {
-      setCardView('energy');
+    it('displays values in energy view', async () => {
+      await setCardView('energy');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#title').innerText, "Energy view");
-        done();
-      });
-    });
+assert.equal(card.shadowRoot.querySelector('#title').innerText, "Energy view");
+});
 
-    test('displays values in money view', (done) => {
-      setCardView('money');
+    it('displays values in money view', async () => {
+      await setCardView('money');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#title').innerText, "Money view");
-        done();
-      });
-    });
+assert.equal(card.shadowRoot.querySelector('#title').innerText, "Money view");
+});
 
   });
-</script>
-</body>
-</html>

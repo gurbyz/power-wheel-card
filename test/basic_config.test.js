@@ -1,5 +1,5 @@
 import '../bower_components/webcomponentsjs/webcomponents-loader';
-import { assert, fixture, html, elementUpdated } from '@open-wc/testing';
+import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
 
@@ -18,7 +18,7 @@ describe('<power-wheel-card> with most basic config', () => {
     };
     hass = {
       states: {
-        "sensor.solar_power" : {
+        "sensor.solar_power": {
           attributes: {
             unit_of_measurement: "W",
             friendly_name: "Solar Power",
@@ -26,14 +26,14 @@ describe('<power-wheel-card> with most basic config', () => {
           entity_id: "sensor.solar_power",
           state: "500.1",
         },
-        "sensor.grid_power_consumption" : {
+        "sensor.grid_power_consumption": {
           attributes: {
             unit_of_measurement: "W",
           },
           entity_id: "sensor.grid_power_consumption",
           state: "1799.9",
         },
-        "sensor.grid_power_production" : {
+        "sensor.grid_power_production": {
           attributes: {
             unit_of_measurement: "W",
           },
@@ -98,7 +98,7 @@ describe('<power-wheel-card> with most basic config', () => {
 
   it('has set card property values after setConfig', () => {
     assert.isFalse(card.autoToggleView, 'Card property autoToggleView should be default false');
-    assert.deepEqual(card.sensors, [ "sensor.solar_power", "sensor.grid_power_consumption", "sensor.grid_power_production" ], 'Card property sensors should have default value');
+    assert.deepEqual(card.sensors, ["sensor.solar_power", "sensor.grid_power_consumption", "sensor.grid_power_production"], 'Card property sensors should have default value');
     assert.equal(card.view, 'power', 'Card property view should have default value');
     assert.equal(card.views.power.title, 'Power wheel', 'Card property views should have default value for power view title');
     assert.isFalse(card.views.power.batteryCapable, 'Card property views should have default value for power view battery capability');

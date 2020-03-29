@@ -1,26 +1,14 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../bower_components/web-component-tester/browser.js"></script>
-  <script type="module" src="hui-view-mock.js"></script>
-  <script type="module" src="../power-wheel-card.js"></script>
-</head>
-<body>
-<test-fixture id="simple">
-  <template>
-    <power-wheel-card></power-wheel-card>
-  </template>
-</test-fixture>
-<script>
-  suite('<power-wheel-card> with icon coloring', () => {
+import '../bower_components/webcomponentsjs/webcomponents-loader';
+import { assert, fixture, html, elementUpdated } from '@open-wc/testing';
+import './hui-view-mock.js';
+import '../power-wheel-card.js';
+
+describe('<power-wheel-card> with icon coloring', () => {
     let card, hass, config;
 
     /** Tests are extended in icon_colors. **/
 
-    setup(() => {
-      card = fixture('simple');
+    beforeEach(async () => {
       config = {
         type: "custom:power-wheel-card",
         solar_power_entity: "sensor.solar_power",
@@ -78,94 +66,96 @@
           },
         },
       };
-      card.setAttribute('hass', JSON.stringify(hass));
-      card.setConfig(config);
-    });
+      card = await fixture(
+      html`
+        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
+      `
+    );
+    await card.setConfig(config);
+  });
 
     const setCardProducingToGrid = () => {
       hass.states['sensor.grid_power_consumption'].state = "0";
       hass.states['sensor.grid_power_production'].state = "50";
-      card.setAttribute('hass', JSON.stringify(hass));
-    };
+    card.setAttribute('hass', JSON.stringify(hass));
+    await elementUpdated(card);
+    await card.setConfig(config);
+};
 
     const setCardAllInactive = () => {
       hass.states['sensor.solar_power'].state = "0";
       hass.states['sensor.grid_power_consumption'].state = "0";
       hass.states['sensor.grid_power_production'].state = "0";
-      card.setAttribute('hass', JSON.stringify(hass));
-    };
+    card.setAttribute('hass', JSON.stringify(hass));
+    await elementUpdated(card);
+    await card.setConfig(config);
+};
 
     const setCardSolarConsuming = () => {
       hass.states['sensor.solar_power'].state = "-5";
       hass.states['sensor.grid_power_consumption'].state = "5";
       hass.states['sensor.grid_power_production'].state = "0";
-      card.setAttribute('hass', JSON.stringify(hass));
-    };
+    card.setAttribute('hass', JSON.stringify(hass));
+    await elementUpdated(card);
+    await card.setConfig(config);
+};
 
-    const setCardProducedToGridOnly = () => {
+    const setCardProducedToGridOnly = async () => {
       hass.states['sensor.grid_energy_consumption'].state = "0";
       hass.states['sensor.grid_energy_production'].state = "0.5";
-      card.setAttribute('hass', JSON.stringify(hass));
-    };
+    card.setAttribute('hass', JSON.stringify(hass));
+    await elementUpdated(card);
+    await card.setConfig(config);
+};
 
-    const setCardConsumedAndProducedToGrid = () => {
+    const setCardConsumedAndProducedToGrid = async () => {
       hass.states['sensor.grid_energy_consumption'].state = "1";
       hass.states['sensor.grid_energy_production'].state = "0.4";
-      card.setAttribute('hass', JSON.stringify(hass));
-    };
+    card.setAttribute('hass', JSON.stringify(hass));
+    await elementUpdated(card);
+    await card.setConfig(config);
+};
 
-    const setCardView = (view) => {
+    const setCardView = async (view) => {
       card.setAttribute('view', view);
+      await elementUpdated(card);
+      await card.setConfig(config);
     };
-
-    test('has config values', (done) => {
-      flush(() => {
-        assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');
+it('has config values', () => {
+assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');
         assert.equal(card.config.consuming_color, 'var(--label-badge-yellow, #f4b400)', 'Card parameter consuming_color should be yellow');
         assert.equal(card.config.producing_color, 'var(--label-badge-green, #0da035)', 'Card parameter producing_color should be green');
-        done();
-      });
-    });
+});
 
-    test('uses color values', (done) => {
-      flush(() => {
-        assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(244, 180, 0)', 'Consuming icon color should be #f4b400');
+    it('uses color values', () => {
+assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(244, 180, 0)', 'Consuming icon color should be #f4b400');
         assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.producing'), null).getPropertyValue('color'), 'rgb(13, 160, 53)', 'Producing icon color should be #0da035');
-        done();
-      });
-    });
+});
 
-    test('displays values in power view when consuming from the grid', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
+    it('displays values in power view when consuming from the grid', () => {
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '1800', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '2300', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('displays values in power view when producing to the grid', (done) => {
+    it('displays values in power view when producing to the grid', () => {
       setCardProducingToGrid();
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '500', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '50', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '450', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('has ui elements in power view when producing to the grid', (done) => {
+    it('has ui elements in power view when producing to the grid', () => {
       setCardProducingToGrid();
 
-      flush(() => {
-        assert.isTrue(card.shadowRoot.querySelector('#icon-solar').classList.contains('producing'), 'Solar icon should be producing');
+assert.isTrue(card.shadowRoot.querySelector('#icon-solar').classList.contains('producing'), 'Solar icon should be producing');
         assert.isTrue(card.shadowRoot.querySelector('#icon-grid').classList.contains('producing'), 'Grid icon should be producing');
         assert.isTrue(card.shadowRoot.querySelector('#icon-home').classList.contains('consuming'), 'Home icon should be consuming');
         assert.equal(card.shadowRoot.querySelector('#icon-solar2grid').getAttribute('icon'), 'mdi:arrow-bottom-left', 'Solar2Grid icon should be normal icon');
@@ -174,127 +164,98 @@
         assert.isTrue(card.shadowRoot.querySelector('#icon-solar2grid').classList.contains('active'), 'Solar2Grid arrow icon should be active');
         assert.isTrue(card.shadowRoot.querySelector('#icon-solar2home').classList.contains('active'), 'Solar2Home arrow icon should be active');
         assert.isTrue(card.shadowRoot.querySelector('#icon-grid2home').classList.contains('inactive'), 'Grid2Home arrow icon should be inactive');
-        done();
-      });
-    });
+});
 
-    test('displays values in power view when all sensor values are zero', (done) => {
+    it('displays values in power view when all sensor values are zero', () => {
       setCardAllInactive();
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '0', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '0', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '0', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('displays values in power view when solar inverter consumes power', (done) => {
+    it('displays values in power view when solar inverter consumes power', () => {
       setCardSolarConsuming();
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '5', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '0', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow should have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('displays values in energy view when having consumed from the grid only', (done) => {
-      setCardView('energy');
+    it('displays values in energy view when having consumed from the grid only', async () => {
+      await setCardView('energy');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '18.000', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '23.000', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('displays values in energy view when having produced to the grid only', (done) => {
-      setCardProducedToGridOnly();
+    it('displays values in energy view when having produced to the grid only', async () => {
+      await setCardProducedToGridOnly();
       setCardView('energy');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.500', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '4.500', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow should have a correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('displays values in energy view when having consumed from and produced to the grid', (done) => {
-      setCardConsumedAndProducedToGrid();
+    it('displays values in energy view when having consumed from and produced to the grid', async () => {
+      await setCardConsumedAndProducedToGrid();
       setCardView('energy');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.600', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '5.600', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '0.400', 'Solar2Grid arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '4.600', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '1.000', 'Grid2Home arrow should have correct value');
-        done();
-      });
-    });
+});
 
-    test('displays values in money view when having consumed from the grid only', (done) => {
-      setCardView('money');
+    it('displays values in money view when having consumed from the grid only', async () => {
+      await setCardView('money');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '3.60', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '4.60', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('displays values in money view when having produced to the grid only', (done) => {
-      setCardProducedToGridOnly();
+    it('displays values in money view when having produced to the grid only', async () => {
+      await setCardProducedToGridOnly();
       setCardView('money');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.10', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '0.90', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow should have a correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');
-        done();
-      });
-    });
+});
 
-    test('displays values in money view when having consumed from and produced to the grid', (done) => {
-      setCardConsumedAndProducedToGrid();
+    it('displays values in money view when having consumed from and produced to the grid', async () => {
+      await setCardConsumedAndProducedToGrid();
       setCardView('money');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
+assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.12', 'Grid should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '1.12', 'Home should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '0.08', 'Solar2Grid arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '0.92', 'Solar2Home arrow should have correct value');
         assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '0.20', 'Grid2Home arrow should have correct value');
-        done();
-      });
-    });
+});
 
   });
-</script>
-</body>
-</html>

@@ -1,26 +1,14 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="../bower_components/web-component-tester/browser.js"></script>
-  <script type="module" src="hui-view-mock.js"></script>
-  <script type="module" src="../power-wheel-card.js"></script>
-</head>
-<body>
-<test-fixture id="simple">
-  <template>
-    <power-wheel-card></power-wheel-card>
-  </template>
-</test-fixture>
-<script>
-  suite('<power-wheel-card> with configured icons', () => {
+import '../bower_components/webcomponentsjs/webcomponents-loader';
+import { assert, fixture, html, elementUpdated } from '@open-wc/testing';
+import './hui-view-mock.js';
+import '../power-wheel-card.js';
+
+describe('<power-wheel-card> with configured icons', () => {
     let card, hass, config;
 
     /** Tests are based on icons_by_customize. **/
 
-    setup(() => {
-      card = fixture('simple');
+    beforeEach(async () => {
       config = {
         type: "custom:power-wheel-card",
         solar_power_entity: "sensor.solar_power",
@@ -117,35 +105,31 @@
           },
         },
       };
-      card.setAttribute('hass', JSON.stringify(hass));
-      card.setConfig(config);
-    });
+      card = await fixture(
+      html`
+        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
+      `
+    );
+    await card.setConfig(config);
+  });
 
-    const setCardView = (view) => {
+    const setCardView = async (view) => {
       card.setAttribute('view', view);
+      await elementUpdated(card);
+      await card.setConfig(config);
     };
-
-    test('prefers configured icons above customized icons in power view', (done) => {
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:solar-power', 'Solar icon should be configured icon');
+it('prefers configured icons above customized icons in power view', () => {
+assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:solar-power', 'Solar icon should be configured icon');
         assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash', 'Grid icon should be configured icon');
         assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-circle', 'Home icon should be configured icon');
-        done();
-      });
-    });
+});
 
-    test('prefers configured icons above customized icons in energy view', (done) => {
-      setCardView('energy');
+    it('prefers configured icons above customized icons in energy view', async () => {
+      await setCardView('energy');
 
-      flush(() => {
-        assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:solar-power', 'Solar icon should be configured icon');
+assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:solar-power', 'Solar icon should be configured icon');
         assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash', 'Grid icon should be configured icon');
         assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-circle', 'Home icon should be configured icon');
-        done();
-      });
-    });
+});
 
   });
-</script>
-</body>
-</html>
