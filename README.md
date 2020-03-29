@@ -165,12 +165,13 @@ If your energy rate is depending on the (time of) day, please supply the average
 
 1. Download the file [power-wheel-card.js](https://raw.githubusercontent.com/gurbyz/power-wheel-card/master/power-wheel-card.js).
 1. Save the file in the `www` folder inside your Home Assistant config folder.
-1. Include the card code in your `ui-lovelace.yaml` file:
+1. Include the card code in your `configuration.yaml` file:
 
 ```yaml
-resources:
-  - url: /local/power-wheel-card.js?v=1
-    type: module
+lovelace:
+  resources:
+    - url: /local/power-wheel-card.js?v=1
+      type: module
 ```
 
 > **Note.** The actual number in `v=A_NUMBER` isn't relevant. You have to increase the number whenever updating the source code to avoid having to manually clear the cache of your browsers and mobile apps.
