@@ -11,7 +11,7 @@ const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
-export class PowerWheelCard extends LitElement {
+class PowerWheelCard extends LitElement {
   static get properties() {
     return {
       hass: { type: Object },
@@ -301,6 +301,7 @@ export class PowerWheelCard extends LitElement {
     this.input = {};
     this.messages = [];
     this.sensors = [];
+    this.view = 'power';
     this.views = {
       power: {},
       energy: {},
