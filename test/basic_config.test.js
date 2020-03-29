@@ -122,7 +122,7 @@ describe('<power-wheel-card> with most basic config', () => {
     assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.inactive'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Inactive arrow icon color should be #bdbdbd');
   });
 
-  xit('displays values', async () => {
+  it('displays values', () => {
     assert.equal(card.shadowRoot.querySelector('#title').innerText, 'Power wheel', 'Should have title');
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Should have unit');
   });

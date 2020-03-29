@@ -281,6 +281,40 @@ class PowerWheelCard extends LitElement {
     // }
   }
 
+  _getSensorUnit(entity) {
+    if (entity) {
+      const stateObj = this.hass.states[entity];
+      const unit = stateObj && stateObj.attributes.unit_of_measurement
+        ? stateObj.attributes.unit_of_measurement : undefined;
+      if (stateObj && !unit) {
+        this._addMessage('error', `Attribute "unit_of_measurement" for the entity "${entity}" not found in HA.`);
+      }
+      return unit;
+    } else {
+      return undefined;
+    }
+  }
+
+  _defineUnit(view, solar_entity, grid_entity, grid_consumption_entity, grid_production_entity) {
+    const solarUnit = this._getSensorUnit(solar_entity);
+    let gridUnit;
+    if (this.views[view].twoGridSensors) {
+      const gridConsumptionUnit = this._getSensorUnit(grid_consumption_entity);
+      const gridProductionUnit = this._getSensorUnit(grid_production_entity);
+      gridUnit = gridConsumptionUnit === gridProductionUnit ? gridConsumptionUnit : undefined;
+    } else if (this.views[view].oneGridSensor) {
+      gridUnit = this._getSensorUnit(grid_entity);
+    } else {
+      gridUnit = undefined;
+    }
+    if (solarUnit === gridUnit) {
+      return solarUnit;
+    } else {
+      this._addMessage('error', `Units not equal for all sensors for the ${view} view.`);
+      return 'error';
+    }
+  }
+
   /* Lit functions */
 
   constructor() {
@@ -337,40 +371,6 @@ class PowerWheelCard extends LitElement {
     });
   }
 
-  _getSensorUnit(entity) {
-    if (entity) {
-      const stateObj = this.hass.states[entity];
-      const unit = stateObj && stateObj.attributes.unit_of_measurement
-        ? stateObj.attributes.unit_of_measurement : undefined;
-      if (stateObj && !unit) {
-        this._addMessage('error', `Attribute "unit_of_measurement" for the entity "${entity}" not found in HA.`);
-      }
-      return unit;
-    } else {
-      return undefined;
-    }
-  }
-
-  _defineUnit(view, solar_entity, grid_entity, grid_consumption_entity, grid_production_entity) {
-    const solarUnit = this._getSensorUnit(solar_entity);
-    let gridUnit;
-    if (this.views[view].twoGridSensors) {
-      const gridConsumptionUnit = this._getSensorUnit(grid_consumption_entity);
-      const gridProductionUnit = this._getSensorUnit(grid_production_entity);
-      gridUnit = gridConsumptionUnit === gridProductionUnit ? gridConsumptionUnit : undefined;
-    } else if (this.views[view].oneGridSensor) {
-      gridUnit = this._getSensorUnit(grid_entity);
-    } else {
-      gridUnit = undefined;
-    }
-    if (solarUnit === gridUnit) {
-      return solarUnit;
-    } else {
-      this._addMessage('error', `Units not equal for all sensors for the ${view} view.`);
-      return 'error';
-    }
-  }
-
   firstUpdated(changedProperties) {
     if (this.config.debug) {
       let line = `Version: ${__VERSION}\nLovelace resource: ${this._lovelaceResource()}\nHA version: ${this.hass.config.version}`;
@@ -382,12 +382,6 @@ class PowerWheelCard extends LitElement {
       this._addMessage('warn', `[${__VERSION}] Debug mode is on.`);
     }
     this._validateSensors();
-    this.views.power.unit = this._defineUnit('power', this.config.solar_power_entity, this.config.grid_power_entity,
-      this.config.grid_power_consumption_entity, this.config.grid_power_production_entity);
-    this.views.energy.unit = this._defineUnit('energy', this.config.solar_energy_entity, this.config.grid_energy_entity,
-      this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity);
-    this.views.money.unit = this.config.money_unit;
-    this.views = { ...this.views };
     if (this.config.energy_price) {
       this._addMessage('warn', 'Deprecated card parameter \'energy_price\' is used.');
     }
@@ -414,6 +408,13 @@ class PowerWheelCard extends LitElement {
   }
 
   render() {
+    this.views.power.unit = this._defineUnit('power', this.config.solar_power_entity, this.config.grid_power_entity,
+      this.config.grid_power_consumption_entity, this.config.grid_power_production_entity);
+    this.views.energy.unit = this._defineUnit('energy', this.config.solar_energy_entity, this.config.grid_energy_entity,
+      this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity);
+    this.views.money.unit = this.config.money_unit;
+    // this.views = { ...this.views };
+
     if (this.view === 'money' && this.views.money.capable) {
       // Calculate energy values first
       this._saveEntityStates(this.config.solar_energy_entity, this.config.grid_energy_production_entity, this.config.grid_energy_consumption_entity, false, this.config.grid_energy_entity, this.config.home_energy_entity);

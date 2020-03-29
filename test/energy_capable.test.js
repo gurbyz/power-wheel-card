@@ -93,8 +93,6 @@ describe('<power-wheel-card> with energy view capable config', () => {
 
   const setCardView = async (view) => {
     card.setAttribute('view', view);
-    await elementUpdated(card);
-    await card.setConfig(config);
   };
 
   it('has config values', () => {
@@ -112,12 +110,12 @@ describe('<power-wheel-card> with energy view capable config', () => {
     assert.equal(card.shadowRoot.querySelectorAll('.message').length, 0, 'Number of messages should be zero');
   });
 
-  xit('displays values', () => {
+  it('displays values', () => {
     assert.equal(card.shadowRoot.querySelector('#title').innerText, "Power wheel");
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, "kWh", 'Unit should be set to energy');
   });
 
-  xit('has ui elements in power view', async () => {
+  it('has ui elements in power view', async () => {
     await setCardView('power');
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W", 'Card should be in power view');
@@ -198,16 +196,17 @@ describe('<power-wheel-card> with energy view capable config', () => {
     assert.isTrue(card.shadowRoot.querySelector('#icon-grid2home').classList.contains('active'), 'Grid2Home arrow icon should be active');
   });
 
-  xit('can click on unit to toggle from power view to energy view', async () => {
+  it('can click on unit to toggle from power view to energy view', async () => {
     await setCardView('power');
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
     card.shadowRoot.querySelector('#unit').click();
+    await elementUpdated(card);
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
   });
 
-  xit('can click on unit to toggle from energy view to power view', async () => {
+  it('can click on unit to toggle from energy view to power view', async () => {
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
     card.shadowRoot.querySelector('#unit').click();
     await elementUpdated(card);
