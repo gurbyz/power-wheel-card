@@ -2,6 +2,7 @@ import '../bower_components/webcomponentsjs/webcomponents-loader';
 import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCardAllInactive} from './test_main.js';
 
 describe('<power-wheel-card> with battery', () => {
   let card, hass, config;
@@ -63,16 +64,6 @@ describe('<power-wheel-card> with battery', () => {
     hass.states['sensor.grid_power_consumption'].state = "0";
     hass.states['sensor.grid_power_production'].state = "50";
     hass.states['sensor.battery_power'].state = "100";
-    card.setAttribute('hass', JSON.stringify(hass));
-    await elementUpdated(card);
-    await card.setConfig(config);
-  };
-
-  const setCardAllInactive = async () => {
-    hass.states['sensor.solar_power'].state = "0";
-    hass.states['sensor.grid_power_consumption'].state = "0";
-    hass.states['sensor.grid_power_production'].state = "0";
-    hass.states['sensor.battery_power'].state = "0";
     card.setAttribute('hass', JSON.stringify(hass));
     await elementUpdated(card);
     await card.setConfig(config);
@@ -225,7 +216,7 @@ describe('<power-wheel-card> with battery', () => {
   });
 
   it('displays values when all sensor values are zero', async () => {
-    await setCardAllInactive();
+    await setCardAllInactive(card, hass, config);
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '0', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0', 'Grid should have correct value');
@@ -240,7 +231,7 @@ describe('<power-wheel-card> with battery', () => {
   });
 
   it('has ui elements when all sensor values are zero', async () => {
-    await setCardAllInactive();
+    await setCardAllInactive(card, hass, config);
 
     assert.isTrue(card.shadowRoot.querySelector('#icon-solar').classList.contains('inactive'), 'Solar icon should be inactive');
     assert.isTrue(card.shadowRoot.querySelector('#icon-grid').classList.contains('inactive'), 'Grid icon should be inactive');

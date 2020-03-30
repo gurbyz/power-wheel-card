@@ -2,7 +2,7 @@ import '../bower_components/webcomponentsjs/webcomponents-loader';
 import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
-import {setCardView} from './test_main.js';
+import {setCardView, setCardAllInactive} from './test_main.js';
 
 describe('<power-wheel-card> with icon coloring', () => {
   let card, hass, config;
@@ -83,15 +83,6 @@ describe('<power-wheel-card> with icon coloring', () => {
     await card.setConfig(config);
   };
 
-  const setCardAllInactive = async () => {
-    hass.states['sensor.solar_power'].state = "0";
-    hass.states['sensor.grid_power_consumption'].state = "0";
-    hass.states['sensor.grid_power_production'].state = "0";
-    card.setAttribute('hass', JSON.stringify(hass));
-    await elementUpdated(card);
-    await card.setConfig(config);
-  };
-
   const setCardSolarConsuming = async () => {
     hass.states['sensor.solar_power'].state = "-5";
     hass.states['sensor.grid_power_consumption'].state = "5";
@@ -163,7 +154,7 @@ it('has config values', () => {
   });
 
   it('displays values in power view when all sensor values are zero', async () => {
-    await setCardAllInactive();
+    await setCardAllInactive(card, hass, config);
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '0', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0', 'Grid should have correct value');
