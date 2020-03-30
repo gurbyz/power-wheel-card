@@ -2,6 +2,7 @@ import '../bower_components/webcomponentsjs/webcomponents-loader';
 import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCardView} from './test_main.js';
 
 describe('<power-wheel-card> with icons from customized sensors', () => {
   let card, hass, config;
@@ -111,11 +112,7 @@ describe('<power-wheel-card> with icons from customized sensors', () => {
     await card.setConfig(config);
   });
 
-  const setCardView = async (view) => {
-    card.setAttribute('view', view);
-  };
-
-  it('has customized icons in power view', () => {
+it('has customized icons in power view', () => {
     assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:white-balance-sunny', 'Solar icon should be customized icon');
     assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash-circle', 'Grid icon should be customized icon');
     assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-assistant', 'Home icon should be customized icon');
@@ -131,7 +128,7 @@ describe('<power-wheel-card> with icons from customized sensors', () => {
   });
 
   it('has customized icons in energy view', async () => {
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:white-balance-sunny', 'Solar icon should be customized icon');
     assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash-circle', 'Grid icon should be customized icon');
@@ -139,7 +136,7 @@ describe('<power-wheel-card> with icons from customized sensors', () => {
   });
 
   it('in energy view doesn\'t let the extra sensors interfere values when consuming from the grid', async () => {
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-18.000', 'Grid should have correct value');

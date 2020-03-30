@@ -2,6 +2,7 @@ import '../bower_components/webcomponentsjs/webcomponents-loader';
 import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCardView} from './test_main.js';
 
 describe('<power-wheel-card> with money view capable config', () => {
   let card, hass, config;
@@ -93,11 +94,7 @@ describe('<power-wheel-card> with money view capable config', () => {
     await card.setConfig(config);
   };
 
-  const setCardView = async (view) => {
-    card.setAttribute('view', view);
-  };
-
-  it('has config values', () => {
+it('has config values', () => {
     assert.equal(card.config.money_unit, '$', 'Card parameter money_unit should be set');
     assert.equal(card.config.initial_view, 'money', 'Card parameter initial_view should be set');
     assert.equal(card.config.energy_production_rate, 0.20, 'Card parameter energy_production_rate should be set');
@@ -120,7 +117,7 @@ describe('<power-wheel-card> with money view capable config', () => {
   });
 
   it('has ui elements in power view', async () => {
-    await setCardView('power');
+    await setCardView(card, 'power');
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W", 'Card should be in power view');
     assert.equal(card.shadowRoot.querySelectorAll('#toggle-button').length, 1, 'Toggle button should be there');
@@ -128,7 +125,7 @@ describe('<power-wheel-card> with money view capable config', () => {
   });
 
   it('has ui elements in energy view', async () => {
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, "kWh", 'Card should be in energy view');
     assert.equal(card.shadowRoot.querySelectorAll('#toggle-button').length, 1, 'Toggle button should be there');
@@ -212,7 +209,7 @@ describe('<power-wheel-card> with money view capable config', () => {
   });
 
   it('can click on unit to toggle from power view to energy view', async () => {
-    await setCardView('power');
+    await setCardView(card, 'power');
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
     card.shadowRoot.querySelector('#unit').click();
@@ -222,7 +219,7 @@ describe('<power-wheel-card> with money view capable config', () => {
   });
 
   it('can click on unit to toggle from energy view to money view', async () => {
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
     card.shadowRoot.querySelector('#unit').click();

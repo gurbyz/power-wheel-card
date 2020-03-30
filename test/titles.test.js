@@ -2,6 +2,7 @@ import '../bower_components/webcomponentsjs/webcomponents-loader';
 import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCardView} from './test_main.js';
 
 describe('<power-wheel-card> with a title per view', () => {
   let card, hass, config;
@@ -75,11 +76,7 @@ describe('<power-wheel-card> with a title per view', () => {
     await card.setConfig(config);
   });
 
-  const setCardView = async (view) => {
-    card.setAttribute('view', view);
-  };
-
-  it('has config values', () => {
+it('has config values', () => {
     assert.equal(card.config.title_power, 'Power view', 'Card parameter title_power should be set');
     assert.equal(card.config.title_energy, 'Energy view', 'Card parameter title_energy should be set');
     assert.equal(card.config.title_money, 'Money view', 'Card parameter title_money should be set');
@@ -100,13 +97,13 @@ describe('<power-wheel-card> with a title per view', () => {
   });
 
   it('displays values in energy view', async () => {
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#title').innerText, "Energy view");
   });
 
   it('displays values in money view', async () => {
-    await setCardView('money');
+    await setCardView(card, 'money');
 
     assert.equal(card.shadowRoot.querySelector('#title').innerText, "Money view");
   });

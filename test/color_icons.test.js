@@ -2,6 +2,7 @@ import '../bower_components/webcomponentsjs/webcomponents-loader';
 import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCardView} from './test_main.js';
 
 describe('<power-wheel-card> with icon coloring', () => {
   let card, hass, config;
@@ -116,11 +117,7 @@ describe('<power-wheel-card> with icon coloring', () => {
     await card.setConfig(config);
   };
 
-  const setCardView = async (view) => {
-    card.setAttribute('view', view);
-  };
-
-  it('has config values', () => {
+it('has config values', () => {
     assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');
     assert.equal(card.config.consuming_color, 'var(--label-badge-yellow, #f4b400)', 'Card parameter consuming_color should be yellow');
     assert.equal(card.config.producing_color, 'var(--label-badge-green, #0da035)', 'Card parameter producing_color should be green');
@@ -188,7 +185,7 @@ describe('<power-wheel-card> with icon coloring', () => {
   });
 
   it('displays values in energy view when having consumed from the grid only', async () => {
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '18.000', 'Grid should have correct value');
@@ -200,7 +197,7 @@ describe('<power-wheel-card> with icon coloring', () => {
 
   it('displays values in energy view when having produced to the grid only', async () => {
     await setCardProducedToGridOnly();
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.500', 'Grid should have correct value');
@@ -212,7 +209,7 @@ describe('<power-wheel-card> with icon coloring', () => {
 
   it('displays values in energy view when having consumed from and produced to the grid', async () => {
     await setCardConsumedAndProducedToGrid();
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.600', 'Grid should have correct value');
@@ -223,7 +220,7 @@ describe('<power-wheel-card> with icon coloring', () => {
   });
 
   it('displays values in money view when having consumed from the grid only', async () => {
-    await setCardView('money');
+    await setCardView(card, 'money');
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '3.60', 'Grid should have correct value');
@@ -235,7 +232,7 @@ describe('<power-wheel-card> with icon coloring', () => {
 
   it('displays values in money view when having produced to the grid only', async () => {
     await setCardProducedToGridOnly();
-    await setCardView('money');
+    await setCardView(card, 'money');
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.10', 'Grid should have correct value');
@@ -247,7 +244,7 @@ describe('<power-wheel-card> with icon coloring', () => {
 
   it('displays values in money view when having consumed from and produced to the grid', async () => {
     await setCardConsumedAndProducedToGrid();
-    await setCardView('money');
+    await setCardView(card, 'money');
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '1.00', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '0.12', 'Grid should have correct value');

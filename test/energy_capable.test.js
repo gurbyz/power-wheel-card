@@ -2,6 +2,7 @@ import '../bower_components/webcomponentsjs/webcomponents-loader';
 import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCardView} from './test_main.js';
 
 describe('<power-wheel-card> with energy view capable config', () => {
   let card, hass, config;
@@ -91,10 +92,6 @@ describe('<power-wheel-card> with energy view capable config', () => {
     await card.setConfig(config);
   };
 
-  const setCardView = async (view) => {
-    card.setAttribute('view', view);
-  };
-
   it('has config values', () => {
     assert.equal(card.config.initial_view, 'energy', 'Card parameter initial_view should be set');
   });
@@ -116,7 +113,7 @@ describe('<power-wheel-card> with energy view capable config', () => {
   });
 
   it('has ui elements in power view', async () => {
-    await setCardView('power');
+    await setCardView(card, 'power');
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W", 'Card should be in power view');
     assert.equal(card.shadowRoot.querySelectorAll('#toggle-button').length, 1, 'Toggle button should be there');
@@ -197,7 +194,7 @@ describe('<power-wheel-card> with energy view capable config', () => {
   });
 
   it('can click on unit to toggle from power view to energy view', async () => {
-    await setCardView('power');
+    await setCardView(card, 'power');
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
     card.shadowRoot.querySelector('#unit').click();

@@ -2,6 +2,7 @@ import '../bower_components/webcomponentsjs/webcomponents-loader';
 import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCardView} from './test_main.js';
 
 describe('<power-wheel-card> with configured icons', () => {
   let card, hass, config;
@@ -113,18 +114,14 @@ describe('<power-wheel-card> with configured icons', () => {
     await card.setConfig(config);
   });
 
-  const setCardView = async (view) => {
-    card.setAttribute('view', view);
-  };
-
-  it('prefers configured icons above customized icons in power view', () => {
+it('prefers configured icons above customized icons in power view', () => {
     assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:solar-power', 'Solar icon should be configured icon');
     assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash', 'Grid icon should be configured icon');
     assert.equal(card.shadowRoot.querySelector('#icon-home').getAttribute('icon'), 'mdi:home-circle', 'Home icon should be configured icon');
   });
 
   it('prefers configured icons above customized icons in energy view', async () => {
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:solar-power', 'Solar icon should be configured icon');
     assert.equal(card.shadowRoot.querySelector('#icon-grid').getAttribute('icon'), 'mdi:flash', 'Grid icon should be configured icon');

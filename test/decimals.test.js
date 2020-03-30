@@ -2,6 +2,7 @@ import '../bower_components/webcomponentsjs/webcomponents-loader';
 import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCardView} from './test_main.js';
 
 describe('<power-wheel-card> with configured decimals', () => {
   let card, hass, config;
@@ -75,11 +76,7 @@ describe('<power-wheel-card> with configured decimals', () => {
     await card.setConfig(config);
   });
 
-  const setCardView = async (view) => {
-    card.setAttribute('view', view);
-  };
-
-  it('has set config values', () => {
+it('has set config values', () => {
     assert.equal(card.config.power_decimals, 2, 'Card parameter power_decimals should have value set');
     assert.equal(card.config.energy_decimals, 1, 'Card parameter energy_decimals should have value set');
     assert.equal(card.config.money_decimals, 3, 'Card parameter money_decimals should have value set');
@@ -95,7 +92,7 @@ describe('<power-wheel-card> with configured decimals', () => {
   });
 
   it('displays values in energy view', async () => {
-    await setCardView('energy');
+    await setCardView(card, 'energy');
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.0', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-18.0', 'Grid should have correct value');
@@ -106,7 +103,7 @@ describe('<power-wheel-card> with configured decimals', () => {
   });
 
   it('displays values in money view', async () => {
-    await setCardView('money');
+    await setCardView(card, 'money');
 
     assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.000', 'Solar should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-18.000', 'Grid should have correct value');
