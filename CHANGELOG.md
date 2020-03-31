@@ -1,6 +1,6 @@
 Changelog
 ====
-## 0.1.0c-dev
+## 0.1.0d-dev
 ### New features
 * **BETA.** Basic support for a battery in the *power view*.
   * New card parameter `battery_power_entity`. Charging should have positive values.
@@ -8,6 +8,7 @@ Changelog
   * New card parameter `battery_icon` to override the default icon.
 ### Improvements
 * Total rebuild of the core functions.
+* Moved from web-components-tester to Karma.
 * **DEPRECATED.** Visual warning if still using card parameter `energy_price` which is deprecated since version 0.0.13.
   Please replace `energy_price` by `energy_consumption_rate` in your setup.
 

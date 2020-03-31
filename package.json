@@ -1,16 +1,16 @@
 {
   "name": "power-wheel-card",
-  "version": "0.1.0c-dev",
+  "version": "0.1.0d-dev",
   "description": "An intuitive way to represent the power and energy that your home is consuming or producing.",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "wct"
+    "test": "karma start --coverage"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "wct"
+      "pre-commit": "karma start --coverage"
     }
   },
   "repository": {
@@ -31,8 +31,12 @@
   },
   "homepage": "https://github.com/gurbyz/power-wheel-card#readme",
   "devDependencies": {
+    "@open-wc/testing": "^2.5.8",
+    "@open-wc/testing-karma": "^3.3.10",
+    "deepmerge": "^4.2.2",
     "husky": "^3.0.8",
     "lit-element": "^2.2.1",
-    "wct-istanbub": "^0.2.9"
+    "mocha": "^7.1.1",
+    "sinon": "^9.0.1"
   }
 }
