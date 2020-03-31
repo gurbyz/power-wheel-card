@@ -1,12 +1,14 @@
 import '../bower_components/webcomponentsjs/webcomponents-loader';
-import {assert, fixture, html, elementUpdated, aTimeout} from '@open-wc/testing';
+import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
+import {useFakeTimers} from 'sinon';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
 
 describe('<power-wheel-card> with automatic toggling between views', () => {
-  let card, hass, config;
+  let card, hass, config, clock;
 
   beforeEach(async () => {
+    clock = useFakeTimers();
     config = {
       type: "custom:power-wheel-card",
       solar_power_entity: "sensor.solar_power",
@@ -73,6 +75,10 @@ describe('<power-wheel-card> with automatic toggling between views', () => {
     await card.setConfig(config);
   });
 
+  afterEach(() => {
+    clock.restore();
+  });
+
   it('has set config values', () => {
     assert.isTrue(card.config.initial_auto_toggle_view, 'Card parameter initial_auto_toggle_view should be set');
     assert.equal(card.config.auto_toggle_view_period, 1, 'Card parameter auto_toggle_view_period should be set');
@@ -80,7 +86,7 @@ describe('<power-wheel-card> with automatic toggling between views', () => {
 
   it('can automatically toggle from power view to energy view', async () => {
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
-    await aTimeout(1050);
+    await clock.tick(1050);
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be in energy view');
   });
@@ -89,7 +95,7 @@ describe('<power-wheel-card> with automatic toggling between views', () => {
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be in power view');
     card.shadowRoot.querySelector('#toggle-button').click();
     await elementUpdated(card);
-    await aTimeout(1050);
+    await clock.tick(1050);
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'W', 'Card should be still in power view');
   });
@@ -100,7 +106,7 @@ describe('<power-wheel-card> with automatic toggling between views', () => {
     await elementUpdated(card);
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should go to energy view first');
-    await aTimeout(1050);
+    await clock.tick(1050);
 
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, 'kWh', 'Card should be still in energy view');
   });
