@@ -17,7 +17,7 @@ describe('<power-wheel-card> with configured decimals', () => {
       grid_energy_consumption_entity: "sensor.grid_energy_consumption",
       grid_energy_production_entity: "sensor.grid_energy_production",
       power_decimals: 2,
-      energy_decimals: 1,
+      energy_decimals: 0,
       money_decimals: 3,
       energy_consumption_rate: 1.00,
       color_icons: false,
@@ -74,7 +74,7 @@ describe('<power-wheel-card> with configured decimals', () => {
 
 it('has set config values', () => {
     assert.equal(card.config.power_decimals, 2, 'Card parameter power_decimals should have value set');
-    assert.equal(card.config.energy_decimals, 1, 'Card parameter energy_decimals should have value set');
+    assert.equal(card.config.energy_decimals, 0, 'Card parameter energy_decimals should have value set');
     assert.equal(card.config.money_decimals, 3, 'Card parameter money_decimals should have value set');
   });
 
@@ -90,9 +90,9 @@ it('has set config values', () => {
   it('displays values in energy view', async () => {
     await setCardView(card, 'energy');
 
-    assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5.0', 'Solar should have correct value');
-    assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-18.0', 'Grid should have correct value');
-    assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-23.0', 'Home should have correct value');
+    assert.equal(card.shadowRoot.querySelector('#value-solar').innerText, '5', 'Solar should have correct value');
+    assert.equal(card.shadowRoot.querySelector('#value-grid').innerText, '-18', 'Grid should have correct value');
+    assert.equal(card.shadowRoot.querySelector('#value-home').innerText, '-23', 'Home should have correct value');
     assert.equal(card.shadowRoot.querySelector('#value-solar2grid').innerText, '', 'Solar2Grid arrow shouldn\'t have a value');
     assert.equal(card.shadowRoot.querySelector('#value-solar2home').innerText, '', 'Solar2Home arrow shouldn\'t have a value');
     assert.equal(card.shadowRoot.querySelector('#value-grid2home').innerText, '', 'Grid2Home arrow shouldn\'t have a value');

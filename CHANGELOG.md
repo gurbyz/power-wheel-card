@@ -11,6 +11,8 @@ Changelog
 * Moved from web-components-tester to Karma.
 * **DEPRECATED.** Visual warning if still using card parameter `energy_price` which is deprecated since version 0.0.13.
   Please replace `energy_price` by `energy_consumption_rate` in your setup.
+### Fixes
+* Number of decimals can be set to zero in *energy view* and *money view*. Issue #39.
 
 ## 0.0.16
 ### Fixes

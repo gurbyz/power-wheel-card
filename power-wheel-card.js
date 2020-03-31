@@ -642,15 +642,15 @@ class PowerWheelCard extends LitElement {
     if (config.power_decimals && !Number.isInteger(config.power_decimals)) {
       throw new Error('Power_decimals should be an integer');
     }
-    config.power_decimals = config.power_decimals ? config.power_decimals : 0;
+    config.power_decimals = config.power_decimals === undefined ? 0 : config.power_decimals;
     if (config.energy_decimals && !Number.isInteger(config.energy_decimals)) {
       throw new Error('Energy_decimals should be an integer');
     }
-    config.energy_decimals = config.energy_decimals ? config.energy_decimals : 3;
+    config.energy_decimals = config.energy_decimals === undefined ? 3 : config.energy_decimals;
     if (config.money_decimals && !Number.isInteger(config.money_decimals)) {
       throw new Error('Money_decimals should be an integer');
     }
-    config.money_decimals = config.money_decimals ? config.money_decimals : 2;
+    config.money_decimals = config.money_decimals === undefined ? 2 : config.money_decimals;
     config.money_unit = config.money_unit ? config.money_unit : '€';
     config.color_icons = config.color_icons !== false;
     config.consuming_color = config.color_icons
