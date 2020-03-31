@@ -1,8 +1,8 @@
 import '../bower_components/webcomponentsjs/webcomponents-loader';
-import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
+import {assert} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
-import {setCardView} from './test_main.js';
+import {setCard, setCardView} from './test_main.js';
 
 describe('<power-wheel-card> with icons from customized sensors', () => {
   let card, hass, config;
@@ -104,13 +104,9 @@ describe('<power-wheel-card> with icons from customized sensors', () => {
         },
       },
     };
-    card = await fixture(
-      html`
-        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
-      `
-    );
-    await card.setConfig(config);
-  });
+
+    card = await setCard(hass, config);
+});
 
 it('has customized icons in power view', () => {
     assert.equal(card.shadowRoot.querySelector('#icon-solar').getAttribute('icon'), 'mdi:white-balance-sunny', 'Solar icon should be customized icon');

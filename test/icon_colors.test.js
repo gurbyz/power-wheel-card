@@ -1,7 +1,8 @@
 import '../bower_components/webcomponentsjs/webcomponents-loader';
-import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
+import {assert} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCard} from './test_main.js';
 
 describe('<power-wheel-card> with configured icon colors', () => {
   let card, hass, config;
@@ -42,13 +43,9 @@ describe('<power-wheel-card> with configured icon colors', () => {
         },
       },
     };
-    card = await fixture(
-      html`
-        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
-      `
-    );
-    await card.setConfig(config);
-  });
+
+    card = await setCard(hass, config);
+});
 
   it('has config values', () => {
     assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');

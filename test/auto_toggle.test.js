@@ -1,8 +1,9 @@
 import '../bower_components/webcomponentsjs/webcomponents-loader';
-import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
+import {assert, elementUpdated} from '@open-wc/testing';
 import {useFakeTimers} from 'sinon';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
+import {setCard} from './test_main.js';
 
 describe('<power-wheel-card> with automatic toggling between views', () => {
   let card, hass, config, clock;
@@ -67,13 +68,9 @@ describe('<power-wheel-card> with automatic toggling between views', () => {
         },
       },
     };
-    card = await fixture(
-      html`
-        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
-      `
-    );
-    await card.setConfig(config);
-  });
+
+    card = await setCard(hass, config);
+});
 
   afterEach(() => {
     clock.restore();

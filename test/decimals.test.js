@@ -1,8 +1,8 @@
 import '../bower_components/webcomponentsjs/webcomponents-loader';
-import {assert, fixture, html, elementUpdated} from '@open-wc/testing';
+import {assert} from '@open-wc/testing';
 import './hui-view-mock.js';
 import '../power-wheel-card.js';
-import {setCardView} from './test_main.js';
+import {setCard, setCardView} from './test_main.js';
 
 describe('<power-wheel-card> with configured decimals', () => {
   let card, hass, config;
@@ -68,13 +68,9 @@ describe('<power-wheel-card> with configured decimals', () => {
         },
       },
     };
-    card = await fixture(
-      html`
-        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
-      `
-    );
-    await card.setConfig(config);
-  });
+
+    card = await setCard(hass, config);
+});
 
 it('has set config values', () => {
     assert.equal(card.config.power_decimals, 2, 'Card parameter power_decimals should have value set');

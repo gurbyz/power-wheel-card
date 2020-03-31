@@ -1,4 +1,19 @@
-import {elementUpdated} from "@open-wc/testing";
+import {elementUpdated, fixture, html} from "@open-wc/testing";
+
+const setCard = async (hass, config) => {
+  const card = await fixture(
+    html`
+        <power-wheel-card .hass=${hass} .config=${{}}></power-wheel-card>
+      `
+  );
+  await card.setConfig(config);
+  // Call firstUpdated() again because fixture already triggered it the first time.
+  await card.firstUpdated();
+  // TODO: Why is this needed for one test case only: 'has debug warning'?
+  await card.setConfig(config);
+
+  return card;
+};
 
 const setCardView = async (card, view) => {
   card.setAttribute('view', view);
@@ -23,4 +38,4 @@ const setCardAllInactive = async (card, hass, config) => {
   await card.setConfig(config);
 };
 
-export {setCardView, setCardAllInactive};
+export {setCard, setCardView, setCardAllInactive};
