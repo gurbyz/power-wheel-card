@@ -10,7 +10,7 @@ Features of the custom power-wheel-card:
 
 * Has different views for showing power values, showing energy values and showing costs/savings: the *power view*, the *energy view* resp. the *money view*.
   The initial view can be set. Click the unit to switch between views.
-* BETA: Has support for a fourth value in 'the wheel': battery. In *power view* only. 
+* BETA: Has support for a fourth value in 'the wheel': [battery](#More about the battery feature). In *power view* only. 
     > **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time. The layout isn't even worked on yet. It's just the same layout as before and the battery icon(s) have been placed (split up) in available space for now.
 * Has options for a different card title per view.
 
@@ -202,7 +202,7 @@ There are many more card parameters available, but it's advised to start with th
 |solar_power_entity|string|**required**| |Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
 |grid_power_consumption_entity (A)|string|optional, always together with B| |Entity id of your sensor for power that you are consuming from the grid. E.g. `sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_power_production_entity (B)|string|optional, always together with A| |Entity id of your sensor for power that you are producing to the grid. E.g. `sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR`. See requirements above.|
-|BETA: battery_power_entity|string|optional| |Entity id of your sensor for power you use to charge the battery. Charging should have positive values. Discharging should have negative values.|
+|BETA: battery_power_entity|string|optional| |Entity id of your sensor for power you use to charge the [battery](#More about the battery feature). Charging should have positive values. Discharging should have negative values.|
 |BETA: battery_soc_entity|string|optional| |Entity id of your sensor for *state of charge* of your battery. Unit should be %.|
 |solar_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your solar energy sensor. E.g. `sensor.YOUR_SOLAR_ENERGY_SENSOR`. See requirements above.|
 |grid_energy_consumption_entity (D)|string|optional, always together with E|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's consumed from the grid. E.g. `sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR`. See requirements above.|
@@ -244,7 +244,6 @@ Some extra parameters for advanced users who use dynamic icons in their HA setup
 |home_energy_entity|string|optional|Default the icon specified in `home_icon` will be used. If not specified `"mdi:home"` will be used.|Entity id of your home energy sensor if you want to use its icon in the *energy view* instead of supplying a static `home_icon` on card level.|
 |grid_energy_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:transmission-tower"` will be used.|Entity id of your grid energy sensor if you want to use its icon in the *energy view* instead of supplying a static `grid_icon` on card level.|
 
-
 ### More about icons
 The icons for solar and grid can be set by card parameters as shown in the tables above.
 If you don't specify them as card parameters, the icons are taken from your own sensors for solar power and grid power (in the *power view*) and from your own sensors for solar energy and grid energy (in the *energy view* and *money view*).
@@ -262,6 +261,29 @@ homeassistant:
     sensor.YOUR_GRID_POWER_SENSOR:
       icon: mdi:flash
 ```
+
+### More about the battery feature
+Battery support in the power-wheel-card is currently a BETA feature.
+Many people asked for it and many people [helped](https://github.com/gurbyz/power-wheel-card/issues/23) during development. Thx! 
+> **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time.
+> Expect things that work now will break in future changes of this feature.
+
+For now battery support is implemented with a set of rules in mind. The ruleset is very basic and not complete.
+1. Solar power is consumed by home first.
+1. What's left of solar power (after home did consume) is used for charging the battery.
+1. What's left of solar power (after home and battery did consume) is produced to the grid.
+
+I think that the ruleset can be extended but possibly only by supplying an extra input parameter to the card.
+This is the point where extra rules have to take in account the behaviour of the battery depending on the state of charge.
+Possibly this behaviour is dynamic and not depending on a strict threshold of the SoC.
+And possibly the extra rules differ per battery make. Because I don't own a battery myself, further implementation gets a bit more difficult.
+I will watch recent and future [issue reports](https://github.com/gurbyz/power-wheel-card/issues) to make changes.
+
+For now battery support is implemented in the current layout grid.
+This is why the battery shows up in two different places and is visible only when in use. This however should be temporary.
+First priority is to get all the values and arrows right.
+If it functionally works with a battery, then it's time to change the layout into a better interface.
+Many [suggestions for the final UI](https://github.com/gurbyz/power-wheel-card/issues/40) have been given.
 
 ## Advanced configuration example
 A more advanced example for in the `ui-lovelace.yaml` file:
