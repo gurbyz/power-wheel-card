@@ -276,9 +276,7 @@ class PowerWheelCard extends LitElement {
   }
 
   static _logConsole(message) {
-    // if (this.config.debug) {
-      console.info(`%cpower-wheel-card%c\n${message}`, "color: green; font-weight: bold", "");
-    // }
+    console.info(`%cpower-wheel-card%c\n${message}`, "color: green; font-weight: bold", "");
   }
 
   _getSensorUnit(entity) {
@@ -358,9 +356,11 @@ class PowerWheelCard extends LitElement {
     return src;
   }
 
-  _addMessage(type, text) {
+  _addMessage(type, text, publishInConsole = true) {
     this.messages.push({ type: type, text: text });
-    console[type](text);
+    if (publishInConsole) {
+      console[type](text);
+    }
   }
 
   _validateSensors() {
@@ -379,11 +379,13 @@ class PowerWheelCard extends LitElement {
       line += `\nProcessed config: ${JSON.stringify(this.config, null, ' ')}\nRegistered sensors: ${JSON.stringify(this.sensors, null, ' ')}`;
       line += `\nViews object: ${JSON.stringify(this.views, null, ' ')}`;
       PowerWheelCard._logConsole(line);
-      this._addMessage('warn', `[${__VERSION}] Debug mode is on.`);
+      this._addMessage('warn', `[${__VERSION}] Debug mode is on.`, false);
+    } else {
+      PowerWheelCard._logConsole(`Version: ${__VERSION}`);
     }
     this._validateSensors();
     if (this.config.energy_price) {
-      this._addMessage('warn', 'Deprecated card parameter \'energy_price\' is used.');
+      this._addMessage('warn', 'Deprecated card parameter \'energy_price\' is used. Please replace it by \'energy_consumption_rate\' in your setup.');
     }
   }
 
