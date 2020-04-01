@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.1.0d-dev";
+const __VERSION = "0.1.0";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;

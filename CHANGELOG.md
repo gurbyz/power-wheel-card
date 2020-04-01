@@ -1,6 +1,6 @@
 Changelog
 ====
-## 0.1.0d-dev
+## 0.1.0
 ### New features
 * **BETA.** Basic support for a battery in the *power view*.
   * New card parameter `battery_power_entity`. Charging should have positive values.
