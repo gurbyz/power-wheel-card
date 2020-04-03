@@ -1,8 +1,26 @@
 power-wheel-card
 ====
 
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+
 An intuitive way to represent the power and energy that your home is consuming or producing.
 > This component is a custom card for the Lovelace UI of Home Assistant. The component is discussed [here](https://community.home-assistant.io/t/lovelace-power-wheel-card/82374) on the Home Assistant forum. There's also a [wiki](https://github.com/gurbyz/power-wheel-card/wiki/Troubleshooting-guide) on GitHub.
+
+## Table of Contents
+* [Features](#Features)
+* [Requirements for the power view](#Requirements-for-the-power-view)
+    * [Example requirements configuration](#Example-requirements-configuration)
+    * [BETA battery feature in power view](#BETA-battery-feature-in-power-view)
+    * [Known issues for the battery feature](#Known-issues-for-the-battery-feature)
+* [Requirements for the energy view](#Requirements-for-the-energy-view)
+* [Requirements for the money view](#Requirements-for-the-money-view)
+* [Installation instructions](#Installation-instructions)
+* [Configuration instructions](#Configuration-instructions)
+    * [Card parameters](#Card-parameters)
+    * [More about icons](#More-about-icons)
+    * [Advanced configuration example](#Advanced-configuration-example)
+* [License](#License)
+* [Credits](#Credits)
 
 ## Features
 Features of the custom power-wheel-card:
@@ -10,7 +28,10 @@ Features of the custom power-wheel-card:
 
 * Has different views for showing power values, showing energy values and showing costs/savings: the *power view*, the *energy view* resp. the *money view*.
   The initial view can be set. Click the unit to switch between views.
+* BETA: Has support for a fourth value in 'the wheel': battery). In *power view* only. 
+    > **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time. The layout isn't even worked on yet. It's just the same layout as before and the battery icon(s) have been placed (split up) in available space for now.
 * Has options for a different card title per view.
+
 * Can auto-toggle between views.
   Click the recycle icon to turn on or off the auto-toggle.
   You can choose the initial state of the auto-toggle.
@@ -39,24 +60,24 @@ Features of the custom power-wheel-card:
 ![example2](./example_energy_view.gif "The power-wheel-card displaying the energy view")
 ![example3](./example_money_view.gif "The power-wheel-card displaying the money view")
 
-## Requirements for the *power view*
+## Requirements for the power view
 1. You need to have a working sensor for your solar power.
-   Write down the entity id of this sensor. This is *YOUR_SOLAR_POWER_SENSOR* in the instructions below.
+   Write down the entity id of this sensor. This is *YOUR_SOLAR_POWER_SENSOR* in the [configuration instructions](#Configuration-instructions) below.
    - The sensor could have an icon (optional) that will override the default icon in the power-wheel-card if the card parameter `solar_icon` is not used.
    - The sensor state value should be a positive number when producing power.
 
 1. You either need to have (i) separate grid power sensors for consuming and producing OR need to have (ii) one (nett) grid power sensor:
    1. You need to have a working sensor for your grid power consumption (i.e. power you consume from the grid).
-      Write down the entity id of this sensor. This is *YOUR_GRID_POWER_CONSUMPTION_SENSOR* in the instructions below.
+      Write down the entity id of this sensor. This is *YOUR_GRID_POWER_CONSUMPTION_SENSOR* in the [configuration instructions](#Configuration-instructions) below.
 
       You need to have a working sensor for your grid power production (i.e. power you produce to the grid).
-      Write down the entity id of this sensor. This is *YOUR_GRID_POWER_PRODUCTION_SENSOR* in the instructions below.
+      Write down the entity id of this sensor. This is *YOUR_GRID_POWER_PRODUCTION_SENSOR* in the [configuration instructions](#Configuration-instructions) below.
       - Preferably these sensors have the same update interval as the sensor for solar power. (If not, the calculated value for home power can give unreal results sometimes.)
       - The sensor state values should be a positive number.
 
       *OR:*
    1. You need to have a working sensor for your (nett) grid power.
-      Write down the entity id of this sensor. This is *YOUR_GRID_POWER_SENSOR* in the instructions below.
+      Write down the entity id of this sensor. This is *YOUR_GRID_POWER_SENSOR* in the [configuration instructions](#Configuration-instructions) below.
       - Default the polarity of this parameter has to be positive for producing (to the grid) and negative for consuming (from the grid).
 1. For all these sensors:
    - A `unit_of_measurement` has been set up, e.g. `'W'` or `'kW'`.
@@ -102,11 +123,42 @@ Because my solar power sensor and dsmr sensor don't report in the same unit of m
 > **Tip.** If you are creating extra sensors for the power-wheel-card, maybe you want to exclude them in your `recorder:` setting.
 Extra sensors based on your heavily updating DSMR sensors will let your database grow fast. 
 
-## Requirements for the *energy view*
+### BETA battery feature in power view
+Battery support in the power-wheel-card is currently a BETA feature.
+Many people asked for it and many people [helped](https://github.com/gurbyz/power-wheel-card/issues/23) during development. Thx! 
+> **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time.
+> Expect things that work now will break in future changes of this feature.
+
+If you want to use the BETA battery feature in the *power view*:
+1. Comply to all the requirements of the *power view* first.
+1. Supply the card parameter `battery_power_entity`.
+   - The sensor state value should be a positive number when the battery is charging.
+   - The sensor state value should be a negative number when the battery is discharging.
+1. Supply the card parameter `battery_soc_entity`.
+
+### Known issues for the battery feature
+For now battery support is implemented with a set of rules in mind. The ruleset is very basic and not complete.
+1. Solar power is consumed by home first.
+1. What's left of solar power (after home did consume) is used for charging the battery.
+1. What's left of solar power (after home and battery did consume) is produced to the grid.
+
+I think that the ruleset can be extended but possibly only by supplying an extra input parameter to the card.
+This is the point where extra rules have to take in account the behaviour of the battery depending on the state of charge.
+Possibly this behaviour is dynamic and not depending on a strict threshold of the SoC.
+And possibly the extra rules differ per battery make. Because I don't own a battery myself, further implementation gets a bit more difficult.
+I will watch recent and future [issue reports](https://github.com/gurbyz/power-wheel-card/issues) to make changes.
+
+For now battery support is implemented in the current layout grid.
+This is why the battery shows up in two different places and is visible only when in use. This however should be temporary.
+First priority is to get all the values and arrows right and improve later.
+If it functionally works with a battery completely, then it's time to change the layout into a better interface.
+Many [suggestions for the final UI](https://github.com/gurbyz/power-wheel-card/issues/40) have been given.
+
+## Requirements for the energy view
 The *energy view* itself is not required. As a result you don't have to specify any *energy view* related card parameters. 
 The toggle functions to switch between views will be disabled.
 
-> **Tip.** You can skip this paragraph and [start](#instructions) with a more simple setup first. 
+> **Tip.** You can skip this paragraph and [start](#Configuration-instructions) with a more simple setup first. 
 
 But if you want the *energy view*:
 1. Comply to all the requirements of the *power view* first.
@@ -115,24 +167,24 @@ But if you want the *energy view*:
    You could use your *smart meter counters* directly, but using self made sensors for e.g. *energy consumed or produced since last midnight* could provide more meaningful information on your power-wheel-card.
    Then you are able to see the actual energy costs/savings today in the *money view*.
 1. You need to have a working sensor for your solar energy. 
-   Write down the entity id of this sensor. This is *YOUR_SOLAR_ENERGY_SENSOR* in the instructions below.
+   Write down the entity id of this sensor. This is *YOUR_SOLAR_ENERGY_SENSOR* in the [configuration instructions](#Configuration-instructions) below.
    - The sensor could have an icon (optional) that will override the default icon in the power-wheel-card if the card parameter `solar_icon` is not used.
    - The sensor state value should be a positive number for having produced energy.
 1. You either need to have (i) separate grid energy sensors for consuming and producing OR need to have (ii) one (nett) grid energy sensor and a home energy sensor:
    1. You need to have a working sensor for your grid energy consumption (i.e. energy you consumed from the grid).
-      Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_CONSUMPTION_SENSOR* in the instructions below.
+      Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_CONSUMPTION_SENSOR* in the [configuration instructions](#Configuration-instructions) below.
 
       You need to have a working sensor for your grid energy production (i.e. energy you produced to the grid).
-      Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_PRODUCTION_SENSOR* in the instructions below.
+      Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_PRODUCTION_SENSOR* in the [configuration instructions](#Configuration-instructions) below.
       - Preferably these sensors have the same update interval as the sensor for solar energy. (If not, the calculated value for home energy can give unreal results sometimes.)
       - The sensor state values should be a positive number.
       
       *OR: (not recommended)*
    1. You need to have a working sensor for your (nett) grid energy.
-      Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_SENSOR* in the instructions below.
+      Write down the entity id of this sensor. This is *YOUR_GRID_ENERGY_SENSOR* in the [configuration instructions](#Configuration-instructions) below.
 
       You need to have a working sensor for your home energy, because it can't be calculated.
-      Write down the entity id of this sensor. This is *YOUR_HOME_ENERGY_SENSOR* in the instructions below.
+      Write down the entity id of this sensor. This is *YOUR_HOME_ENERGY_SENSOR* in the [configuration instructions](#Configuration-instructions) below.
       - Default the polarity of these parameters have to be positive for producing (to the grid) and negative for consuming (from the grid).
       - Nb. You will lack arrow coloring and arrow values in the *energy view* and *money view* due to supplying too less information to calculate these.      
 1. For all these sensors:
@@ -144,7 +196,7 @@ You don't always need a sensor for your (nett) grid energy but you can use it if
 
 You don't always need a sensor for your home energy, but you can use it if you have it available and want to use its **icon**.
 
-## Requirements for the *money view*
+## Requirements for the money view
 The *money view* itself is not required. As a result you don't have to specify any *money view* related card parameters. 
 The toggle functions to switch to the *money view* will be disabled.
 
@@ -156,23 +208,30 @@ But if you want the *money view*:
 > The power-wheel-card only has rates for the energy depending on whether you consume or produce it.
 If your energy rate is depending on the (time of) day, please supply the average rates for high and low tariff or choose to not use the *money view*. 
 
-
-## Instructions
+## Installation instructions
 1. Check the requirements above. If you don't comply to the requirements, the card won't be much of use for you or just won't work.
 
+1. You can install the power-wheel-card using [HACS](https://hacs.xyz/) in Home Assistant. Search for `Power Wheel Card` in the *Plugins* tab.
+   
+   *OR:*
+   
+   You can proceed with the instructions below to manually install the card.
 1. Download the file [power-wheel-card.js](https://raw.githubusercontent.com/gurbyz/power-wheel-card/master/power-wheel-card.js).
 1. Save the file in the `www` folder inside your Home Assistant config folder.
-1. Include the card code in your `ui-lovelace.yaml` file:
+1. Include the card code in your `configuration.yaml` file:
 
 ```yaml
-resources:
-  - url: /local/power-wheel-card.js?v=1
-    type: module
+lovelace:
+  resources:
+    - url: /local/power-wheel-card.js?v=1
+      type: module
 ```
 
 > **Note.** The actual number in `v=A_NUMBER` isn't relevant. You have to increase the number whenever updating the source code to avoid having to manually clear the cache of your browsers and mobile apps.
 
-5. Include a configuration for the power-wheel-card in your `ui-lovelace.yaml` file:
+
+## Configuration instructions
+Include a configuration for the power-wheel-card in your `ui-lovelace.yaml` file:
 
 ```yaml
 views:
@@ -186,7 +245,7 @@ views:
 
 There are many more card parameters available, but it's advised to start with this simple setup to get things running. 
 
-## Card parameters
+### Card parameters
 
 | Parameter | Type | Mandatory? | Default | Description |
 |-----------|------|------------|---------|-------------|
@@ -198,6 +257,8 @@ There are many more card parameters available, but it's advised to start with th
 |solar_power_entity|string|**required**| |Entity id of your solar power sensor. E.g. `sensor.YOUR_SOLAR_POWER_SENSOR`. See requirements above.|
 |grid_power_consumption_entity (A)|string|optional, always together with B| |Entity id of your sensor for power that you are consuming from the grid. E.g. `sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_power_production_entity (B)|string|optional, always together with A| |Entity id of your sensor for power that you are producing to the grid. E.g. `sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR`. See requirements above.|
+|BETA: battery_power_entity|string|optional| |Entity id of your sensor for power you use to charge the battery. Charging should have positive values. Discharging should have negative values. Battery feature is in BETA, [expect issues](#Known-issues-for-the-battery-feature).|
+|BETA: battery_soc_entity|string|optional| |Entity id of your sensor for *state of charge* of your battery. Unit should be %. Battery feature is in BETA, [expect issues](#Known-issues-for-the-battery-feature).|
 |solar_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your solar energy sensor. E.g. `sensor.YOUR_SOLAR_ENERGY_SENSOR`. See requirements above.|
 |grid_energy_consumption_entity (D)|string|optional, always together with E|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's consumed from the grid. E.g. `sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_energy_production_entity (E)|string|optional, always together with D|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's produced to the grid. E.g. `sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR`. See requirements above.|
@@ -208,6 +269,7 @@ There are many more card parameters available, but it's advised to start with th
 |solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
 |grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:transmission-tower"` will be used.|Icon for grid power and energy.|
 |home_icon|string|optional|The icon of your own customized home sensor(s) if its entity parameter is set. If not available, then `"mdi:home"` will be used.|Icon for home power and energy.|
+|BETA: battery_icon|string|optional|The icon of your own customized battery sensor(s) if its entity parameter is set. If not available, then `"mdi:car-battery"` will be used.|Icon for battery power.|
 |power_decimals|integer|optional|`0`|Number of decimals for the power values.|
 |energy_decimals|integer|optional|`3`|Number of decimals for the energy values.|
 |money_decimals|integer|optional|`2`|Number of decimals for the money values.|
@@ -237,7 +299,6 @@ Some extra parameters for advanced users who use dynamic icons in their HA setup
 |home_energy_entity|string|optional|Default the icon specified in `home_icon` will be used. If not specified `"mdi:home"` will be used.|Entity id of your home energy sensor if you want to use its icon in the *energy view* instead of supplying a static `home_icon` on card level.|
 |grid_energy_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:transmission-tower"` will be used.|Entity id of your grid energy sensor if you want to use its icon in the *energy view* instead of supplying a static `grid_icon` on card level.|
 
-
 ### More about icons
 The icons for solar and grid can be set by card parameters as shown in the tables above.
 If you don't specify them as card parameters, the icons are taken from your own sensors for solar power and grid power (in the *power view*) and from your own sensors for solar energy and grid energy (in the *energy view* and *money view*).
@@ -256,7 +317,7 @@ homeassistant:
       icon: mdi:flash
 ```
 
-## Advanced configuration example
+### Advanced configuration example
 A more advanced example for in the `ui-lovelace.yaml` file:
 ```yaml
 - type: custom:power-wheel-card
@@ -266,6 +327,8 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
   grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
   grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
+  battery_power_entity: sensor.YOUR_BATTERY_POWER_SENSOR  # Battery feature is in BETA, expect issues.
+  battery_soc_entity: sensor.YOUR_BATTERY_SOC_SENSOR  # Battery feature is in BETA, expect issues.
   solar_energy_entity: sensor.YOUR_SOLAR_ENERGY_SENSOR
   grid_energy_consumption_entity: sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR
   grid_energy_production_entity: sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR
@@ -275,6 +338,7 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   solar_icon: "mdi:white-balance-sunny"
   grid_icon: "mdi:flash"
   home_icon: "mdi:home-assistant"
+  battery_icon: "mdi:battery"  # Battery feature is in BETA, expect issues.
   power_decimals: 2
   energy_decimals: 2
   money_decimals: 0
