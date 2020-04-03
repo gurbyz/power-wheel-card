@@ -3,7 +3,7 @@ power-wheel-card
 
 An intuitive way to represent the power and energy that your home is consuming or producing.
 
-* MANUAL / README: Sourcecode, manual, requirements and examples are in the readme file of the <a href="https://github.com/gurbyz/power-wheel-card">repo on GitHub</a>.
+* MANUAL / README: Sourcecode, manual, requirements and examples are in the <a href="https://github.com/gurbyz/power-wheel-card">README</a> file of the repo on GitHub.
 
 * FORUM: This component is discussed <a href="https://community.home-assistant.io/t/lovelace-power-wheel-card/82374">here</a> on the Home Assistant forum.
 * CHANGELOG: <a href="https://github.com/gurbyz/power-wheel-card/blob/master/CHANGELOG.md">List of changes</a> per version of the card.
@@ -16,7 +16,7 @@ Features of the custom power-wheel-card:
 * Has different views for showing power values, showing energy values and showing costs/savings: the *power view*, the *energy view* resp. the *money view*.
   The initial view can be set. Click the unit to switch between views.
 * BETA: Has support for a fourth value in 'the wheel': battery. In *power view* only. 
-    > **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time. The layout isn't even worked on yet. It's just the same layout as before and the battery icon(s) have been placed (split up) in available space for now.
+    > **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time. The layout isn't even worked on yet. It's just the same layout as before and the battery icon(s) have been placed (split up) in available space for now. More info in the <a href="https://github.com/gurbyz/power-wheel-card">README</a> file.
 
 * Has options for a different card title per view.
 * Can auto-toggle between views.
@@ -43,4 +43,4 @@ Features of the custom power-wheel-card:
 * Works for default theme and custom themes that use standard CSS vars.
 * Has support for HACS to check for a new release and upgrade to newer versions.
 
-More in the <a href="https://github.com/gurbyz/power-wheel-card">readme</a> file: requirements, installation & configuration instructions and examples.
+More in the <a href="https://github.com/gurbyz/power-wheel-card">README</a> file: requirements, installation & configuration instructions and examples.
