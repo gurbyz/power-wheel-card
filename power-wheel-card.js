@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.1.0";
+const __VERSION = "0.1.1-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;
@@ -93,9 +93,6 @@ class PowerWheelCard extends LitElement {
         color: var(--paper-item-icon-color, #44739e);
         width: 48px;
         height: 48px;
-      }
-      ha-icon.active {
-        color: var(--paper-item-icon-active-color, #fdd835);
       }
       ha-icon.inactive {
         color: var(--state-icon-unavailable-color, #bdbdbd);
@@ -489,6 +486,9 @@ class PowerWheelCard extends LitElement {
         ha-icon.producing {
           color: ${this.config.producing_color};
         }
+        ha-icon.active {
+          color: ${this.config.active_arrow_color};
+        }
       </style>
       <ha-card>
         ${this.messages.length ? this.messages.map((message) => { return html`<div class="message ${message.type}">${message.text}</div>`}) : ''}
@@ -661,6 +661,9 @@ class PowerWheelCard extends LitElement {
     config.producing_color = config.color_icons
       ? (config.producing_color ? config.producing_color : 'var(--label-badge-green, #0da035)')
       : 'var(--state-icon-unavailable-color, #bdbdbd)';
+    config.active_arrow_color = config.active_arrow_color
+      ? config.active_arrow_color
+      : 'var(--paper-item-icon-active-color, #fdd835)';
     if (config.initial_view && !['power', 'energy', 'money'].includes(config.initial_view)) {
       throw new Error("Initial_view should 'power', 'energy' or 'money'");
     }

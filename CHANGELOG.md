@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.1.1-dev
+### New features
+* Custom color for active arrows. New card parameter `active_arrow_color`.
+
 ## 0.1.0
 ### New features
 * **BETA.** Basic support for a battery in the *power view*.

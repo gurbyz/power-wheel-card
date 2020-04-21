@@ -276,6 +276,7 @@ There are many more card parameters available, but it's advised to start with th
 |color_icons|boolean|optional|`true`|To color the consuming icons green and the producing icons yellow. Icon values will have an absolute value. This setting only is affecting the three big icons for *solar*, *home* and *grid*. The arrows have colors by default.|
 |consuming_color|string|optional|The yellow color for `--label-badge-yellow` from your theme. If not available, then `"#f4b400"` will be used.|CSS color code for consuming power icons if `color_icons` is set to `true`. Examples: `"orange"`, `"#ffcc66"` or `"rgb(200,100,50)"`. Don't forget the quotation marks when using the `#` color notation.|
 |producing_color|string|optional|The green color for `--label-badge-green` from your theme. If not available, then `"#0da035"` will be used.|CSS color code for producing power icons if `color_icons` is set to `true`.|
+|active_arrow_color|string|optional|The yellow color for `--paper-item-icon-active-color` from your theme. If not available, then `"#fdd835"` will be used.|CSS color code for active arrow icons.|
 |initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|
 |initial_auto_toggle_view|boolean|optional|`false`|The initial state of the auto-toggle for views.|
 |auto_toggle_view_period|integer|optional|`10`|Period in seconds between views when auto-toggle for views is turned on.|
@@ -345,6 +346,7 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   color_icons: true
   consuming_color: "#33ff33"
   producing_color: "#dd5500"
+  active_arrow_color: "#ffff00"
   initial_view: "energy"
   initial_auto_toggle_view: true
   auto_toggle_view_period: 5

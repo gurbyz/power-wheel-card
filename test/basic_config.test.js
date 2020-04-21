@@ -78,6 +78,7 @@ describe('<power-wheel-card> with most basic config', () => {
     assert.equal(card.config.money_unit, '€', 'Card parameter money_unit should have default value');
     assert.equal(card.config.consuming_color, 'var(--state-icon-unavailable-color, #bdbdbd)', 'Card parameter consuming_color should have default value');
     assert.equal(card.config.producing_color, 'var(--state-icon-unavailable-color, #bdbdbd)', 'Card parameter producing_color should have default value');
+    assert.equal(card.config.active_arrow_color, 'var(--paper-item-icon-active-color, #fdd835)', 'Card parameter active_arrow_color should have default value');
     assert.equal(card.config.initial_view, 'power', 'Card parameter initial_view should have default value');
     assert.isFalse(card.config.initial_auto_toggle_view, 'Card parameter initial_auto_toggle_view should be default false');
     assert.equal(card.config.auto_toggle_view_period, 10, 'Card parameter auto_toggle_view_period should have default value');
