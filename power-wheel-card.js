@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.1.1-dev";
+const __VERSION = "0.1.1b-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;
@@ -89,6 +89,7 @@ class PowerWheelCard extends LitElement {
         cursor: pointer;
       }
       ha-icon {
+        --mdc-icon-size: 48px;
         transition: all 0.4s ease-in-out;
         color: var(--paper-item-icon-color, #44739e);
         width: 48px;
@@ -98,6 +99,7 @@ class PowerWheelCard extends LitElement {
         color: var(--state-icon-unavailable-color, #bdbdbd);
       }
       ha-icon#toggle-button {
+        --mdc-icon-size: 24px;
         padding-top: 4px;
         width: 24px;
         height: 24px;

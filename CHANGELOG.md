@@ -1,8 +1,10 @@
 Changelog
 ====
-## 0.1.1-dev
+## 0.1.1b-dev
 ### New features
 * Custom color for active arrows. New card parameter `active_arrow_color`.
+### Fixes
+* Provisional fix for icon sizes (as of HA 0.110.0).
 
 ## 0.1.0
 ### New features
