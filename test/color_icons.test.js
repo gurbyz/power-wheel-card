@@ -20,6 +20,9 @@ describe('<power-wheel-card> with icon coloring', () => {
       grid_energy_production_entity: "sensor.grid_energy_production",
       energy_consumption_rate: 0.20,
       money_unit: '$',
+      consuming_color: "#550000",
+      producing_color: "#005500",
+      active_arrow_color: "#000055",
     };
     hass = {
       states: {
@@ -104,15 +107,18 @@ describe('<power-wheel-card> with icon coloring', () => {
     await card.setConfig(config);
   };
 
-it('has config values', () => {
+  it('has config values', () => {
     assert.isTrue(card.config.color_icons, 'Card parameter color_icons should be set');
-    assert.equal(card.config.consuming_color, 'var(--label-badge-yellow, #f4b400)', 'Card parameter consuming_color should be yellow');
-    assert.equal(card.config.producing_color, 'var(--label-badge-green, #0da035)', 'Card parameter producing_color should be green');
+    assert.equal(card.config.consuming_color, '#550000', 'Card parameter consuming_color should be set');
+    assert.equal(card.config.producing_color, '#005500', 'Card parameter producing_color should be set');
+    assert.equal(card.config.active_arrow_color, '#000055', 'Card parameter active_arrow_color should be set');
   });
 
   it('uses color values', () => {
-    assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(244, 180, 0)', 'Consuming icon color should be #f4b400');
-    assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.producing'), null).getPropertyValue('color'), 'rgb(13, 160, 53)', 'Producing icon color should be #0da035');
+    assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.consuming'), null).getPropertyValue('color'), 'rgb(85, 0, 0)', 'Consuming icon color should be #550000');
+    assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.producing'), null).getPropertyValue('color'), 'rgb(0, 85, 0)', 'Producing icon color should be #005500');
+    assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.active'), null).getPropertyValue('color'), 'rgb(0, 0, 85)', 'Active arrow icon color should be #000055');
+    assert.equal(window.getComputedStyle(card.shadowRoot.querySelector('ha-icon.inactive'), null).getPropertyValue('color'), 'rgb(189, 189, 189)', 'Inactive arrow icon color should be #bdbdbd');
   });
 
   it('displays values in power view when consuming from the grid', () => {
