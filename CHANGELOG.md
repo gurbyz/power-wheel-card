@@ -1,10 +1,11 @@
 Changelog
 ====
-## 0.1.1b-dev
+## 0.1.1
 ### New features
 * Custom color for active arrows. New card parameter `active_arrow_color`.
+* Invert grid icon coloring for consuming/producing. New card parameter `invert_grid_colors`. Default `false`.
 ### Fixes
-* Provisional fix for icon sizes (as of HA 0.110.0).
+* Provisional fix for icon sizes (as of HA 0.110.0). Issue #48.
 
 ## 0.1.0
 ### New features

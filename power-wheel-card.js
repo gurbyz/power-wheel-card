@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.1.1b-dev";
+const __VERSION = "0.1.1";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;
@@ -137,7 +137,9 @@ class PowerWheelCard extends LitElement {
     const valueStrSoC = typeof valSoC === 'undefined' ? 'unavailable' : `(${valSoC}%)`;
     const stateObj = this.hass.states[entity];
     const icon = configIcon ? configIcon : (stateObj && stateObj.attributes.icon ? stateObj.attributes.icon : defaultIcon);
-    const classValue = PowerWheelCard._generateClass(val);
+    // Invert producing/consuming for grid icon when user wants to invert_grid_colors
+    const classValue = PowerWheelCard._generateClass(val *
+      (defaultIcon === 'mdi:transmission-tower' && this.config.invert_grid_colors ? -1 : 1));
 
     return {
       stateObj,
@@ -663,6 +665,7 @@ class PowerWheelCard extends LitElement {
     config.producing_color = config.color_icons
       ? (config.producing_color ? config.producing_color : 'var(--label-badge-green, #0da035)')
       : 'var(--state-icon-unavailable-color, #bdbdbd)';
+    config.invert_grid_colors = config.invert_grid_colors ? (config.invert_grid_colors == true) : false;
     config.active_arrow_color = config.active_arrow_color
       ? config.active_arrow_color
       : 'var(--paper-item-icon-active-color, #fdd835)';
