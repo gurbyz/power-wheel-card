@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.1.1";
+const __VERSION = "0.1.2-dev";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;
@@ -42,6 +42,7 @@ class PowerWheelCard extends LitElement {
         padding: 4px 0 12px;
         display: flex;
         justify-content: space-between;
+        min-height: 12px;
       }
       ha-card .wheel {
         position: relative;
@@ -416,7 +417,6 @@ class PowerWheelCard extends LitElement {
     this.views.energy.unit = this._defineUnit('energy', this.config.solar_energy_entity, this.config.grid_energy_entity,
       this.config.grid_energy_consumption_entity, this.config.grid_energy_production_entity);
     this.views.money.unit = this.config.money_unit;
-    // this.views = { ...this.views };
 
     if (this.view === 'money' && this.views.money.capable) {
       // Calculate energy values first
@@ -641,7 +641,7 @@ class PowerWheelCard extends LitElement {
     }
     config.production_is_positive = config.production_is_positive !== false;
     config.production_is_positive = config.production_is_positive ? 1 : -1;
-    config.title = config.title ? config.title : 'Power wheel';
+    config.title = config.title ? config.title : '';
     config.title_power = config.title_power ? config.title_power : config.title;
     config.title_energy = config.title_energy ? config.title_energy : config.title;
     config.title_money = config.title_money ? config.title_money : config.title;

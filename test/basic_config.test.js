@@ -12,6 +12,7 @@ describe('<power-wheel-card> with most basic config', () => {
   beforeEach(async () => {
     config = {
       type: "custom:power-wheel-card",
+      title: "Power wheel",
       solar_power_entity: "sensor.solar_power",
       grid_power_consumption_entity: "sensor.grid_power_consumption",
       grid_power_production_entity: "sensor.grid_power_production",

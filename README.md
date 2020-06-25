@@ -238,6 +238,7 @@ views:
   - id: example_view
     cards:
       - type: custom:power-wheel-card
+        title: "Power wheel"
         solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
         grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
         grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
@@ -250,7 +251,7 @@ There are many more card parameters available, but it's advised to start with th
 | Parameter | Type | Mandatory? | Default | Description |
 |-----------|------|------------|---------|-------------|
 |type|string|**required**| |Type of the card. Use `"custom:power-wheel-card"`.|
-|title|string|optional|`"Power wheel"`|Title of the card in all views, if not overridden with a title per view.|
+|title|string|optional|No title|Title of the card in all views, if not overridden with a title per view.|
 |title_power|string|optional|Value of `title`.|Title of the card in *power view*.|
 |title_energy|string|optional|Value of `title`.|Title of the card in *energy view*.|
 |title_money|string|optional|Value of `title`.|Title of the card in *money view*.|

@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.1.2-dev
+### New features
+* Allowing to hide the title. Default value for `title` is empty now. If you want the previous behavior you could add `title: 'Power wheel'` to your config.
+
 ## 0.1.1
 ### New features
 * Custom color for active arrows. New card parameter `active_arrow_color`.
