@@ -4,6 +4,8 @@ Changelog
 ### New features
 * Allowing to hide the title. Default value for `title` is empty now. If you want the previous behavior you could add `title: 'Power wheel'` to your config. Issue #51.
 * ** BETA.** You can switch the polarity of `battery_power_entity` with the new card parameter `charging_is_positive`. No need to make an extra template sensor for this anymore. Issue #46.
+### Improvements
+* Removed deprecated input parameter `energy_price`. This parameter was deprecated since version 0.1.0. 
 
 ## 0.1.1
 ### New features

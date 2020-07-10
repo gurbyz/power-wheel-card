@@ -391,9 +391,6 @@ class PowerWheelCard extends LitElement {
       PowerWheelCard._logConsole(`Version: ${__VERSION}`);
     }
     this._validateSensors();
-    if (this.config.energy_price) {
-      this._addMessage('warn', 'Deprecated card parameter \'energy_price\' is used. Please replace it by \'energy_consumption_rate\' in your setup.');
-    }
   }
 
   _sensorChangeDetected(oldValue) {
@@ -686,9 +683,6 @@ class PowerWheelCard extends LitElement {
     }
     config.auto_toggle_view_period = config.auto_toggle_view_period ? config.auto_toggle_view_period : 10;
     config.debug = config.debug ? config.debug : false;
-    if (config.energy_price && config.energy_consumption_rate === undefined) {
-      config.energy_consumption_rate = config.energy_price;
-    }
     if (config.energy_production_rate === undefined && config.energy_consumption_rate) {
       config.energy_production_rate = config.energy_consumption_rate;
     }
