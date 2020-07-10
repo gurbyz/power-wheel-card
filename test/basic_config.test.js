@@ -68,6 +68,7 @@ describe('<power-wheel-card> with most basic config', () => {
   it('has set default config values', () => {
     assert.isFalse(card.config.color_icons, 'Card parameter color_icons should be set');
     assert.equal(card.config.production_is_positive, 1, 'Card parameter production_is_positive should be default 1');
+    assert.equal(card.config.charging_is_positive, 1, 'Card parameter charging_is_positive should be default 1');
     assert.isFalse(card.config.debug, 'Card parameter debug should be default false');
     assert.equal(card.config.title, 'Power wheel', 'Card parameter title should have default value');
     assert.equal(card.config.title_power, 'Power wheel', 'Card parameter title_power should have default value');

@@ -181,11 +181,16 @@ class PowerWheelCard extends LitElement {
       ? undefined : value * this.config.production_is_positive;
   }
 
+  _setBatteryPolarity(value) {
+    return typeof value === 'undefined'
+      ? undefined : value * this.config.charging_is_positive;
+  }
+
   // Get all entity states (view dependent) and save in this.input
   // Since battery functions this.input.grid_solo_production is not always the same as this.data.solar2grid anymore.
   _saveEntityStates(solar_entity, grid_production_entity, grid_consumption_entity, battery_entity, grid_entity, home_entity) {
     this.input.solar_production = this._getEntityState(solar_entity);
-    this.input.battery_charging = this._getEntityState(battery_entity);
+    this.input.battery_charging = this._setBatteryPolarity(this._getEntityState(battery_entity));
     this.input.home_production = this._setPolarity(this._getEntityState(home_entity));
     if (this.views[this.view].twoGridSensors) {
       this.input.grid_solo_production = this._getEntityState(grid_production_entity);
@@ -639,6 +644,8 @@ class PowerWheelCard extends LitElement {
     if (config.grid_power_consumption_entity && !config.grid_power_production_entity) {
       throw new Error('You need to define a grid_power_production_entity');
     }
+    config.charging_is_positive = config.charging_is_positive !== false;
+    config.charging_is_positive = config.charging_is_positive ? 1 : -1;
     config.production_is_positive = config.production_is_positive !== false;
     config.production_is_positive = config.production_is_positive ? 1 : -1;
     config.title = config.title ? config.title : '';
