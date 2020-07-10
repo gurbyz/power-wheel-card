@@ -5,7 +5,7 @@
  *
  */
 
-const __VERSION = "0.1.2-dev";
+const __VERSION = "0.1.2";
 
 const LitElement = Object.getPrototypeOf(customElements.get("hui-view"));
 const html = LitElement.prototype.html;
@@ -390,7 +390,7 @@ class PowerWheelCard extends LitElement {
     } else {
       PowerWheelCard._logConsole(`Version: ${__VERSION}`);
     }
-    this._validateSensors();
+    // this._validateSensors(); // todo: Have to find a better trigger than firstUpdated. Disabled in version 0.1.2 because new startup order in HA 0.111.0.
   }
 
   _sensorChangeDetected(oldValue) {
