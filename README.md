@@ -238,6 +238,7 @@ views:
   - id: example_view
     cards:
       - type: custom:power-wheel-card
+        title: "Power wheel"
         solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
         grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
         grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
@@ -250,7 +251,7 @@ There are many more card parameters available, but it's advised to start with th
 | Parameter | Type | Mandatory? | Default | Description |
 |-----------|------|------------|---------|-------------|
 |type|string|**required**| |Type of the card. Use `"custom:power-wheel-card"`.|
-|title|string|optional|`"Power wheel"`|Title of the card in all views, if not overridden with a title per view.|
+|title|string|optional|No title|Title of the card in all views, if not overridden with a title per view.|
 |title_power|string|optional|Value of `title`.|Title of the card in *power view*.|
 |title_energy|string|optional|Value of `title`.|Title of the card in *energy view*.|
 |title_money|string|optional|Value of `title`.|Title of the card in *money view*.|
@@ -258,13 +259,13 @@ There are many more card parameters available, but it's advised to start with th
 |grid_power_consumption_entity (A)|string|optional, always together with B| |Entity id of your sensor for power that you are consuming from the grid. E.g. `sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_power_production_entity (B)|string|optional, always together with A| |Entity id of your sensor for power that you are producing to the grid. E.g. `sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR`. See requirements above.|
 |BETA: battery_power_entity|string|optional| |Entity id of your sensor for power you use to charge the battery. Charging should have positive values. Discharging should have negative values. Battery feature is in BETA, [expect issues](#Known-issues-for-the-battery-feature).|
-|BETA: battery_soc_entity|string|optional| |Entity id of your sensor for *state of charge* of your battery. Unit should be %. Battery feature is in BETA, [expect issues](#Known-issues-for-the-battery-feature).|
+|BETA: charging_is_positive|boolean|optional|`true`|You can specify the polarity of your input sensor `battery_power_entity`. Use `true` for charging the battery has positive values in your input sensor. Use `false` for charging the battery has negative values.|
+|BETA: battery_soc_entity|string|optional| |Entity id of your sensor for *state of charge* of your battery. Unit should be %.|
 |solar_energy_entity|string|optional|Default the *energy view* will not be enabled.|Entity id of your solar energy sensor. E.g. `sensor.YOUR_SOLAR_ENERGY_SENSOR`. See requirements above.|
 |grid_energy_consumption_entity (D)|string|optional, always together with E|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's consumed from the grid. E.g. `sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR`. See requirements above.|
 |grid_energy_production_entity (E)|string|optional, always together with D|Default the *energy view* will not be enabled.|Entity id of your sensor for energy that's produced to the grid. E.g. `sensor.YOUR_GRID_ENERGY_PRODUCTION_SENSOR`. See requirements above.|
 |energy_consumption_rate|float|optional|Default the *money view* will not be enabled.|The rate of your energy consumed from the grid per unit of energy. E.g. `0.20`.|
 |energy_production_rate|float|optional|The value of `energy_consumption_rate`.|The rate of your energy produced to the grid per unit of energy. E.g. `0.15`.|
-|energy_price *(deprecated)*|float|optional| |Deprecated. Please use `energy_consumption_rate` and evt. the optional `energy_production_rate` as of version 0.0.13.|
 |money_unit|string|optional|`"€"`|The unit of `energy_consumption_rate` and `energy_production_rate`. This unit will be used for displaying all money values.|
 |solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
 |grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:transmission-tower"` will be used.|Icon for grid power and energy.|
@@ -329,7 +330,9 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
   grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
   grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
+  production_is_positive: true
   battery_power_entity: sensor.YOUR_BATTERY_POWER_SENSOR  # Battery feature is in BETA, expect issues.
+  charging_is_positive: true  # Battery feature is in BETA, expect issues.
   battery_soc_entity: sensor.YOUR_BATTERY_SOC_SENSOR  # Battery feature is in BETA, expect issues.
   solar_energy_entity: sensor.YOUR_SOLAR_ENERGY_SENSOR
   grid_energy_consumption_entity: sensor.YOUR_GRID_ENERGY_CONSUMPTION_SENSOR

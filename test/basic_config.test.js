@@ -12,6 +12,7 @@ describe('<power-wheel-card> with most basic config', () => {
   beforeEach(async () => {
     config = {
       type: "custom:power-wheel-card",
+      title: "Power wheel",
       solar_power_entity: "sensor.solar_power",
       grid_power_consumption_entity: "sensor.grid_power_consumption",
       grid_power_production_entity: "sensor.grid_power_production",
@@ -67,6 +68,7 @@ describe('<power-wheel-card> with most basic config', () => {
   it('has set default config values', () => {
     assert.isFalse(card.config.color_icons, 'Card parameter color_icons should be set');
     assert.equal(card.config.production_is_positive, 1, 'Card parameter production_is_positive should be default 1');
+    assert.equal(card.config.charging_is_positive, 1, 'Card parameter charging_is_positive should be default 1');
     assert.isFalse(card.config.debug, 'Card parameter debug should be default false');
     assert.equal(card.config.title, 'Power wheel', 'Card parameter title should have default value');
     assert.equal(card.config.title_power, 'Power wheel', 'Card parameter title_power should have default value');

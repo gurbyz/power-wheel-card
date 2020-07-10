@@ -69,7 +69,7 @@ describe('<power-wheel-card> with most basic config for one grid sensor', () => 
   });
 
   it('displays values', () => {
-    assert.equal(card.shadowRoot.querySelector('#title').innerText, "Power wheel");
+    assert.equal(card.shadowRoot.querySelector('#title').innerText, "");
     assert.equal(card.shadowRoot.querySelector('#unit').innerText, "W");
   });
 
