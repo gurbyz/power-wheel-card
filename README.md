@@ -135,12 +135,12 @@ But if you want the *money view*:
 If your energy rate is depending on the (time of) day, please supply the average rates for high and low tariff or choose to not use the *money view*. 
 
 ## Installation instructions
-##### Installation using HACS (recommended)
+### Installation using HACS (recommended)
 You can install the power-wheel-card using [HACS](https://hacs.xyz/) in Home Assistant.
 In HACS click on 'Frontend' and then click on the big '+' icon in the right lower part of your screen. 
 Search for `Power Wheel Card` and follow the instructions there to install the card.
 
-##### Manual installation (advanced users)
+### Manual installation (advanced users)
 Manual installation is not the preferred way, but sometimes necessary. E.g. when you want to install the development branch.   
 1. Download the file [power-wheel-card.js](https://raw.githubusercontent.com/gurbyz/power-wheel-card/master/power-wheel-card.js) from master or choose another branch.
 1. Save the file in the `www` folder inside your Home Assistant config folder.
@@ -154,7 +154,6 @@ lovelace:
 ```
 
 > **Note.** The actual number for the `v` parameter isn't relevant. You have to increase the number whenever updating the source code to avoid having to manually clear the cache of your browsers and mobile apps.
-
 
 ## Configuration instructions
 Include a simple configuration for the power-wheel-card first:
