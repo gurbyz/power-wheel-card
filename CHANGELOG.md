@@ -3,6 +3,8 @@ Changelog
 ## 0.1.3-dev
 ### Improvements
 * Rewrite of the icons paragraph in the documentation.
+* Added a paragraph for 'view toggling' in the documentation.
+* Updated HACS installation instruction. Simplified some documentation.
 
 ## 0.1.2
 ### New features

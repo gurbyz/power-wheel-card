@@ -9,7 +9,6 @@ An intuitive way to represent the power and energy that your home is consuming o
 ## Table of Contents
 * [Features](#Features)
 * [Requirements for the power view](#Requirements-for-the-power-view)
-    * [Example requirements configuration](#Example-requirements-configuration)
     * [BETA battery feature in power view](#BETA-battery-feature-in-power-view)
     * [Known issues for the battery feature](#Known-issues-for-the-battery-feature)
 * [Requirements for the energy view](#Requirements-for-the-energy-view)
@@ -83,45 +82,6 @@ Features of the custom power-wheel-card:
    - A `unit_of_measurement` has been set up, e.g. `'W'` or `'kW'`.
    - The `unit_of_measurement` is the same as the other power sensors.
    - The sensor state should always be parsable to an *int* or - even better - a *float* value.
-
-You don't always need a sensor for your (nett) grid power but you can use it if you have it available and want to use its **icon**.
-
-You don't need a sensor for your home power, but you can use it if you have it available and want to use its **icon**. The **value** of this sensor will not be used. 
-
-### Example requirements configuration
-This is not the configuration of the power-wheel-card itself, but an example configuration that's needed to have input sensors for the power-wheel-card.
-An example configuration in `configuration.yaml` to comply to the requirements:
-
-```yaml
-sensor:
-  - platform: template
-    sensors:
-      solar_power:
-        friendly_name: 'Solar power production'
-        unit_of_measurement: 'W'
-        value_template: >-
-          {{ state_attr("sensor.youless", "pwr") }}
-      grid_power_consumption:
-        friendly_name: 'Grid power consumption'
-        unit_of_measurement: 'W'
-        value_template: >-
-          {{ (1000 * (states("sensor.power_consumption") | float)) | int }}
-      grid_power_production:
-        friendly_name: 'Grid power production'
-        unit_of_measurement: 'W'
-        value_template: >-
-          {{ (1000 * (states("sensor.power_production") | float)) | int }}
-```
-
-In this example the sensors names for *YOUR_SOLAR_POWER_SENSOR*, *YOUR_GRID_POWER_CONSUMPTION_SENSOR* and *YOUR_GRID_POWER_PRODUCTION_SENSOR* are `solar_power`, `grid_power_consumption` resp. `grid_power_production`.
-
-Not visible in the example above, but of course you have to have installed the hardware and configured it to feed your sensors.
-In the example above I used a [rest sensor](https://www.home-assistant.io/components/sensor.rest/) for my [Youless](http://youless.nl/winkel/product/ls120.html) for the solar power.
-For the grid power I used a [dsmr sensor](https://www.home-assistant.io/components/sensor.dsmr/) for my Iskra Smart Meter.
-Because my solar power sensor and dsmr sensor don't report in the same unit of measurement, I had to convert that.
-
-> **Tip.** If you are creating extra sensors for the power-wheel-card, maybe you want to exclude them in your `recorder:` setting.
-Extra sensors based on your heavily updating DSMR sensors will let your database grow fast. 
 
 ### BETA battery feature in power view
 Battery support in the power-wheel-card is currently a BETA feature.
@@ -211,7 +171,9 @@ If your energy rate is depending on the (time of) day, please supply the average
 ## Installation instructions
 1. Check the requirements above. If you don't comply to the requirements, the card won't be much of use for you or just won't work.
 
-1. You can install the power-wheel-card using [HACS](https://hacs.xyz/) in Home Assistant. Search for `Power Wheel Card` in the *Plugins* tab.
+1. You can install the power-wheel-card using [HACS](https://hacs.xyz/) in Home Assistant.
+Click on Frontend and click on the big '+' icon in the right lower part of your screen. 
+Search for `Power Wheel Card`.
    
    *OR:*
    
@@ -231,17 +193,13 @@ lovelace:
 
 
 ## Configuration instructions
-Include a configuration for the power-wheel-card in your `ui-lovelace.yaml` file:
+Include a simple configuration for the power-wheel-card first:
 
 ```yaml
-views:
-  - id: example_view
-    cards:
-      - type: custom:power-wheel-card
-        title: "Power wheel"
-        solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
-        grid_power_consumption_entity: sensor.YOUR_GRID_POWER_CONSUMPTION_SENSOR
-        grid_power_production_entity: sensor.YOUR_GRID_POWER_PRODUCTION_SENSOR
+- type: custom:power-wheel-card
+  title: "Power wheel"
+  solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
+  grid_power_entity: sensor.YOUR_GRID_POWER_SENSOR
 ```
 
 There are many more card parameters available, but it's advised to start with this simple setup to get things running. 
