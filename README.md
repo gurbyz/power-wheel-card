@@ -54,7 +54,7 @@ Features of the custom power-wheel-card:
 * Optionally uses icons of your own choice, which can be set by card parameters or taken from your `customize:` sensor settings.
 * Optionally colors the consuming icons yellow and the producing icons green. You can choose your own colors for consuming and producing.
 * Works for default theme and custom themes that use [standard CSS vars](https://github.com/home-assistant/home-assistant-polymer/blob/master/src/resources/ha-style.ts).
-* Has support for [HACS](https://custom-components.github.io/hacs/) to check for a new release.
+* Has support for [HACS](https://hacs.xyz/) to install and check for new releases.
 
 ![example1](./example_power_view.gif "The power-wheel-card displaying the power view")
 ![example2](./example_energy_view.gif "The power-wheel-card displaying the energy view")
@@ -135,18 +135,16 @@ But if you want the *money view*:
 If your energy rate is depending on the (time of) day, please supply the average rates for high and low tariff or choose to not use the *money view*. 
 
 ## Installation instructions
-1. Check the requirements above. If you don't comply to the requirements, the card won't be much of use for you or just won't work.
+##### Installation using HACS (recommended)
+You can install the power-wheel-card using [HACS](https://hacs.xyz/) in Home Assistant.
+In HACS click on 'Frontend' and then click on the big '+' icon in the right lower part of your screen. 
+Search for `Power Wheel Card` and follow the instructions there to install the card.
 
-1. You can install the power-wheel-card using [HACS](https://hacs.xyz/) in Home Assistant.
-Click on Frontend and click on the big '+' icon in the right lower part of your screen. 
-Search for `Power Wheel Card`.
-   
-   *OR:*
-   
-   You can proceed with the instructions below to manually install the card.
-1. Download the file [power-wheel-card.js](https://raw.githubusercontent.com/gurbyz/power-wheel-card/master/power-wheel-card.js).
+##### Manual installation (advanced users)
+Manual installation is not the preferred way, but sometimes necessary. E.g. when you want to install the development branch.   
+1. Download the file [power-wheel-card.js](https://raw.githubusercontent.com/gurbyz/power-wheel-card/master/power-wheel-card.js) from master or choose another branch.
 1. Save the file in the `www` folder inside your Home Assistant config folder.
-1. Include the card code in your `configuration.yaml` file:
+1. Include the card code in your `configuration.yaml` file and increase the `v` parameter to bypass any caching.
 
 ```yaml
 lovelace:
@@ -155,7 +153,7 @@ lovelace:
       type: module
 ```
 
-> **Note.** The actual number in `v=A_NUMBER` isn't relevant. You have to increase the number whenever updating the source code to avoid having to manually clear the cache of your browsers and mobile apps.
+> **Note.** The actual number for the `v` parameter isn't relevant. You have to increase the number whenever updating the source code to avoid having to manually clear the cache of your browsers and mobile apps.
 
 
 ## Configuration instructions

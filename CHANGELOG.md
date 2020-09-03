@@ -6,6 +6,7 @@ Changelog
 * Added a paragraph for 'view toggling' in the documentation.
 * Updated HACS installation instruction. Simplified some documentation.
 * Battery feature documentation restructured.
+* Updated installation instructions and HACS info file.
 
 ## 0.1.2
 ### New features
