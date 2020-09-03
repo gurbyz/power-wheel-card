@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.1.3-dev
+### Improvements
+* Rewrite of the icons paragraph in the documentation.
+
 ## 0.1.2
 ### New features
 * Allowing to hide the title. Default value for `title` is empty now. If you want the previous behavior you could add `title: 'Power wheel'` to your config. Issue #51.

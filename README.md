@@ -17,7 +17,7 @@ An intuitive way to represent the power and energy that your home is consuming o
 * [Installation instructions](#Installation-instructions)
 * [Configuration instructions](#Configuration-instructions)
     * [Card parameters](#Card-parameters)
-    * [More about icons](#More-about-icons)
+    * [Icons](#Icons)
     * [Advanced configuration example](#Advanced-configuration-example)
 * [License](#License)
 * [Credits](#Credits)
@@ -267,18 +267,9 @@ There are many more card parameters available, but it's advised to start with th
 |energy_consumption_rate|float|optional|Default the *money view* will not be enabled.|The rate of your energy consumed from the grid per unit of energy. E.g. `0.20`.|
 |energy_production_rate|float|optional|The value of `energy_consumption_rate`.|The rate of your energy produced to the grid per unit of energy. E.g. `0.15`.|
 |money_unit|string|optional|`"€"`|The unit of `energy_consumption_rate` and `energy_production_rate`. This unit will be used for displaying all money values.|
-|solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
-|grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:transmission-tower"` will be used.|Icon for grid power and energy.|
-|home_icon|string|optional|The icon of your own customized home sensor(s) if its entity parameter is set. If not available, then `"mdi:home"` will be used.|Icon for home power and energy.|
-|BETA: battery_icon|string|optional|The icon of your own customized battery sensor(s) if its entity parameter is set. If not available, then `"mdi:car-battery"` will be used.|Icon for battery power.|
 |power_decimals|integer|optional|`0`|Number of decimals for the power values.|
 |energy_decimals|integer|optional|`3`|Number of decimals for the energy values.|
 |money_decimals|integer|optional|`2`|Number of decimals for the money values.|
-|color_icons|boolean|optional|`true`|To color the consuming icons green and the producing icons yellow. Icon values will have an absolute value. This setting only is affecting the three big icons for *solar*, *home* and *grid*. The arrows have colors by default.|
-|consuming_color|string|optional|The yellow color for `--label-badge-yellow` from your theme. If not available, then `"#f4b400"` will be used.|CSS color code for consuming power icons if `color_icons` is set to `true`. Examples: `"orange"`, `"#ffcc66"` or `"rgb(200,100,50)"`. Don't forget the quotation marks when using the `#` color notation.|
-|producing_color|string|optional|The green color for `--label-badge-green` from your theme. If not available, then `"#0da035"` will be used.|CSS color code for producing power icons if `color_icons` is set to `true`.|
-|invert_grid_colors|boolean|optional|`false`|The default color of the grid icon is green when producing to the grid. And the grid icon is red for consuming from the grid. You can invert that.|
-|active_arrow_color|string|optional|The yellow color for `--paper-item-icon-active-color` from your theme. If not available, then `"#fdd835"` will be used.|CSS color code for active arrow icons.|
 |initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|
 |initial_auto_toggle_view|boolean|optional|`false`|The initial state of the auto-toggle for views.|
 |auto_toggle_view_period|integer|optional|`10`|Period in seconds between views when auto-toggle for views is turned on.|
@@ -293,7 +284,55 @@ Some extra parameters for users who don't have separate grid sensors for produci
 |home_energy_entity (G)|string|optional, but required if you don't have D and E and want to use the *energy view*| |Entity id of your home energy sensor if you don't have separate sensors for grid energy production (to the grid) and grid energy consumption (from the grid). E.g. `sensor.YOUR_HOME_ENERGY_SENSOR`.|
 |production_is_positive|boolean|optional|`true`|If you use C, F or G you can specify the polarity of these input sensors. Use `true` for producing to the grid has positive values in your input sensors. Use `false` for producing to the grid has negative values.| 
 
-Some extra parameters for advanced users who use dynamic icons in their HA setup and want to use them in the power-wheel-card: 
+### Icons
+##### Color of the icons
+Icons will be colored by default. 
+The default colors work in a way that green is used for "positive"/"producing" situations. Yellow is used for "negative"/"consuming" situations.
+If there is solar power, the solar icon will be green. If your home is using power, the home icon will be yellow. 
+You are producing to the grid? The grid icon will be green. You are consuming from the grid? The grid icon will be yellow.
+
+The card uses theme specified colors for green (`--label-badge-green`) and yellow (`--label-badge-yellow`) if those are set in your theme.
+You can override default and/or theme colors of the solar, grid and home icon by supplying `consuming_color` and/or `producing_color` in your card configuration.
+
+For the active arrow color the card uses `--paper-item-icon-active-color` which could be set in a theme.
+You can override the default and/or theme color of active arrows by supplying `active_arrow_color`.
+
+Some people like another perspective for the coloring of the grid icon. They can use `invert_grid_colors` to invert the coloring behaviour.
+
+| Parameter | Type | Mandatory? | Default | Description |
+|-----------|------|------------|---------|-------------|
+|color_icons|boolean|optional|`true`|To color the consuming icons green and the producing icons yellow. Icon values will have an absolute value. This setting only is affecting the three big icons for *solar*, *home* and *grid*. The arrows have colors by default.|
+|consuming_color|string|optional|The yellow color for `--label-badge-yellow` from your theme. If not available, then `"#f4b400"` will be used.|CSS color code for consuming power icons if `color_icons` is set to `true`. Examples: `"orange"`, `"#ffcc66"` or `"rgb(200,100,50)"`. Don't forget the quotation marks when using the `#` color notation.|
+|producing_color|string|optional|The green color for `--label-badge-green` from your theme. If not available, then `"#0da035"` will be used.|CSS color code for producing power icons if `color_icons` is set to `true`.|
+|invert_grid_colors|boolean|optional|`false`|The default color of the grid icon is green when producing to the grid. And the grid icon is yellow for consuming from the grid. You can invert that.|
+|active_arrow_color|string|optional|The yellow color for `--paper-item-icon-active-color` from your theme. If not available, then `"#fdd835"` will be used.|CSS color code for active arrow icons.|
+
+##### Using the default icons
+If you don't specify anything about icons, and your sensors don't have icons of itself then the default icons will be used.
+For the solar icon the default is `mdi:weather-sunny`. For the grid icon the default is `mdi:transmission-tower`. And for the home icon this is `mdi:home`.
+
+##### Using sensor icons
+If your sensors are set up with an icon, then that icon will be used instead of the default icon. You don't have to set up anything in the card configuration.
+If the card detects an icon in the sensor data, it will use it.
+
+##### Using user specified icons
+If you want to defer from the sensor icon or the default icon, you can specify your own icons in the card configuration.
+These will override any sensor icons and default icons. 
+
+| Parameter | Type | Mandatory? | Default | Description |
+|-----------|------|------------|---------|-------------|
+|solar_icon|string|optional|The icon of your own customized solar sensor(s). If not available, then `"mdi:weather-sunny"` will be used.|Icon for solar power and energy.|
+|grid_icon|string|optional|The icon of your own customized grid sensor(s) if its entity parameter is set. If not available, then `"mdi:transmission-tower"` will be used.|Icon for grid power and energy.|
+|home_icon|string|optional|The icon of your own customized home sensor(s) if its entity parameter is set. If not available, then `"mdi:home"` will be used.|Icon for home power and energy.|
+|BETA: battery_icon|string|optional|The icon of your own customized battery sensor(s) if its entity parameter is set. If not available, then `"mdi:car-battery"` will be used.|Icon for battery power.|
+
+##### Using dynamic icons (advanced users only, no support given)
+Some advanced users have set up dynamic icons in their HA. For the power-wheel-card these dynamic icons will be seen as normal sensor icons.
+The dynamic behaviour is visible in the card. There was only one problem: not all sensors were present in the card configuration.
+E.g. the value of the home power is calculated, so there was no parameter for supplying the sensor. And because of that there was no dynamic behaviour of the icon.
+
+For the sole reason of using the sensor icon for otherwise not configured entities there are some extra parameters.
+Please note that supplying these sensors in the config will not imply that their (power or energy) value is used. For home entities their (power or energy) values are never used. 
 
 | Parameter | Type | Mandatory? | Default | Description |
 |-----------|------|------------|---------|-------------|
@@ -301,24 +340,6 @@ Some extra parameters for advanced users who use dynamic icons in their HA setup
 |grid_power_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:transmission-tower"` will be used.|Entity id of your grid power sensor if you want to use its icon in the *power view* instead of supplying a static `grid_icon` on card level.|
 |home_energy_entity|string|optional|Default the icon specified in `home_icon` will be used. If not specified `"mdi:home"` will be used.|Entity id of your home energy sensor if you want to use its icon in the *energy view* instead of supplying a static `home_icon` on card level.|
 |grid_energy_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:transmission-tower"` will be used.|Entity id of your grid energy sensor if you want to use its icon in the *energy view* instead of supplying a static `grid_icon` on card level.|
-
-### More about icons
-The icons for solar and grid can be set by card parameters as shown in the tables above.
-If you don't specify them as card parameters, the icons are taken from your own sensors for solar power and grid power (in the *power view*) and from your own sensors for solar energy and grid energy (in the *energy view* and *money view*).
-You could have specified those with the `customize:` option for `homeassistant` in your `configuration.yaml`.
-
-If you haven't set up any icons for them, default icons will be used in all views. For solar: `mdi:weather-sunny`; and for grid: `mdi:transmission-tower`.
-
-An example for reusing the icons of your sensors used in the *power view*, to be put in `configuration.yaml`:
-
-```yaml
-homeassistant:
-  customize:
-    sensor.YOUR_SOLAR_POWER_SENSOR:
-      icon: mdi:white-balance-sunny
-    sensor.YOUR_GRID_POWER_SENSOR:
-      icon: mdi:flash
-```
 
 ### Advanced configuration example
 A more advanced example for in the `ui-lovelace.yaml` file:
