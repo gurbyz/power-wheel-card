@@ -16,8 +16,8 @@ An intuitive way to represent the power and energy that your home is consuming o
 * [Requirements for the money view](#Requirements-for-the-money-view)
 * [Installation instructions](#Installation-instructions)
 * [Configuration instructions](#Configuration-instructions)
-    * [Card parameters](#Card-parameters)
     * [Icons](#Icons)
+    * [View toggling](#View-toggling)
     * [Advanced configuration example](#Advanced-configuration-example)
 * [License](#License)
 * [Credits](#Credits)
@@ -246,8 +246,6 @@ views:
 
 There are many more card parameters available, but it's advised to start with this simple setup to get things running. 
 
-### Card parameters
-
 | Parameter | Type | Mandatory? | Default | Description |
 |-----------|------|------------|---------|-------------|
 |type|string|**required**| |Type of the card. Use `"custom:power-wheel-card"`.|
@@ -270,9 +268,6 @@ There are many more card parameters available, but it's advised to start with th
 |power_decimals|integer|optional|`0`|Number of decimals for the power values.|
 |energy_decimals|integer|optional|`3`|Number of decimals for the energy values.|
 |money_decimals|integer|optional|`2`|Number of decimals for the money values.|
-|initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|
-|initial_auto_toggle_view|boolean|optional|`false`|The initial state of the auto-toggle for views.|
-|auto_toggle_view_period|integer|optional|`10`|Period in seconds between views when auto-toggle for views is turned on.|
 |debug|boolean|optional|`false`|Logs debug information in the console of your browser. Useful when you want to investigate or register an issue.|
 
 Some extra parameters for users who don't have separate grid sensors for producing and consuming:
@@ -340,6 +335,19 @@ Please note that supplying these sensors in the config will not imply that their
 |grid_power_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:transmission-tower"` will be used.|Entity id of your grid power sensor if you want to use its icon in the *power view* instead of supplying a static `grid_icon` on card level.|
 |home_energy_entity|string|optional|Default the icon specified in `home_icon` will be used. If not specified `"mdi:home"` will be used.|Entity id of your home energy sensor if you want to use its icon in the *energy view* instead of supplying a static `home_icon` on card level.|
 |grid_energy_entity|string|optional|Default the icon specified in `grid_icon` will be used. If not specified `"mdi:transmission-tower"` will be used.|Entity id of your grid energy sensor if you want to use its icon in the *energy view* instead of supplying a static `grid_icon` on card level.|
+
+### View toggling
+If you specified enough parameters in the card configuration, you can have multiple views: the *power view*, the *energy view* and the *money view*.
+The user can click on the unit in the center of the card to toggle views. 
+The user can click on the auto toggle button in the upper right corner of the card to start or stop auto toggling.
+
+There are some parameters to support the view toggling:
+
+| Parameter | Type | Mandatory? | Default | Description |
+|-----------|------|------------|---------|-------------|
+|initial_view|string|optional|`"power"`|The initial view that will displayed. Allowed values are `"power"` for *power view*, `"energy"` for *energy view* and `"money"` for *money view*.|
+|initial_auto_toggle_view|boolean|optional|`false`|The initial state of the auto-toggle for views.|
+|auto_toggle_view_period|integer|optional|`10`|Period in seconds between views when auto-toggle for views is turned on.|
 
 ### Advanced configuration example
 A more advanced example for in the `ui-lovelace.yaml` file:
