@@ -7,6 +7,7 @@ Changelog
 * Updated HACS installation instruction. Simplified some documentation.
 * Battery feature documentation restructured.
 * Updated installation instructions and HACS info file.
+* Rewrite of the documentation for requirements and configuration.
 
 ## 0.1.2
 ### New features
