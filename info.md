@@ -3,11 +3,11 @@ power-wheel-card
 
 An intuitive way to represent the power and energy that your home is consuming or producing.
 
-* MANUAL / README: Sourcecode, manual, requirements and examples are in the <a href="https://github.com/gurbyz/power-wheel-card">README</a> file of the repo on GitHub.
+* MANUAL: Sourcecode, manual, requirements and examples are in the README file of the repo on GitHub. <a href="https://github.com/gurbyz/power-wheel-card">README file.</a>
 
-* FORUM: This component is discussed <a href="https://community.home-assistant.io/t/lovelace-power-wheel-card/82374">here</a> on the Home Assistant forum.
-* CHANGELOG: <a href="https://github.com/gurbyz/power-wheel-card/blob/master/CHANGELOG.md">List of changes</a> per version of the card.
-* TROUBLESHOOTING / ISSUES: There's also a troubleshooting <a href="https://github.com/gurbyz/power-wheel-card/wiki/Troubleshooting-guide">wiki</a> on GitHub. Read this please before filing an <a href="https://github.com/gurbyz/power-wheel-card/issues/new/choose">issue</a>.
+* FORUM: This component is discussed on the Home Assistant forum. <a href="https://community.home-assistant.io/t/lovelace-power-wheel-card/82374">Forum topic.</a>
+* CHANGELOG: There is a list of changes per version of the card. <a href="https://github.com/gurbyz/power-wheel-card/blob/master/CHANGELOG.md">Changelog.</a>
+* TROUBLESHOOTING / ISSUES: There's also a troubleshooting wiki on GitHub. Read this please before filing an issue. <a href="https://github.com/gurbyz/power-wheel-card/wiki/Troubleshooting-guide">Wiki page.</a> <a href="https://github.com/gurbyz/power-wheel-card/issues/new/choose">Issue form.</a>
 
 ## Features
 Features of the custom power-wheel-card:
@@ -16,7 +16,7 @@ Features of the custom power-wheel-card:
 * Has different views for showing power values, showing energy values and showing costs/savings: the *power view*, the *energy view* resp. the *money view*.
   The initial view can be set. Click the unit to switch between views.
 * BETA: Has support for a fourth value in 'the wheel': battery. In *power view* only. 
-    > **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time. The layout isn't even worked on yet. It's just the same layout as before and the battery icon(s) have been placed (split up) in available space for now. More info in the <a href="https://github.com/gurbyz/power-wheel-card">README</a> file.
+    > **What does BETA for battery support mean**: expect issues! There are known and unknown issues to be solved. The values and arrows don't show correctly all the time. The layout isn't even worked on yet. It's just the same layout as before and the battery icon(s) have been placed (split up) in available space for now. More info in the README file.
 
 * Has options for a different card title per view.
 * Can auto-toggle between views.
@@ -41,6 +41,6 @@ Features of the custom power-wheel-card:
 * Optionally uses icons of your own choice, which can be set by card parameters or taken from your `customize:` sensor settings.
 * Optionally colors the consuming icons yellow and the producing icons green. You can choose your own colors for consuming and producing.
 * Works for default theme and custom themes that use standard CSS vars.
-* Has support for HACS to check for a new release and upgrade to newer versions.
+* Has support for HACS to install and check for new releases.
 
-More in the <a href="https://github.com/gurbyz/power-wheel-card">README</a> file: requirements, installation & configuration instructions and examples.
+You can find more information in the README file: requirements, installation & configuration instructions and examples. <a href="https://github.com/gurbyz/power-wheel-card">README file.</a>

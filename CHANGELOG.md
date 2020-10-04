@@ -1,5 +1,16 @@
 Changelog
 ====
+## 0.1.3
+### Improvements
+* Documentation improvements
+  * Rewrite of the icons paragraph in the documentation.
+  * Added a paragraph for 'view toggling' in the documentation.
+  * Updated HACS installation instruction. Simplified some documentation.
+  * Battery feature documentation restructured.
+  * Updated installation instructions and HACS info file.
+  * Rewrite of the documentation for requirements and configuration.
+* Prevent impact for HA breaking change about getting LitElement from hui-view. Possible solution for issue #61.
+
 ## 0.1.2
 ### New features
 * Allowing to hide the title. Default value for `title` is empty now. If you want the previous behavior you could add `title: 'Power wheel'` to your config. Issue #51.
