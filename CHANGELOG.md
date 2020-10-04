@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.1.4-dev
+### Improvements
+* Documentation improvement.
+
 ## 0.1.3
 ### Improvements
 * Documentation improvements
