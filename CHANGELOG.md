@@ -1,13 +1,15 @@
 Changelog
 ====
-## 0.1.3-dev
+## 0.1.3
 ### Improvements
-* Rewrite of the icons paragraph in the documentation.
-* Added a paragraph for 'view toggling' in the documentation.
-* Updated HACS installation instruction. Simplified some documentation.
-* Battery feature documentation restructured.
-* Updated installation instructions and HACS info file.
-* Rewrite of the documentation for requirements and configuration.
+* Documentation improvements
+  * Rewrite of the icons paragraph in the documentation.
+  * Added a paragraph for 'view toggling' in the documentation.
+  * Updated HACS installation instruction. Simplified some documentation.
+  * Battery feature documentation restructured.
+  * Updated installation instructions and HACS info file.
+  * Rewrite of the documentation for requirements and configuration.
+* Prevent impact for HA breaking change about getting LitElement from hui-view. Possible solution for issue #61.
 
 ## 0.1.2
 ### New features
