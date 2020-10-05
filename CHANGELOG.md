@@ -1,8 +1,9 @@
 Changelog
 ====
-## 0.1.4-dev
+## 0.1.4
 ### Improvements
-* Documentation improvement.
+* Documentation improvement. As mentioned in #60.
+* Prevent impact for HA breaking change about getting LitElement from hui-view. Better solution for issue #61 than in version 0.1.3.
 
 ## 0.1.3
 ### Improvements
