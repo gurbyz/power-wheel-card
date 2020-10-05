@@ -5,10 +5,10 @@
  *
  */
 
-const __VERSION = "0.1.3";
+const __VERSION = "0.1.4";
 
-const LitElement = customElements.get('home-assistant-main')
-  ? Object.getPrototypeOf(customElements.get('home-assistant-main'))
+const LitElement = customElements.get('hui-masonry-view')
+  ? Object.getPrototypeOf(customElements.get('hui-masonry-view'))
   : Object.getPrototypeOf(customElements.get('hui-view'));
 const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;

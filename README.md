@@ -96,9 +96,9 @@ Most setups will only have (A).
 |type|string|**required**| |Type of the card. Use `"custom:power-wheel-card"`.|
 |title|string|optional|No title|Title of the card in all views, if not overridden with a title per view.|
 |solar_power_entity|string|**required**| |Entity id of your solar power sensor. The sensor state value should be a positive number when producing power.|
-|grid_power_entity (A)|string|either A or B+C is **required**| |Entity id of your nett grid power sensor. Default the polarity of this parameter has to be positive for producing to the grid and negative for consuming from the grid.|
-|grid_power_consumption_entity (B)|string|either A or B+C is **required**| |Entity id of your sensor for power that you are consuming from the grid. The sensor state values should be a positive number.|
-|grid_power_production_entity (C)|string|either A or B+C is **required**| |Entity id of your sensor for power that you are producing to the grid. The sensor state values should be a positive number.|
+|grid_power_entity (A)|string|either A or B+C is **required**; don't use A together with B or C| |Entity id of your nett grid power sensor. Default the polarity of this parameter has to be positive for producing to the grid and negative for consuming from the grid.|
+|grid_power_consumption_entity (B)|string|either A or B+C is **required**; don't use B together with A| |Entity id of your sensor for power that you are consuming from the grid. The sensor state values should be a positive number.|
+|grid_power_production_entity (C)|string|either A or B+C is **required**; don't use C together with A| |Entity id of your sensor for power that you are producing to the grid. The sensor state values should be a positive number.|
 |production_is_positive|boolean|optional|`true`|If you use A you can specify the polarity of this input sensor. Use `true` for producing to the grid has positive values in your input sensor. Use `false` for producing to the grid has negative values.| 
 |debug|boolean|optional|`false`|Logs debug information in the console of your browser. Useful when you want to investigate or register an issue.|
 
@@ -136,10 +136,10 @@ If you don't have the separate sensors D and E, you can supply a nett sensor for
 | Parameter | Type | Mandatory if you want to use the *energy view*? | Default | Description |
 |-----------|------|------------|---------|-------------|
 |solar_energy_entity|string|**required**| |Entity id of your solar energy sensor. The sensor state value should be a positive number for having produced energy.|
-|grid_energy_consumption_entity (D)|string|either D+E or F+G is **required**| |Entity id of your sensor for energy that's consumed from the grid. The sensor state value should be a positive number.|
-|grid_energy_production_entity (E)|string|either D+E or F+G is **required**| |Entity id of your sensor for energy that's produced to the grid. The sensor state value should be a positive number.|
-|grid_energy_entity (F)|string|either D+E or F+G is **required**| |Entity id of your nett grid energy sensor if you don't have separate sensors for grid energy production to the grid and grid energy consumption from the grid. Default the polarity has to be positive for producing to the grid and negative for consuming from the grid.|
-|home_energy_entity (G)|string|either D+E or F+G is **required**| |Entity id of your home energy sensor if you don't have separate sensors for grid energy production to the grid and grid energy consumption from the grid. Default the polarity has to be positive for producing to the grid and negative for consuming from the grid.|
+|grid_energy_consumption_entity (D)|string|either D+E or F+G is **required**; don't use D or E together with F or G| |Entity id of your sensor for energy that's consumed from the grid. The sensor state value should be a positive number.|
+|grid_energy_production_entity (E)|string|either D+E or F+G is **required**; don't use D or E together with F or G| |Entity id of your sensor for energy that's produced to the grid. The sensor state value should be a positive number.|
+|grid_energy_entity (F)|string|either D+E or F+G is **required**; don't use D or E together with F or G| |Entity id of your nett grid energy sensor if you don't have separate sensors for grid energy production to the grid and grid energy consumption from the grid. Default the polarity has to be positive for producing to the grid and negative for consuming from the grid.|
+|home_energy_entity (G)|string|either D+E or F+G is **required**; don't use D or E together with F or G| |Entity id of your home energy sensor if you don't have separate sensors for grid energy production to the grid and grid energy consumption from the grid. Default the polarity has to be positive for producing to the grid and negative for consuming from the grid.|
 |production_is_positive|boolean|optional|`true`|If you use `grid_power_entity` or F or G you can specify the polarity of these input sensors. Use `true` for producing to the grid has positive values in your input sensors. Use `false` for producing to the grid has negative values.| 
 
 > You can easily distinguish between sensors that belong to the *power view* and sensors that below to the *energy view*.
