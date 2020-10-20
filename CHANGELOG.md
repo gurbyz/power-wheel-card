@@ -1,5 +1,9 @@
 Changelog
 ====
+## 0.1.5-dev
+### Fixes
+* Trying to solve #64. Could it be caused by lazy loading in HA?
+
 ## 0.1.4
 ### Improvements
 * Documentation improvement. As mentioned in #60.

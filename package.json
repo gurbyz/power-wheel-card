@@ -1,6 +1,6 @@
 {
   "name": "power-wheel-card",
-  "version": "0.1.4",
+  "version": "0.1.5-dev",
   "description": "An intuitive way to represent the power and energy that your home is consuming or producing.",
   "directories": {
     "test": "test"
