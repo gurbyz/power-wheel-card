@@ -629,21 +629,20 @@ class PowerWheelCard extends LitElement {
 
   setConfig(config) {
     config = { ...config };
-    // Disabled as part of testing for issue #64: could lazy loading of HA be the cause?
-    // if (!config.solar_power_entity) {
-    //   throw new Error('You need to define a solar_power_entity');
-    // }
-    // if (!config.grid_power_consumption_entity && !config.grid_power_production_entity
-    //   && !config.grid_power_entity) {
-    //   throw new Error('You need to define a grid_power_consumption_entity' +
-    //     'and a grid_power_production_entity OR you can define a grid_power_entity');
-    // }
-    // if (config.grid_power_production_entity && !config.grid_power_consumption_entity) {
-    //   throw new Error('You need to define a grid_power_consumption_entity');
-    // }
-    // if (config.grid_power_consumption_entity && !config.grid_power_production_entity) {
-    //   throw new Error('You need to define a grid_power_production_entity');
-    // }
+    if (!config.solar_power_entity) {
+      throw new Error('You need to define a solar_power_entity');
+    }
+    if (!config.grid_power_consumption_entity && !config.grid_power_production_entity
+      && !config.grid_power_entity) {
+      throw new Error('You need to define a grid_power_consumption_entity' +
+        'and a grid_power_production_entity OR you can define a grid_power_entity');
+    }
+    if (config.grid_power_production_entity && !config.grid_power_consumption_entity) {
+      throw new Error('You need to define a grid_power_consumption_entity');
+    }
+    if (config.grid_power_consumption_entity && !config.grid_power_production_entity) {
+      throw new Error('You need to define a grid_power_production_entity');
+    }
     config.charging_is_positive = config.charging_is_positive !== false;
     config.charging_is_positive = config.charging_is_positive ? 1 : -1;
     config.production_is_positive = config.production_is_positive !== false;
