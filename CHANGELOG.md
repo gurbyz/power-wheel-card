@@ -1,7 +1,8 @@
 Changelog
 ====
 ## 0.1.5-dev
-### Fixes
+### Improvements
+* Extra classes to use for styling with card-mod: `.position-value`, `.arrow-value`, `.icon`, `.position-icon` and `.arrow-icon`. Example in Readme file.
 
 ## 0.1.4
 ### Improvements
