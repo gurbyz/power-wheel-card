@@ -18,6 +18,7 @@ An intuitive way to represent the power and energy that your home is consuming o
     * [Icons](#Icons)
     * [View toggling](#View-toggling)
     * [Advanced configuration example](#Advanced-configuration-example)
+    * [More styling](#More-styling)
 * [BETA battery feature in power view](#BETA-battery-feature-in-power-view)
     * [Configuration instructions battery feature](#Configuration-instructions-battery-feature)
     * [Known issues for the battery feature](#Known-issues-for-the-battery-feature)
@@ -286,6 +287,35 @@ A more advanced example for in the `ui-lovelace.yaml` file:
   initial_view: "energy"
   initial_auto_toggle_view: true
   auto_toggle_view_period: 5
+```
+
+### More styling
+You can use another custom integration [card-mod](https://github.com/thomasloven/lovelace-card-mod) to change more of the styling of power-wheel-card.
+Don't forget to install card-mod separately. Then you can put more styling to the classes and id's in the power-wheel-card configuration.
+
+Some classes to start with, are `.icon` (for the icons in the wheel) and `.value` (for the numeric values below the icons). 
+If you want to style icons and values of arrows and positions separately you want to use `.arrow-icon` (for the arrow icons), `.position-icon` (for the icons of the positions Home, Solar and Grid), `.arrow-value` and `.position-value`.
+
+Here is an example where e.g. the values and the position icons (Home, Solar and Grid) in the card have been styled. The values have a larger font and are separated a bit more from the icons.
+The position icons are larger. And there is more space in the bottom of the card.
+
+```yaml
+- type: custom:power-wheel-card
+  title: "Power wheel"
+  solar_power_entity: sensor.YOUR_SOLAR_POWER_SENSOR
+  grid_power_entity: sensor.YOUR_GRID_POWER_SENSOR
+  style: |  # styled with card-mod
+    .value {
+      font-weight: 300;
+      font-size: 20px;
+      margin-top: 5px;
+    }
+    .position-icon {
+      --mdc-icon-size: 56px;
+    }
+    .wheel {
+      margin-bottom: 20px;
+    }
 ```
 
 ## BETA battery feature in power view
