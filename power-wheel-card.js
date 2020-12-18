@@ -635,7 +635,7 @@ class PowerWheelCard extends LitElement {
     if (!config.grid_power_consumption_entity && !config.grid_power_production_entity
       && !config.grid_power_entity) {
       throw new Error('You need to define a grid_power_consumption_entity' +
-        'and a grid_power_production_entity OR you can define a grid_power_entity');
+        ' and a grid_power_production_entity OR you can define a grid_power_entity');
     }
     if (config.grid_power_production_entity && !config.grid_power_consumption_entity) {
       throw new Error('You need to define a grid_power_consumption_entity');
